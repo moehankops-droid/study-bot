@@ -1,451 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="my">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Bot WebApp</title>
-    <!-- Telegram WebApp SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: #1c1c1e;
-            color: #ffffff;
-            padding-bottom: 70px;
-        }
-
-        .header {
-            background-color: #2c2c2e;
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #3a3a3c;
-        }
-
-        .header h1 {
-            font-size: 20px;
-            color: #007aff;
-        }
-
-        .container {
-            padding: 15px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Card Styles */
-        .card {
-            background-color: #2c2c2e;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 12px;
-            border: 1px solid #3a3a3c;
-        }
-
-        .card h3 {
-            color: #34c759;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-
-        .formula {
-            background-color: #1c1c1e;
-            padding: 8px;
-            border-radius: 6px;
-            font-family: monospace;
-            color: #ff9500;
-            margin: 5px 0;
-        }
-
-        /* Quiz Styles */
-        .quiz-option {
-            background-color: #3a3a3c;
-            color: white;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: left;
-            border: none;
-            width: 100%;
-            font-size: 15px;
-            transition: background-color 0.2s;
-        }
-
-        .quiz-option:active {
-            background-color: #007aff;
-        }
-
-        /* Leaderboard */
-        .leader-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            border-bottom: 1px solid #3a3a3c;
-        }
-
-        /* Bottom Nav */
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background-color: #2c2c2e;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid #3a3a3c;
-        }
-
-        .nav-item {
-            color: #8e8e93;
-            text-decoration: none;
-            font-size: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .nav-item.active {
-            color: #007aff;
-            font-weight: bold;
-        }
-
-        .btn {
-            background-color: #007aff;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade 8 English Study Bot</title>
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      padding: 20px;
+      text-align: center;
+    }
+    #leaderboard-container {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #leaderboard-list {
+      list-style: none;
+      padding: 0;
+    }
+    #leaderboard-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Study Bot Mini App</h1>
-    </div>
+  <h1>📚 Grade 8 English Quiz & Leaderboard</h1>
+  <p>မေးခွန်းများဖြေဆိုပြီး အဆင့်ယှဉ်ပြိုင်ကြပါစို့။</p>
 
-    <div class="container">
-        <!-- HOME TAB -->
-        <div id="home" class="tab-content active">
-            <div class="card">
-                <h2>👋 မင်္ဂလာပါ, <span id="user-name">User</span>!</h2>
-                <p style="margin-top: 8px; color: #a1a1a6;">Study Bot မှ ကြိုဆိုပါတယ်။ သင်ယူလိုသည့် Tenses များကို လေ့လာပြီး Quiz ဖြေဆိုကာ Leaderboard မှာ အမှတ်ယှဉ်ပြိုင်နိုင်ပါတယ်။</p>
-            </div>
-            <div class="card">
-                <h3>📊 Quick Stats</h3>
-                <p>လက်ရှိရမှတ်: <strong id="home-score" style="color: #34c759;">0</strong> Points</p>
-            </div>
-        </div>
+  <!-- Quiz ဖြေမယ့်နေရာ (နမူနာခလုတ်) -->
+  <button onclick="finishQuiz(50)">Test Score (50 pts ထည့်မည်)</button>
 
-        <!-- TENSE TAB -->
-        <div id="tense" class="tab-content">
-            <h2 style="margin-bottom: 15px;">English Tenses (၁၂ မျိုး)</h2>
-            
-            <div class="card">
-                <h3>1. Present Simple</h3>
-                <div class="formula">Subject + Verb(v1/s/es) + Object</div>
-                <p><strong>Example:</strong> She eats an apple every day.</p>
-            </div>
+  <!-- Live Leaderboard ဇယားပေါ်မယ့်နေရာ -->
+  <div id="leaderboard-container">
+    <h3>🏆 Live Leaderboard</h3>
+    <ul id="leaderboard-list">
+      <!-- Realtime ဖြင့် အဆင့်စာရင်းများ ဝင်ရောက်လာမည် -->
+    </ul>
+  </div>
 
-            <div class="card">
-                <h3>2. Present Continuous</h3>
-                <div class="formula">Subject + am/is/are + Verb(-ing)</div>
-                <p><strong>Example:</strong> They are playing football now.</p>
-            </div>
+  <!-- Firebase နှင့် Telegram ချိတ်ဆက်ခြင်း JavaScript ကုဒ် -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 
-            <div class="card">
-                <h3>3. Present Perfect</h3>
-                <div class="formula">Subject + have/has + Verb(v3)</div>
-                <p><strong>Example:</strong> I have finished my homework.</p>
-            </div>
+    // Your Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyClv4XqqbYFcRowwpV8StLFWwbjaOx-5gQ",
+      authDomain: "study-bot-61a39.firebaseapp.com",
+      databaseURL: "https://study-bot-61a39-default-rtdb.firebaseio.com",
+      projectId: "study-bot-61a39",
+      storageBucket: "study-bot-61a39.firebasestorage.app",
+      messagingSenderId: "637683324139",
+      appId: "1:637683324139:web:2d1577b62765f331f69aae"
+    };
 
-            <div class="card">
-                <h3>4. Present Perfect Continuous</h3>
-                <div class="formula">Subject + have/has + been + Verb(-ing)</div>
-                <p><strong>Example:</strong> He has been studying for two hours.</p>
-            </div>
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-            <div class="card">
-                <h3>5. Past Simple</h3>
-                <div class="formula">Subject + Verb(v2) + Object</div>
-                <p><strong>Example:</strong> We visited Yangon last year.</p>
-            </div>
+    // Telegram User အချက်အလက်ရယူခြင်း
+    const tg = window.Telegram?.WebApp;
+    let userName = "Guest User";
+    let userId = "user_" + Math.floor(Math.random() * 10000);
 
-            <div class="card">
-                <h3>6. Past Continuous</h3>
-                <div class="formula">Subject + was/were + Verb(-ing)</div>
-                <p><strong>Example:</strong> I was sleeping when you called.</p>
-            </div>
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      userName = tg.initDataUnsafe.user.first_name || "Telegram User";
+      userId = "user_" + tg.initDataUnsafe.user.id;
+    }
 
-            <div class="card">
-                <h3>7. Past Perfect</h3>
-                <div class="formula">Subject + had + Verb(v3)</div>
-                <p><strong>Example:</strong> The train had left before I arrived.</p>
-            </div>
+    // Quiz ပြီးဆုံးချိန် အမှတ်ပို့ရန် Function
+    window.finishQuiz = function(score) {
+      const scoreRef = ref(db, 'leaderboard/' + userId);
+      set(scoreRef, {
+        name: userName,
+        score: score,
+        timestamp: Date.now()
+      }).then(() => {
+        console.log("Score saved successfully!");
+        alert("အမှတ်များကို Database သို့ အောင်မြင်စွာ ပို့ပြီးပါပြီ!");
+      }).catch((error) => {
+        console.error("Error saving score: ", error);
+      });
+    };
 
-            <div class="card">
-                <h3>8. Past Perfect Continuous</h3>
-                <div class="formula">Subject + had + been + Verb(-ing)</div>
-                <p><strong>Example:</strong> They had been waiting for hours.</p>
-            </div>
+    // Live Leaderboard ဆွဲထုတ်ရန် Function
+    const leaderboardRef = ref(db, 'leaderboard');
+    onValue(leaderboardRef, (snapshot) => {
+      const data = snapshot.val();
+      const leaderboardList = document.getElementById('leaderboard-list');
+      if (!leaderboardList) return;
 
-            <div class="card">
-                <h3>9. Future Simple</h3>
-                <div class="formula">Subject + will/shall + Verb(v1)</div>
-                <p><strong>Example:</strong> I will help you tomorrow.</p>
-            </div>
+      leaderboardList.innerHTML = "";
+      
+      if (data) {
+        let users = Object.values(data);
+        users.sort((a, b) => b.score - a.score);
 
-            <div class="card">
-                <h3>10. Future Continuous</h3>
-                <div class="formula">Subject + will be + Verb(-ing)</div>
-                <p><strong>Example:</strong> At 8 PM, I will be watching TV.</p>
-            </div>
+        users.slice(0, 10).forEach((user, index) => {
+          let li = document.createElement('li');
+          li.innerHTML = `<span>#${index + 1} ${user.name}</span> <b>${user.score} pts</b>`;
+          leaderboardList.appendChild(li);
+        });
+      }
+    });
+  </script>
 
-            <div class="card">
-                <h3>11. Future Perfect</h3>
-                <div class="formula">Subject + will have + Verb(v3)</div>
-                <p><strong>Example:</strong> By next week, I will have finished the project.</p>
-            </div>
-
-            <div class="card">
-                <h3>12. Future Perfect Continuous</h3>
-                <div class="formula">Subject + will have been + Verb(-ing)</div>
-                <p><strong>Example:</strong> By 2027, she will have been teaching here for 5 years.</p>
-            </div>
-        </div>
-
-        <!-- QUESTION (QUIZ) TAB -->
-        <div id="question" class="tab-content">
-            <div class="card">
-                <h3>📝 Grammar Quiz</h3>
-                <p id="quiz-question" style="font-size: 16px; margin: 15px 0; font-weight: 500;"></p>
-                <div id="quiz-options"></div>
-                <p id="quiz-feedback" style="margin-top: 12px; font-weight: bold; line-height: 1.4;"></p>
-            </div>
-        </div>
-
-        <!-- LEADERBOARD TAB -->
-        <div id="leaderboard" class="tab-content">
-            <div class="card">
-                <h3>🏆 Top Students</h3>
-                <div id="leaderboard-list"></div>
-            </div>
-        </div>
-
-        <!-- ACCOUNT TAB -->
-        <div id="account" class="tab-content">
-            <div class="card">
-                <h3>👤 Profile Details</h3>
-                <p style="margin: 8px 0;"><strong>Name:</strong> <span id="acc-name">User</span></p>
-                <p style="margin: 8px 0;"><strong>Total Points:</strong> <span id="acc-score" style="color: #34c759;">0</span></p>
-                <p style="margin: 8px 0;"><strong>Rank:</strong> Beginner Student</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- BOTTOM NAVIGATION -->
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="switchTab('home')">🏠<br>Home</div>
-        <div class="nav-item" onclick="switchTab('tense')">📚<br>Tense</div>
-        <div class="nav-item" onclick="switchTab('question')">❓<br>Question</div>
-        <div class="nav-item" onclick="switchTab('leaderboard')">🏆<br>Leaderboard</div>
-        <div class="nav-item" onclick="switchTab('account')">👤<br>Account</div>
-    </div>
-
-    <script>
-        // Init Telegram WebApp
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) {
-            tg.expand();
-        }
-
-        let username = "Moe Han";
-        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            username = tg.initDataUnsafe.user.first_name || tg.initDataUnsafe.user.username;
-        }
-
-        document.getElementById('user-name').innerText = username;
-        document.getElementById('acc-name').innerText = username;
-
-        // User Score System
-        let userScore = parseInt(localStorage.getItem('study_bot_score')) || 0;
-        updateScoreUI();
-
-        function updateScoreUI() {
-            document.getElementById('home-score').innerText = userScore;
-            document.getElementById('acc-score').innerText = userScore;
-            localStorage.setItem('study_bot_score', userScore);
-            renderLeaderboard();
-        }
-
-        // Tab Navigation
-        function switchTab(tabId) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-
-            const navs = document.querySelectorAll('.nav-item');
-            navs.forEach(nav => nav.classList.remove('active'));
-
-            document.getElementById(tabId).classList.add('active');
-
-            // Set active nav item
-            const navItems = document.querySelectorAll('.nav-item');
-            const tabMap = { 'home': 0, 'tense': 1, 'question': 2, 'leaderboard': 3, 'account': 4 };
-            if (tabMap[tabId] !== undefined) {
-                navItems[tabMap[tabId]].classList.add('active');
-            }
-
-            if (tabId === 'question') {
-                loadQuiz();
-            }
-        }
-
-        // ========================================================
-        // 🌟 1000+ QUESTION GENERATOR ENGINE (Tricky & Explanations)
-        // ========================================================
-        const baseQuestions = [
-            { q: "She _____ (eat) an apple every day.", options: ["eats", "is eating", "ate", "has eaten"], ans: 0, exp: "💡 'Every day' ပါရင် ပုံမှန်အလေ့အထမို့ Present Simple (v1 + s/es) သုံးရပါတယ်!" },
-            { q: "They _____ (play) football at the moment.", options: ["play", "are playing", "played", "will play"], ans: 1, exp: "💡 'at the moment' ပါရင် လက်ရှိဖြစ်ပျက်နေဆဲ Present Continuous (am/is/are + ing) ပါ။" },
-            { q: "I _____ (finish) my homework yesterday.", options: ["finish", "have finished", "finished", "was finishing"], ans: 2, exp: "💡 'yesterday' ပါရင် အတိတ်ကာလ Past Simple (v2) ပဲ သုံးရပါမယ်။" },
-            { q: "He didn't _____ (go) to school yesterday, did he?", options: ["goes", "went", "go", "gone"], ans: 2, exp: "💡 မိသွားပြီ! 'Didn't' ရဲ့နောက်မှာ မူရင်း Verb (V1) ပဲ ပြန်လိုက်ရပါတယ်!" },
-            { q: "Water _____ (boil) at 100°C.", options: ["boil", "boils", "is boiling", "boiled"], ans: 1, exp: "💡 သဘာဝအမှန်တရား (Scientific Fact) မို့လို့ Present Simple (boils) ဖြစ်ရမယ်။" },
-            { q: "By this time tomorrow, we _____ (fly) to Yangon.", options: ["will fly", "will be flying", "fly", "flew"], ans: 1, exp: "💡 'By this time tomorrow' ဆိုရင် အနာဂတ်မှာ လုပ်နေဆဲဖြစ်မယ့် Future Continuous (will be flying) ပါ။" },
-            { q: "Listen! Someone _____ (sing) a song.", options: ["sings", "is singing", "sang", "has sung"], ans: 1, exp: "💡 'Listen!' လို့ တားမြက်အော်ခေါ်ရင် အခုလက်ရှိဖြစ်နေတာ (is singing) ပေါ့။" },
-            { q: "My mother _____ (cook) dinner when I arrived home.", options: ["cooks", "is cooking", "was cooking", "cooked"], ans: 2, exp: "💡 တစ်ခုခုလုပ်နေတုန်း အခြားအရာဝင်ဖြစ်တာမို့ Past Continuous (was cooking) ပါ။" },
-            { q: "We _____ (live) in Monywa since 2018.", options: ["lived", "are living", "have lived", "will live"], ans: 2, exp: "💡 'since 2018' ပါရင် အတိတ်ကစပြီး ယခုထိဖြစ်ဆဲ Present Perfect (have lived) သုံးရပါတယ်။" },
-            { q: "She usually _____ (get) up early in the morning.", options: ["gets", "is getting", "got", "has got"], ans: 0, exp: "💡 'usually' အလေ့အထပြစကားလုံးမို့ Present Simple (gets) ပါ။" },
-            { q: "Look at the dark clouds! It _____ (rain).", options: ["rains", "is raining", "is going to rain", "rained"], ans: 2, exp: "💡 အထောက်အထား (dark clouds) တွေ့ရင် 'is going to rain' ကို သုံးရပါတယ်။" },
-            { q: "The train _____ (leave) before we reached the station.", options: ["left", "had left", "has left", "leaves"], ans: 1, exp: "💡 အတိတ်ဖြစ်ရပ် ၂ ခုထဲက ပထမဆုံးပြီးသွားတာမို့ Past Perfect (had left) ပါ။" },
-            { q: "If you study hard, you _____ (pass) the exam.", options: ["pass", "passed", "will pass", "would pass"], ans: 2, exp: "💡 First Conditional စည်းမျဉ်း (If + V1, Will + V1) ပါ။" },
-            { q: "English _____ (speak) all over the world.", options: ["is spoken", "speaks", "is speaking", "spoke"], ans: 0, exp: "💡 Passive Voice မို့လို့ (is/am/are + V3 -> is spoken) ဖြစ်ရမယ်။" },
-            { q: "The letter _____ (write) by Su Su yesterday.", options: ["is written", "was written", "wrote", "has written"], ans: 1, exp: "💡 'yesterday' ပါတဲ့ Passive မို့လို့ 'was written' ဖြစ်ရပါမယ်။" },
-            { q: "He said that he _____ (be) busy then.", options: ["is", "was", "has been", "will be"], ans: 1, exp: "💡 Indirect Speech မှာ ရှေ့က Past (said) ဖြစ်ရင် နောက်က 'was' ပြောင်းရပါတယ်။" },
-            { q: "Do you mind _____ (open) the door?", options: ["open", "to open", "opening", "opened"], ans: 2, exp: "💡 'Do you mind' ရဲ့နောက်မှာ Gerund (-ing) ပဲ လိုက်ရပါတယ်!" },
-            { q: "Neither Aung Aung nor his friends _____ present.", options: ["is", "are", "was", "has"], ans: 1, exp: "💡 Neither... nor မှာ အနီးဆုံး Subject (friends - plural) ကိုကြည့်ပြီး 'are' ယူရပါတယ်။" },
-            { q: "She is _____ intelligent than her sister.", options: ["more", "most", "much", "less"], ans: 0, exp: "💡 နှစ်ယောက်ယှဉ်ပြိုင်ရင် Comparative (more intelligent) သုံးရပါတယ်။" },
-            { q: "Mount Everest is the _____ mountain in the world.", options: ["high", "higher", "highest", "more high"], ans: 2, exp: "💡 အားလုံးထဲမှာ အမြင့်ဆုံးမို့ Superlative (highest) ပါ။" }
-        ];
-
-        // dynamic generator ဖြင့် မေးခွန်း ၁၀၀၀ ကျော် ဖန်တီးခြင်း
-        const subjects = ["Aung Aung", "Kyaw Kyaw", "Su Su", "My brother", "The teacher", "They", "We", "The doctor", "My father", "The cat"];
-        const verbs = [
-            { v1: "eat", v2: "ate", v3: "eaten", v_s: "eats", ing: "eating", obj: "an apple" },
-            { v1: "watch", v2: "watched", v3: "watched", v_s: "watches", ing: "watching", obj: "TV" },
-            { v1: "play", v2: "played", v3: "played", v_s: "plays", ing: "playing", obj: "football" },
-            { v1: "read", v2: "read", v3: "read", v_s: "reads", ing: "reading", obj: "a book" },
-            { v1: "write", v2: "wrote", v3: "written", v_s: "writes", ing: "writing", obj: "a letter" },
-            { v1: "clean", v2: "cleaned", v3: "cleaned", v_s: "cleans", ing: "cleaning", obj: "the room" },
-            { v1: "buy", v2: "bought", v3: "bought", v_s: "buys", ing: "buying", obj: "a new phone" }
-        ];
-
-        let quizPool = [...baseQuestions];
-
-        // မေးခွန်းပေါင်း ၁၀၀၀ ကျော်အထိ Auto Generator ပေါင်းစပ်ခြင်း
-        for (let i = 0; i < 150; i++) {
-            let s = subjects[i % subjects.length];
-            let v = verbs[i % verbs.length];
-
-            quizPool.push({
-                q: `${s} _____ (${v.v1}) ${v.obj} every weekend.`,
-                options: [v.v_s, v.ing, v.v2, v.v3],
-                ans: 0,
-                exp: `💡 'every weekend' ပါလို့ Present Simple (${v.v_s}) သုံးရပါတယ်!`
-            });
-
-            quizPool.push({
-                q: `${s} didn't _____ (${v.v1}) ${v.obj} yesterday.`,
-                options: [v.v2, v.v1, v.v_s, v.ing],
-                ans: 1,
-                exp: `💡 'didn't' ရဲ့နောက်မှာ မူရင်း Base Verb (${v.v1}) ပဲ လိုက်ရတယ်နော်!`
-            });
-
-            quizPool.push({
-                q: "Look! " + s + " _____ (" + v.v1 + ") " + v.obj + " right now.",
-                options: [v.v_s, "is " + v.ing, v.v2, "has " + v.v3],
-                ans: 1,
-                exp: `💡 'Look!' နဲ့ 'right now' ပါလို့ Present Continuous (is/are ${v.ing}) သုံးရပါတယ်။`
-            });
-
-            quizPool.push({
-                q: s + " _____ (" + v.v1 + ") " + v.obj + " last night.",
-                options: [v.v1, v.v_s, v.v2, "has " + v.v3],
-                ans: 2,
-                exp: `💡 'last night' ပါလို့ Past Simple (${v.v2}) ဖြစ်ရပါမယ်။`
-            });
-
-            quizPool.push({
-                q: s + " has already _____ (" + v.v1 + ") " + v.obj + ".",
-                options: [v.v1, v.v2, v.v3, v.ing],
-                ans: 2,
-                exp: `💡 Present Perfect (has + V3) မို့လို့ (${v.v3}) သုံးရပါမယ်။`
-            });
-        }
-
-        let currentQuiz = null;
-
-        function loadQuiz() {
-            // မေးခွန်းပေါင်း ၁၀၀၀ ကျော်ထဲက Random ထုတ်ယူခြင်း
-            const randomIndex = Math.floor(Math.random() * quizPool.length);
-            currentQuiz = quizPool[randomIndex];
-
-            document.getElementById('quiz-question').innerText = currentQuiz.q;
-            document.getElementById('quiz-feedback').innerText = "";
-
-            const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = "";
-
-            currentQuiz.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = "quiz-option";
-                btn.innerText = (idx + 1) + ". " + opt;
-                btn.onclick = () => checkAnswer(idx);
-                optionsContainer.appendChild(btn);
-            });
-        }
-
-        function checkAnswer(selectedIndex) {
-            const feedback = document.getElementById('quiz-feedback');
-            const optionsBtns = document.querySelectorAll('.quiz-option');
-
-            // Disable all buttons after choice
-            optionsBtns.forEach(btn => btn.style.pointerEvents = 'none');
-
-            if (selectedIndex === currentQuiz.ans) {
-                feedback.style.color = "#34c759";
-                feedback.innerHTML = "✅ ဟားဟား မှန်သွားတယ်! (+10 Points)<br><span style='font-size:13px; color:#a1a1a6; font-weight:normal;'>" + currentQuiz.exp + "</span>";
-                userScore += 10;
-                updateScoreUI();
-            } else {
-                feedback.style.color = "#ff3b30";
-                feedback.innerHTML = "❌ မိသွားပြီ၊ မှားသွားပါပြီကွာ!<br>အဖြေမှန်: <strong>" + currentQuiz.options[currentQuiz.ans] + "</strong><br><span style='font-size:13px; color:#ff9500; font-weight:normal;'>" + currentQuiz.exp + "</span>";
-            }
-
-            // 3.2 စက္ကန့်အကြာတွင် မေးခွန်းအသစ်သို့ ပြောင်းမည် (ရှင်းလင်းချက်ဖတ်ရန်)
-            setTimeout(() => {
-                loadQuiz();
-            }, 3200);
-        }
-
-        // Leaderboard Render
-        function renderLeaderboard() {
-            let leaderboardData = [
-                { name: "Aung Aung"
+</body>
+</html>
