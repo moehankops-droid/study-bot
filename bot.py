@@ -16,7 +16,7 @@ async def cmd_start(message: types.Message):
     # Chat ထဲမှာ ပေါ်မယ့် ခလုတ်များ (Inline Buttons)
     builder = InlineKeyboardBuilder()
     builder.button(text="🎮 Open WebApp", web_app=WebAppInfo(url="https://your-website-url.com"))
-    builder.button(text="💬 Join Group", url="https://t.me/your_group_link")
+    builder.button(text="💬 Join Group", url="https://t.me/+IX7O3z2qZNY2ZmE9")
     builder.button(text="📢 Join Channel", url="https://t.me/your_channel_link")
     builder.adjust(1)
     
