@@ -1,12 +1,11 @@
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher, F, types
+from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.types import WebAppInfo, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import WebAppInfo, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
-# Bot Token ကို ထည့်သွင်းပြီးပါပြီ
-TOKEN = "8951516202:AAHMNyUKnA7kFP2YMICj5XHz4ezCEEGPgsY"
+TOKEN = "8951516202:AAHMnyUkNa7kFP2YMiCj5H3r4erCEEGPgsY"
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -16,10 +15,9 @@ async def cmd_start(message: types.Message):
     # Chat ထဲမှာ ပေါ်မယ့် ခလုတ်များ (Inline Buttons)
     builder = InlineKeyboardBuilder()
     builder.button(text="🎮 Open WebApp", web_app=WebAppInfo(url="https://your-website-url.com"))
-    builder.button(text="💬 Join Group", url="https://t.me/+IX7O3z2qZNY2ZmE9")
-    builder.button(text="📢 Join Channel", url="https://t.me/your_channel_link")
+    builder.button(text="💬 Join Group", url="https://t.me/+IX703z2qZNY2ZmE9")
     builder.adjust(1)
-    
+
     # အောက်ခြေမှာ ပေါ်မယ့် Menu ခလုတ် (Reply Keyboard)
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
@@ -27,7 +25,7 @@ async def cmd_start(message: types.Message):
         ],
         resize_keyboard=True
     )
-    
+
     await message.answer(
         "👋 Welcome to Study Bot!\n\nကျေးဇူးပြု၍ အောက်ပါခလုတ်များကို နှိပ်ပါ။",
         reply_markup=builder.as_markup()
