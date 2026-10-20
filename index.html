@@ -1,9 +1,409 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Bot WebApp</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #1c1c1e;
+            color: #ffffff;
+            padding-bottom: 70px;
+        }
+
+        .header {
+            background-color: #2c2c2e;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #3a3a3c;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            color: #007aff;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #2c2c2e;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border: 1px solid #3a3a3c;
+        }
+
+        .card h3 {
+            color: #34c759;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .formula {
+            background-color: #1c1c1e;
+            padding: 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            color: #ff9500;
+            margin: 5px 0;
+        }
+
+        /* Quiz Styles */
+        .quiz-option {
+            background-color: #3a3a3c;
+            color: white;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            border: none;
+            width: 100%;
+            font-size: 15px;
+        }
+
+        .quiz-option:active {
+            background-color: #007aff;
+        }
+
+        /* Leaderboard */
+        .leader-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #3a3a3c;
+        }
+
+        /* Bottom Nav */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: #2c2c2e;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #3a3a3c;
+        }
+
+        .nav-item {
+            color: #8e8e93;
+            text-decoration: none;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #007aff;
+            font-weight: bold;
+        }
+
+        .btn {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Study Bot WebApp!</h1>
+
+    <div class="header">
+        <h1>Study Bot Mini App</h1>
+    </div>
+
+    <div class="container">
+        <!-- HOME TAB -->
+        <div id="home" class="tab-content active">
+            <div class="card">
+                <h2>👋 မင်္ဂလာပါ, <span id="user-name">User</span>!</h2>
+                <p style="margin-top: 8px; color: #a1a1a6;">Study Bot မှ ကြိုဆိုပါတယ်။ သင်ယူလိုသည့် Tenses များကို လေ့လာပြီး Quiz ဖြေဆိုကာ Leaderboard မှာ အမှတ်ယှဉ်ပြိုင်နိုင်ပါတယ်။</p>
+            </div>
+            <div class="card">
+                <h3>📊 Quick Stats</h3>
+                <p>လက်ရှိရမှတ်: <strong id="home-score" style="color: #34c759;">0</strong> Points</p>
+            </div>
+        </div>
+
+        <!-- TENSE TAB -->
+        <div id="tense" class="tab-content">
+            <h2 style="margin-bottom: 15px;">English Tenses (၁၂ မျိုး)</h2>
+            
+            <div class="card">
+                <h3>1. Present Simple</h3>
+                <div class="formula">Subject + Verb(v1/s/es) + Object</div>
+                <p><strong>Example:</strong> She eats an apple every day.</p>
+            </div>
+
+            <div class="card">
+                <h3>2. Present Continuous</h3>
+                <div class="formula">Subject + am/is/are + Verb(-ing)</div>
+                <p><strong>Example:</strong> They are playing football now.</p>
+            </div>
+
+            <div class="card">
+                <h3>3. Present Perfect</h3>
+                <div class="formula">Subject + have/has + Verb(v3)</div>
+                <p><strong>Example:</strong> I have finished my homework.</p>
+            </div>
+
+            <div class="card">
+                <h3>4. Present Perfect Continuous</h3>
+                <div class="formula">Subject + have/has + been + Verb(-ing)</div>
+                <p><strong>Example:</strong> He has been studying for two hours.</p>
+            </div>
+
+            <div class="card">
+                <h3>5. Past Simple</h3>
+                <div class="formula">Subject + Verb(v2) + Object</div>
+                <p><strong>Example:</strong> We visited Yangon last year.</p>
+            </div>
+
+            <div class="card">
+                <h3>6. Past Continuous</h3>
+                <div class="formula">Subject + was/were + Verb(-ing)</div>
+                <p><strong>Example:</strong> I was sleeping when you called.</p>
+            </div>
+
+            <div class="card">
+                <h3>7. Past Perfect</h3>
+                <div class="formula">Subject + had + Verb(v3)</div>
+                <p><strong>Example:</strong> The train had left before I arrived.</p>
+            </div>
+
+            <div class="card">
+                <h3>8. Past Perfect Continuous</h3>
+                <div class="formula">Subject + had + been + Verb(-ing)</div>
+                <p><strong>Example:</strong> They had been waiting for hours.</p>
+            </div>
+
+            <div class="card">
+                <h3>9. Future Simple</h3>
+                <div class="formula">Subject + will/shall + Verb(v1)</div>
+                <p><strong>Example:</strong> I will help you tomorrow.</p>
+            </div>
+
+            <div class="card">
+                <h3>10. Future Continuous</h3>
+                <div class="formula">Subject + will be + Verb(-ing)</div>
+                <p><strong>Example:</strong> At 8 PM, I will be watching TV.</p>
+            </div>
+
+            <div class="card">
+                <h3>11. Future Perfect</h3>
+                <div class="formula">Subject + will have + Verb(v3)</div>
+                <p><strong>Example:</strong> By next week, I will have finished the project.</p>
+            </div>
+
+            <div class="card">
+                <h3>12. Future Perfect Continuous</h3>
+                <div class="formula">Subject + will have been + Verb(-ing)</div>
+                <p><strong>Example:</strong> By 2027, she will have been teaching here for 5 years.</p>
+            </div>
+        </div>
+
+        <!-- QUESTION (QUIZ) TAB -->
+        <div id="question" class="tab-content">
+            <div class="card">
+                <h3>📝 Grammar Quiz</h3>
+                <p id="quiz-question" style="font-size: 16px; margin: 15px 0;"></p>
+                <div id="quiz-options"></div>
+                <p id="quiz-feedback" style="margin-top: 10px; font-weight: bold;"></p>
+            </div>
+        </div>
+
+        <!-- LEADERBOARD TAB -->
+        <div id="leaderboard" class="tab-content">
+            <div class="card">
+                <h3>🏆 Top Students</h3>
+                <div id="leaderboard-list"></div>
+            </div>
+        </div>
+
+        <!-- ACCOUNT TAB -->
+        <div id="account" class="tab-content">
+            <div class="card">
+                <h3>👤 Profile Details</h3>
+                <p style="margin: 8px 0;"><strong>Name:</strong> <span id="acc-name">User</span></p>
+                <p style="margin: 8px 0;"><strong>Total Points:</strong> <span id="acc-score" style="color: #34c759;">0</span></p>
+                <p style="margin: 8px 0;"><strong>Rank:</strong> Beginner Student</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('home')">🏠<br>Home</div>
+        <div class="nav-item" onclick="switchTab('tense')">📚<br>Tense</div>
+        <div class="nav-item" onclick="switchTab('question')">❓<br>Question</div>
+        <div class="nav-item" onclick="switchTab('leaderboard')">🏆<br>Leaderboard</div>
+        <div class="nav-item" onclick="switchTab('account')">👤<br>Account</div>
+    </div>
+
+    <script>
+        // Init Telegram WebApp
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
+        if (tg) {
+            tg.expand();
+        }
+
+        let username = "Moe Han";
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            username = tg.initDataUnsafe.user.first_name || tg.initDataUnsafe.user.username;
+        }
+
+        document.getElementById('user-name').innerText = username;
+        document.getElementById('acc-name').innerText = username;
+
+        // User Score System
+        let userScore = parseInt(localStorage.getItem('study_bot_score')) || 0;
+        updateScoreUI();
+
+        function updateScoreUI() {
+            document.getElementById('home-score').innerText = userScore;
+            document.getElementById('acc-score').innerText = userScore;
+            localStorage.setItem('study_bot_score', userScore);
+            renderLeaderboard();
+        }
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            const navs = document.querySelectorAll('.nav-item');
+            navs.forEach(nav => nav.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            if (tabId === 'question') {
+                loadQuiz();
+            }
+        }
+
+        // Quiz Questions Data
+        const quizData = [
+            {
+                q: "She _____ (eat) an apple every day.",
+                options: ["eats", "is eating", "ate", "has eaten"],
+                ans: 0
+            },
+            {
+                q: "They _____ (play) football at the moment.",
+                options: ["play", "are playing", "played", "will play"],
+                ans: 1
+            },
+            {
+                q: "I _____ (finish) my homework yesterday.",
+                options: ["finish", "have finished", "finished", "was finishing"],
+                ans: 2
+            },
+            {
+                q: "Look! The sun _____ (rise).",
+                options: ["rises", "is rising", "rose", "has risen"],
+                ans: 1
+            },
+            {
+                q: "We _____ (live) in Yangon since 2018.",
+                options: ["lived", "are living", "have lived", "will live"],
+                ans: 2
+            }
+        ];
+
+        let currentQuizIndex = 0;
+
+        function loadQuiz() {
+            const currentQuiz = quizData[currentQuizIndex];
+            document.getElementById('quiz-question').innerText = currentQuiz.q;
+            document.getElementById('quiz-feedback').innerText = "";
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = "";
+
+            currentQuiz.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option";
+                btn.innerText = (idx + 1) + ". " + opt;
+                btn.onclick = () => checkAnswer(idx);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const currentQuiz = quizData[currentQuizIndex];
+            const feedback = document.getElementById('quiz-feedback');
+
+            if (selectedIndex === currentQuiz.ans) {
+                feedback.style.color = "#34c759";
+                feedback.innerText = "✅ မှန်ပါသည်! (+10 Points)";
+                userScore += 10;
+                updateScoreUI();
+            } else {
+                feedback.style.color = "#ff3b30";
+                feedback.innerText = "❌ မှားပါသည်! အဖြေမှန်မှာ: " + currentQuiz.options[currentQuiz.ans];
+            }
+
+            setTimeout(() => {
+                currentQuizIndex = (currentQuizIndex + 1) % quizData.length;
+                loadQuiz();
+            }, 1800);
+        }
+
+        // Leaderboard Render
+        function renderLeaderboard() {
+            let leaderboardData = [
+                { name: "Aung Aung", score: 120 },
+                { name: "Su Su", score: 90 },
+                { name: "Kyaw Kyaw", score: 70 },
+                { name: username, score: userScore }
+            ];
+
+            // Sort high to low score
+            leaderboardData.sort((a, b) => b.score - a.score);
+
+            const listContainer = document.getElementById('leaderboard-list');
+            listContainer.innerHTML = "";
+
+            leaderboardData.forEach((user, index) => {
+                const item = document.createElement('div');
+                item.className = "leader-item";
+                let rankIcon = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : (index + 1) + ".";
+                item.innerHTML = `<span>${rankIcon} ${user.name}</span><strong>${user.score} pts</strong>`;
+                listContainer.appendChild(item);
+            });
+        }
+    </script>
 </body>
-</html>
+    </html>
+    
