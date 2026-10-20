@@ -20,7 +20,7 @@ async def cmd_start(message: types.Message):
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="🎯 EARN NOW")]
-        
+        ],
         resize_keyboard=True
     )
 
