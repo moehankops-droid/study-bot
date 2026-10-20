@@ -5,7 +5,7 @@ from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import WebAppInfo, ReplyKeyboardMarkup, KeyboardButton
 
-TOKEN = "8951516202:AAHMnyUkNa7kFP2YMiCj5H3r4erCEEGPgsY"
+TOKEN = "8951516202:AAHMNyUKnA7kFP2YMICj5XHz4ezCEEGPgsY"
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -37,4 +37,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-    
+
