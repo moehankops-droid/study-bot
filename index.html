@@ -1,459 +1,351 @@
 <!DOCTYPE html>
 <html lang="my">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 8 English Study Bot</title>
-    <!-- Telegram WebApp SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-color: #6366f1;
-            --accent-hover: #4f46e5;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --fire-color: #f97316;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade 8 English Master</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding-bottom: 70px;
-        }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      max-width: 500px;
+      margin: 0 auto;
+    }
 
-        /* Top Bar */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px;
-            background-color: #1e293b80;
-            backdrop-filter: blur(8px);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            border-bottom: 1px solid #334155;
-        }
+    /* Header & User Stats */
+    .header {
+      background: var(--card-bg);
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
 
-        .bot-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #6366f1;
-        }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .streak-badge {
-            background: #334155;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: var(--fire-color);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
 
-        /* Container */
-        .container {
-            padding: 16px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
+    .stats {
+      display: flex;
+      gap: 12px;
+    }
 
-        /* Tab Content Control */
-        .tab-content {
-            display: none;
-        }
+    .stat-badge {
+      background: #334155;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
 
-        .tab-content.active {
-            display: block;
-        }
+    /* Navigation Tabs */
+    .tabs {
+      display: flex;
+      background: var(--card-bg);
+      border-bottom: 1px solid #334155;
+    }
 
-        /* Profile & XP Card */
-        .profile-card {
-            background: linear-gradient(135deg, #312e81, #1e1b4b);
-            border: 1px solid #4338ca;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      background: none;
+      border: none;
+      color: var(--subtext);
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
 
-        .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
+    /* Tab Content Area */
+    .tab-content {
+      padding: 15px;
+      flex: 1;
+      display: none;
+    }
 
-        .level-tag {
-            font-size: 0.8rem;
-            background: #4f46e5;
-            padding: 2px 8px;
-            border-radius: 10px;
-            margin-top: 4px;
-            display: inline-block;
-        }
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+    }
 
-        .xp-bar-bg {
-            background: #334155;
-            height: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
+    /* Quiz Area */
+    .quiz-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
 
-        .xp-bar-fill {
-            background: linear-gradient(90deg, #6366f1, #a855f7);
-            height: 100%;
-            width: 70%;
-            transition: width 0.3s ease;
-        }
+    .question-title {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
 
-        /* Dashboard Grid */
-        .grid-menu {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
+    .question-sub {
+      color: var(--subtext);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
 
-        .menu-card {
-            background: var(--card-bg);
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px solid #334155;
-            text-align: center;
-            cursor: pointer;
-        }
+    .quiz-input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 2px solid #334155;
+      background: #0f172a;
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      outline: none;
+    }
 
-        .menu-card h4 {
-            margin-top: 8px;
-            font-size: 0.95rem;
-        }
+    .quiz-input:focus {
+      border-color: var(--accent);
+    }
 
-        .menu-card p {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            margin-top: 4px;
-        }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
 
-        /* Flashcard Component */
-        .flashcard-container {
-            perspective: 1000px;
-            margin-top: 20px;
-        }
+    .btn:active {
+      background: var(--accent-hover);
+    }
 
-        .flashcard {
-            width: 100%;
-            height: 220px;
-            background: var(--card-bg);
-            border: 1px solid #475569;
-            border-radius: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            cursor: pointer;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            position: relative;
-        }
+    .feedback {
+      margin-top: 12px;
+      font-weight: bold;
+      min-height: 24px;
+    }
 
-        .flashcard.flipped {
-            transform: rotateY(180deg);
-        }
+    .feedback.correct { color: var(--success); }
+    .feedback.wrong { color: var(--danger); }
 
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+    /* Leaderboard */
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
 
-        .card-back {
-            transform: rotateY(180deg);
-            background: #0f172a;
-            border-radius: 16px;
-            border: 1px solid var(--accent-color);
-        }
+    .rank {
+      font-weight: bold;
+      width: 25px;
+    }
 
-        .btn-action {
-            width: 100%;
-            padding: 12px;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-top: 15px;
-            cursor: pointer;
-        }
-
-        /* Accordion / Notes */
-        .note-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 10px;
-            border: 1px solid #334155;
-        }
-
-        .note-card h3 {
-            color: #818cf8;
-            font-size: 1rem;
-            margin-bottom: 6px;
-        }
-
-        /* Leaderboard */
-        .rank-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--card-bg);
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            border: 1px solid #334155;
-        }
-
-        /* Bottom Nav */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #1e293b;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #334155;
-        }
-
-        .nav-item {
-            color: var(--text-sub);
-            text-decoration: none;
-            font-size: 0.75rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-        }
-
-        .nav-item.active {
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-    </style>
+    /* Battle Mode Placeholder */
+    .battle-box {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--card-bg);
+      border-radius: 12px;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Top Header Bar -->
-    <div class="top-bar">
-        <div class="bot-title">Grade 8 English Bot</div>
-        <div class="streak-badge">🔥 <span id="streakCount">3</span> ရက်</div>
+  <!-- Header -->
+  <div class="header">
+    <div class="user-info">
+      <div class="avatar" id="avatar">M</div>
+      <div>
+        <div style="font-weight: bold;" id="username">Moe Han</div>
+        <div style="font-size: 0.75rem; color: var(--subtext);" id="level-title">Level 1 Student</div>
+      </div>
     </div>
-
-    <div class="container">
-
-        <!-- TAB 1: HOME -->
-        <div id="tab-home" class="tab-content active">
-            <div class="profile-card">
-                <div class="user-info">
-                    <div class="avatar" id="userAvatar">G8</div>
-                    <div>
-                        <h3 id="userName">မင်္ဂလာပါ ကျောင်းသားလေး</h3>
-                        <span class="level-tag">Level <span id="userLevel">1</span> : Novice Student</span>
-                    </div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-sub);">
-                    <span>လေ့လာမှု တိုးတက်မှု (XP)</span>
-                    <span><span id="userXP">140</span> / 200 XP</span>
-                </div>
-                <div class="xp-bar-bg">
-                    <div class="xp-bar-fill" id="xpBar" style="width: 70%;"></div>
-                </div>
-            </div>
-
-            <div class="grid-menu">
-                <div class="menu-card" onclick="switchTab('vocab')">
-                    <div style="font-size: 1.8rem;">🎴</div>
-                    <h4>Flashcards</h4>
-                    <p>ဝေါဟာရ အသစ်များ</p>
-                </div>
-                <div class="menu-card" onclick="switchTab('tense')">
-                    <div style="font-size: 1.8rem;">📚</div>
-                    <h4>Grammar</h4>
-                    <p>Tense နှင့် မှတ်စုများ</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2: FLASHCARDS (VOCAB BUILDER) -->
-        <div id="tab-vocab" class="tab-content">
-            <h2>📖 Vocab Flashcards</h2>
-            <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 10px;">ကတ်လေးကို နှိပ်ပြီး အဓိပ္ပာယ် ကြည့်ပါ</p>
-
-            <div class="flashcard-container">
-                <div class="flashcard" id="card" onclick="flipCard()">
-                    <div class="card-front">
-                        <h1 id="vocabWord" style="color: #818cf8;">Experiment</h1>
-                        <p style="color: var(--text-sub); margin-top: 8px;">(Noun / Verb)</p>
-                        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 20px;">💡 လှန်ကြည့်ရန် နှိပ်ပါ</p>
-                    </div>
-                    <div class="card-back">
-                        <h3>အဓိပ္ပာယ်: စမ်းသပ်စမ်းသပ်မှု</h3>
-                        <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 10px;">Example: We will do a science experiment tomorrow.</p>
-                    </div>
-                </div>
-            </div>
-
-            <button class="btn-action" onclick="addXP(10)">မှတ်မိပြီ (+10 XP ရယူမည်)</button>
-        </div>
-
-        <!-- TAB 3: TENSE & NOTES -->
-        <div id="tab-tense" class="tab-content">
-            <h2>📚 Tense & Notes</h2>
-            <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 15px;">Grade 8 အတွက် အဓိက မှတ်စုများ</p>
-
-            <div class="note-card">
-                <h3>1. Present Simple Tense</h3>
-                <p style="font-size: 0.85rem; color: #cbd5e1;"><b>Form:</b> Subject + V1 (s/es)</p>
-                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">အမြဲတမ်း ပြုလုပ်လေ့ရှိသော အလေ့အထများနှင့် အမှန်တရားများကို ပြောရာတွင် သုံးသည်။</p>
-            </div>
-
-            <div class="note-card">
-                <h3>2. Present Continuous Tense</h3>
-                <p style="font-size: 0.85rem; color: #cbd5e1;"><b>Form:</b> Subject + am/is/are + V-ing</p>
-                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">လက်ရှိ ပြောနေချိန်တွင် ပြုလုပ်နေဆဲ အလုပ်များကို ပြောရာတွင် သုံးသည်။</p>
-            </div>
-        </div>
-
-        <!-- TAB 4: LEADERBOARD -->
-        <div id="tab-rank" class="tab-content">
-            <h2>🏆 Leaderboard (XP-Based)</h2>
-            <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 15px;">အမှတ်အများဆုံး သူငယ်ချင်းများ</p>
-
-            <div class="rank-item">
-                <span>🥇 1. Min Thant</span>
-                <span style="color: #6366f1; font-weight: bold;">450 XP</span>
-            </div>
-            <div class="rank-item">
-                <span>🥈 2. Su Su</span>
-                <span style="color: #6366f1; font-weight: bold;">320 XP</span>
-            </div>
-            <div class="rank-item">
-                <span>🥉 3. Aung Aung</span>
-                <span style="color: #6366f1; font-weight: bold;">210 XP</span>
-            </div>
-            <div class="rank-item" style="border: 1px solid #6366f1;">
-                <span>🎯 4. You (မင်း)</span>
-                <span style="color: #6366f1; font-weight: bold;" id="rankXP">140 XP</span>
-            </div>
-        </div>
-
-        <!-- TAB 5: ACCOUNT & 1v1 -->
-        <div id="tab-account" class="tab-content">
-            <h2>👤 Account & 1v1 Battle</h2>
-            <div class="note-card" style="margin-top: 15px;">
-                <h3>⚔️ 1v1 Room Battle (Coming Soon)</h3>
-                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">Room Code ရိုက်ထည့်ပြီး သူငယ်ချင်းနဲ့ အပြိုင် စကားလုံးဖြေဆိုနိုင်မည့် စနစ်။</p>
-                <input type="text" placeholder="Enter Room Code" style="width: 100%; padding: 10px; margin-top: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white;">
-                <button class="btn-action" style="margin-top: 8px;">Join Room</button>
-            </div>
-        </div>
-
+    <div class="stats">
+      <div class="stat-badge">🔥 <span id="streak">1</span></div>
+      <div class="stat-badge">⭐ <span id="xp">0</span> XP</div>
     </div>
+  </div>
 
-    <!-- Bottom Navigation Bar -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home')">
-            <span>🏠</span>
-            <span>ပင်မ</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('vocab')">
-            <span>🎴</span>
-            <span>Vocab</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('tense')">
-            <span>📚</span>
-            <span>Notes</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('rank')">
-            <span>🏆</span>
-            <span>Rank</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('account')">
-            <span>👤</span>
-            <span>အကောင့်</span>
-        </div>
+  <!-- Navigation -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('study')">📚 Practice</button>
+    <button class="tab-btn" onclick="switchTab('battle')">⚔️ 1v1 Battle</button>
+    <button class="tab-btn" onclick="switchTab('ranks')">🏆 Rank</button>
+  </div>
+
+  <!-- Study Tab -->
+  <div id="study-tab" class="tab-content active">
+    <div class="quiz-card">
+      <div class="question-title" id="q-word">Word Loading...</div>
+      <div class="question-sub">အင်္ဂလိပ်စာလုံး + မြန်မာအဓိပ္ပာယ် မှန်အောင်ဖြေပါ</div>
+      
+      <div style="text-align: left; margin-bottom: 5px; font-size: 0.85rem; color: var(--subtext);">၁။ အင်္ဂလိပ်စာလုံး ရိုက်ပါ:</div>
+      <input type="text" id="ans-eng" class="quiz-input" placeholder="e.g. Environment" autocomplete="off">
+
+      <div style="text-align: left; margin-bottom: 5px; font-size: 0.85rem; color: var(--subtext);">၂။ မြန်မာအဓိပ္ပာယ် ရိုက်ပါ:</div>
+      <input type="text" id="ans-my" class="quiz-input" placeholder="e.g. ပတ်ဝန်းကျင်" autocomplete="off">
+
+      <button class="btn" onclick="checkAnswer()">Submit Answer</button>
+      <div id="feedback" class="feedback"></div>
     </div>
+  </div>
 
-    <script>
-        // Init Telegram WebApp
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
-        if(tg) {
-            tg.expand();
-            if(tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                document.getElementById('userName').innerText = user.first_name + ' ' + (user.last_name || '');
-                document.getElementById('userAvatar').innerText = user.first_name.charAt(0);
-            }
-        }
+  <!-- Battle Tab -->
+  <div id="battle-tab" class="tab-content">
+    <div class="battle-box">
+      <h2>⚔️ 1v1 Quiz Battle</h2>
+      <p style="color: var(--subtext); margin: 15px 0;">အခြားကျောင်းသားများနှင့် အွန်လိုင်းတွင် ပြိုင်ဆိုင်ရန် မကြာမီလာမည်...</p>
+      <button class="btn" style="background: #475569;" disabled>Coming Soon</button>
+    </div>
+  </div>
 
-        let currentXP = 140;
+  <!-- Ranks Tab -->
+  <div id="ranks-tab" class="tab-content">
+    <h3 style="margin-bottom: 12px;">Top Grade 8 Learners</h3>
+    <div class="leaderboard-item">
+      <div><span class="rank">🥇</span> <strong>Moe Han</strong></div>
+      <div style="color: var(--accent);"><span id="rank-xp">0</span> XP</div>
+    </div>
+    <div class="leaderboard-item">
+      <div><span class="rank">🥈</span> Aung Aung</div>
+      <div style="color: var(--subtext);">120 XP</div>
+    </div>
+    <div class="leaderboard-item">
+      <div><span class="rank">🥉</span> Su Su</div>
+      <div style="color: var(--subtext);">80 XP</div>
+    </div>
+  </div>
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById('tab-' + tabName).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
+  <script>
+    // Initialize Telegram Web App
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.expand();
+    }
 
-        function flipCard() {
-            document.getElementById('card').classList.toggle('flipped');
-        }
+    // Vocab Database (Grade 8 Focus)
+    const wordList = [
+      { prompt: "သဘာဝပတ်ဝန်းကျင်", eng: "environment", my: "ပတ်ဝန်းကျင်" },
+      { prompt: "သိပ္ပံစမ်းသပ်မှု", eng: "experiment", my: "စမ်းသပ်မှု" },
+      { prompt: "ဖိအား (Pressure)", eng: "pressure", my: "ဖိအား" },
+      { prompt: "မျက်နှာပြင်ဧရိယာ", eng: "surface area", my: "မျက်နှာပြင်ဧရိယာ" },
+      { prompt: "အင်အား / ကောင်းခြင်း", eng: "strength", my: "ခွန်အား" }
+    ];
 
-        function addXP(amount) {
-            currentXP += amount;
-            document.getElementById('userXP').innerText = currentXP;
-            document.getElementById('rankXP').innerText = currentXP + ' XP';
-            const percentage = Math.min((currentXP / 200) * 100, 100);
-            document.getElementById('xpBar').style.width = percentage + '%';
-            alert('🎉 +' + amount + ' XP ရရှိခဲ့ပါသည်။');
-        }
-    </script>
+    let currentIndex = 0;
+    let userXP = parseInt(localStorage.getItem('userXP') || '0');
+    let userStreak = parseInt(localStorage.getItem('userStreak') || '1');
+
+    function updateUI() {
+      document.getElementById('xp').innerText = userXP;
+      document.getElementById('rank-xp').innerText = userXP;
+      document.getElementById('streak').innerText = userStreak;
+      document.getElementById('level-title').innerText = `Level ${Math.floor(userXP / 50) + 1} Student`;
+
+      const q = wordList[currentIndex];
+      document.getElementById('q-word').innerText = `"${q.prompt}"`;
+      document.getElementById('ans-eng').value = '';
+      document.getElementById('ans-my').value = '';
+      document.getElementById('feedback').innerText = '';
+    }
+
+    function checkAnswer() {
+      const inputEng = document.getElementById('ans-eng').value.trim().toLowerCase();
+      const inputMy = document.getElementById('ans-my').value.trim();
+      const q = wordList[currentIndex];
+
+      const isEngCorrect = inputEng === q.eng.toLowerCase();
+      const isMyCorrect = inputMy.length > 0 && q.my.includes(inputMy);
+
+      const fb = document.getElementById('feedback');
+
+      if (isEngCorrect && isMyCorrect) {
+        fb.className = 'feedback correct';
+        fb.innerText = '✅ မှန်ကန်ပါသည်။ +10 XP ရရှိသည်!';
+        userXP += 10;
+        localStorage.setItem('userXP', userXP);
+        
+        setTimeout(() => {
+          currentIndex = (currentIndex + 1) % wordList.length;
+          updateUI();
+        }, 1200);
+      } else {
+        fb.className = 'feedback wrong';
+        let msg = '❌ မှားယွင်းနေပါသည်။ ';
+        if (!isEngCorrect) msg += `(Eng: ${q.eng}) `;
+        if (!isMyCorrect) msg += `(မြန်မာ: ${q.my})`;
+        fb.innerText = msg;
+      }
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      if (tabName === 'study') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('study-tab').classList.add('active');
+      } else if (tabName === 'battle') {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('battle-tab').classList.add('active');
+      } else if (tabName === 'ranks') {
+        document.querySelectorAll('.tab-btn')[2].classList.add('active');
+        document.getElementById('ranks-tab').classList.add('active');
+      }
+    }
+
+    // Initialize
+    updateUI();
+  </script>
 </body>
-    </html>
-    
+</html>
