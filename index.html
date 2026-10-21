@@ -319,10 +319,10 @@
                 document.querySelectorAll('.nav-item')[tabMap[tabId]].classList.add('active');
             }
 
-            if (tabId === 'question') loadSmartQuiz();
+            if (tabId === 'question') loadAIQuiz();
         };
 
-        // Grade 8 အဆင့် Tenses မေးခွန်းများ (Fallback & Dynamic Pool)
+        // Grade 8 အဆင့် Tenses မေးခွန်းများ (Fallback Pool)
         const fallbackQuestions = [
             { q: "She _____ (eat) an apple every day.", options: ["eats", "is eating", "ate", "has eaten"], ans: 0, exp: "💡 'Every day' ပါရင် Present Simple (v1 + s/es) သုံးရပါတယ်!" },
             { q: "They _____ (play) football at the moment.", options: ["play", "are playing", "played", "will play"], ans: 1, exp: "💡 'at the moment' ပါရင် Present Continuous (am/is/are + ing) ပါ။" },
@@ -337,7 +337,7 @@
         const GEMINI_API_KEY = "AQ.Ab8RN6KAaQM0KLogzoAYr6IG0RZkSLWwcX-QOVCR-RgfpvkADg";
         let currentQuiz = null;
 
-        async function loadSmartQuiz() {
+        async function loadAIQuiz() {
             const loadingEl = document.getElementById('quiz-loading');
             const questionEl = document.getElementById('quiz-question');
             const optionsContainer = document.getElementById('quiz-options');
@@ -375,7 +375,6 @@ Return ONLY valid JSON without any markdown:
 
             } catch (err) {
                 console.warn("Using Fallback Question due to API restriction:", err);
-                // AI သို့မဟုတ် API Key အလုပ်မလုပ်ပါက အရန်မေးခွန်းများထဲမှ တိုက်ရိုက်ဆွဲထုတ်မည်
                 const randomIndex = Math.floor(Math.random() * fallbackQuestions.length);
                 currentQuiz = fallbackQuestions[randomIndex];
             }
@@ -406,7 +405,7 @@ Return ONLY valid JSON without any markdown:
                 feedback.innerHTML = "❌ မှားသွားပါပြီ!<br>အဖြေမှန်: <strong>" + currentQuiz.options[currentQuiz.ans] + "</strong><br><span style='font-size:13px; color:#ff9500; font-weight:normal;'>" + currentQuiz.exp + "</span>";
             }
 
-            setTimeout(() => { loadSmartQuiz(); }, 3000);
+            setTimeout(() => { loadAIQuiz(); }, 3000);
         }
 
         const leaderboardRef = ref(db, 'leaderboard');
@@ -432,4 +431,4 @@ Return ONLY valid JSON without any markdown:
     </script>
 </body>
     </html>
-
+    
