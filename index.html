@@ -322,8 +322,8 @@
             if (tabId === 'question') loadAIQuiz();
         };
 
-        // 🔑 Gemini API Key
-        const GEMINI_API_KEY = "AQ.Ab8RN6KpYzTlEccqdcKXis4OI_qvLVLogfc57YfpewJmxfD7kw";
+        // 🔑 Gemini API Key အသစ် (လုံခြုံရေးအတွက် ကိုယ်ပိုင် Config ဖိုင် သို့မဟုတ် GitHub Allow Secret ဖြင့် အသုံးပြုရန်)
+        const GEMINI_API_KEY = "AQ.Ab8RN6KAaQM0KLogzoAYr6IG0RZkSLWwcX-QOVCR-RgfpvkADg";
         let currentQuiz = null;
 
         async function loadAIQuiz() {
@@ -356,6 +356,11 @@ Return ONLY a valid JSON object without any markdown format or code blocks, stri
                 });
 
                 const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+
                 let rawText = data.candidates[0].content.parts[0].text;
                 
                 // Markdown formatting များကို Clean လုပ်ခြင်း
@@ -420,3 +425,4 @@ Return ONLY a valid JSON object without any markdown format or code blocks, stri
     </script>
 </body>
 </html>
+
