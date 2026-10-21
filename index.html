@@ -1,41 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="my">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Bot WebApp</title>
+    <title>Grade 8 English Study Bot</title>
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #6366f1;
+            --accent-hover: #4f46e5;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --fire-color: #f97316;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #1c1c1e;
-            color: #ffffff;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             padding-bottom: 70px;
         }
 
-        .header {
-            background-color: #2c2c2e;
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #3a3a3c;
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background-color: #1e293b80;
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 1px solid #334155;
         }
 
-        .header h1 {
-            font-size: 20px;
-            color: #007aff;
+        .bot-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #6366f1;
         }
 
+        .streak-badge {
+            background: #334155;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--fire-color);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Container */
         .container {
-            padding: 15px;
+            padding: 16px;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
+        /* Tab Content Control */
         .tab-content {
             display: none;
         }
@@ -44,430 +79,381 @@
             display: block;
         }
 
-        /* Card Styles */
-        .card {
-            background-color: #2c2c2e;
+        /* Profile & XP Card */
+        .profile-card {
+            background: linear-gradient(135deg, #312e81, #1e1b4b);
+            border: 1px solid #4338ca;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .level-tag {
+            font-size: 0.8rem;
+            background: #4f46e5;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        .xp-bar-bg {
+            background: #334155;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .xp-bar-fill {
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            height: 100%;
+            width: 70%;
+            transition: width 0.3s ease;
+        }
+
+        /* Dashboard Grid */
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .menu-card {
+            background: var(--card-bg);
+            padding: 16px;
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 12px;
-            border: 1px solid #3a3a3c;
-        }
-
-        .card h3 {
-            color: #34c759;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-
-        .formula {
-            background-color: #1c1c1e;
-            padding: 8px;
-            border-radius: 6px;
-            font-family: monospace;
-            color: #ff9500;
-            margin: 5px 0;
-        }
-
-        /* Quiz Styles */
-        .quiz-option {
-            background-color: #3a3a3c;
-            color: white;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
+            border: 1px solid #334155;
+            text-align: center;
             cursor: pointer;
-            text-align: left;
-            border: none;
-            width: 100%;
-            font-size: 15px;
-            transition: background-color 0.2s;
         }
 
-        .quiz-option:active {
-            background-color: #007aff;
+        .menu-card h4 {
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+
+        .menu-card p {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        /* Flashcard Component */
+        .flashcard-container {
+            perspective: 1000px;
+            margin-top: 20px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 220px;
+            background: var(--card-bg);
+            border: 1px solid #475569;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: #0f172a;
+            border-radius: 16px;
+            border: 1px solid var(--accent-color);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        /* Accordion / Notes */
+        .note-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border: 1px solid #334155;
+        }
+
+        .note-card h3 {
+            color: #818cf8;
+            font-size: 1rem;
+            margin-bottom: 6px;
         }
 
         /* Leaderboard */
-        .leader-item {
+        .rank-item {
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            padding: 10px;
-            border-bottom: 1px solid #3a3a3c;
+            background: var(--card-bg);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #334155;
         }
 
         /* Bottom Nav */
-        .nav-bar {
+        .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 60px;
-            background-color: #2c2c2e;
+            background: #1e293b;
             display: flex;
             justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid #3a3a3c;
+            padding: 10px 0;
+            border-top: 1px solid #334155;
         }
 
         .nav-item {
-            color: #8e8e93;
+            color: var(--text-sub);
             text-decoration: none;
-            font-size: 12px;
+            font-size: 0.75rem;
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 4px;
             cursor: pointer;
         }
 
         .nav-item.active {
-            color: #007aff;
+            color: var(--accent-color);
             font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Study Bot Mini App</h1>
+    <!-- Top Header Bar -->
+    <div class="top-bar">
+        <div class="bot-title">Grade 8 English Bot</div>
+        <div class="streak-badge">🔥 <span id="streakCount">3</span> ရက်</div>
     </div>
 
     <div class="container">
-        <!-- HOME TAB -->
-        <div id="home" class="tab-content active">
-            <div class="card">
-                <h2>👋 မင်္ဂလာပါ, <span id="user-name">User</span>!</h2>
-                <p style="margin-top: 8px; color: #a1a1a6;">Study Bot မှ ကြိုဆိုပါတယ်။ သင်ယူလိုသည့် Tenses များကို လေ့လာပြီး မေးခွန်းများကို ဖြေဆိုကာ Leaderboard မှာ အမှတ်ယှဉ်ပြိုင်နိုင်ပါတယ်။</p>
+
+        <!-- TAB 1: HOME -->
+        <div id="tab-home" class="tab-content active">
+            <div class="profile-card">
+                <div class="user-info">
+                    <div class="avatar" id="userAvatar">G8</div>
+                    <div>
+                        <h3 id="userName">မင်္ဂလာပါ ကျောင်းသားလေး</h3>
+                        <span class="level-tag">Level <span id="userLevel">1</span> : Novice Student</span>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-sub);">
+                    <span>လေ့လာမှု တိုးတက်မှု (XP)</span>
+                    <span><span id="userXP">140</span> / 200 XP</span>
+                </div>
+                <div class="xp-bar-bg">
+                    <div class="xp-bar-fill" id="xpBar" style="width: 70%;"></div>
+                </div>
             </div>
-            <div class="card">
-                <h3>📊 Quick Stats</h3>
-                <p>လက်ရှိရမှတ်: <strong id="home-score" style="color: #34c759;">0</strong> Points</p>
+
+            <div class="grid-menu">
+                <div class="menu-card" onclick="switchTab('vocab')">
+                    <div style="font-size: 1.8rem;">🎴</div>
+                    <h4>Flashcards</h4>
+                    <p>ဝေါဟာရ အသစ်များ</p>
+                </div>
+                <div class="menu-card" onclick="switchTab('tense')">
+                    <div style="font-size: 1.8rem;">📚</div>
+                    <h4>Grammar</h4>
+                    <p>Tense နှင့် မှတ်စုများ</p>
+                </div>
             </div>
         </div>
 
-        <!-- TENSE TAB -->
-        <div id="tense" class="tab-content">
-            <h2 style="margin-bottom: 15px;">English Tenses (၁၂ မျိုး)</h2>
-            
-            <div class="card">
-                <h3>1. Present Simple</h3>
-                <div class="formula">Subject + Verb(v1/s/es) + Object</div>
-                <p><strong>Example:</strong> She eats an apple every day.</p>
+        <!-- TAB 2: FLASHCARDS (VOCAB BUILDER) -->
+        <div id="tab-vocab" class="tab-content">
+            <h2>📖 Vocab Flashcards</h2>
+            <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 10px;">ကတ်လေးကို နှိပ်ပြီး အဓိပ္ပာယ် ကြည့်ပါ</p>
+
+            <div class="flashcard-container">
+                <div class="flashcard" id="card" onclick="flipCard()">
+                    <div class="card-front">
+                        <h1 id="vocabWord" style="color: #818cf8;">Experiment</h1>
+                        <p style="color: var(--text-sub); margin-top: 8px;">(Noun / Verb)</p>
+                        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 20px;">💡 လှန်ကြည့်ရန် နှိပ်ပါ</p>
+                    </div>
+                    <div class="card-back">
+                        <h3>အဓိပ္ပာယ်: စမ်းသပ်စမ်းသပ်မှု</h3>
+                        <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 10px;">Example: We will do a science experiment tomorrow.</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="card">
-                <h3>2. Present Continuous</h3>
-                <div class="formula">Subject + am/is/are + Verb(-ing)</div>
-                <p><strong>Example:</strong> They are playing football now.</p>
+            <button class="btn-action" onclick="addXP(10)">မှတ်မိပြီ (+10 XP ရယူမည်)</button>
+        </div>
+
+        <!-- TAB 3: TENSE & NOTES -->
+        <div id="tab-tense" class="tab-content">
+            <h2>📚 Tense & Notes</h2>
+            <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 15px;">Grade 8 အတွက် အဓိက မှတ်စုများ</p>
+
+            <div class="note-card">
+                <h3>1. Present Simple Tense</h3>
+                <p style="font-size: 0.85rem; color: #cbd5e1;"><b>Form:</b> Subject + V1 (s/es)</p>
+                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">အမြဲတမ်း ပြုလုပ်လေ့ရှိသော အလေ့အထများနှင့် အမှန်တရားများကို ပြောရာတွင် သုံးသည်။</p>
             </div>
 
-            <div class="card">
-                <h3>3. Present Perfect</h3>
-                <div class="formula">Subject + have/has + Verb(v3)</div>
-                <p><strong>Example:</strong> I have finished my homework.</p>
-            </div>
-
-            <div class="card">
-                <h3>4. Present Perfect Continuous</h3>
-                <div class="formula">Subject + have/has + been + Verb(-ing)</div>
-                <p><strong>Example:</strong> He has been studying for two hours.</p>
-            </div>
-
-            <div class="card">
-                <h3>5. Past Simple</h3>
-                <div class="formula">Subject + Verb(v2) + Object</div>
-                <p><strong>Example:</strong> We visited Yangon last year.</p>
-            </div>
-
-            <div class="card">
-                <h3>6. Past Continuous</h3>
-                <div class="formula">Subject + was/were + Verb(-ing)</div>
-                <p><strong>Example:</strong> I was sleeping when you called.</p>
-            </div>
-
-            <div class="card">
-                <h3>7. Past Perfect</h3>
-                <div class="formula">Subject + had + Verb(v3)</div>
-                <p><strong>Example:</strong> The train had left before I arrived.</p>
-            </div>
-
-            <div class="card">
-                <h3>8. Past Perfect Continuous</h3>
-                <div class="formula">Subject + had + been + Verb(-ing)</div>
-                <p><strong>Example:</strong> They had been waiting for hours.</p>
-            </div>
-
-            <div class="card">
-                <h3>9. Future Simple</h3>
-                <div class="formula">Subject + will/shall + Verb(v1)</div>
-                <p><strong>Example:</strong> I will help you tomorrow.</p>
-            </div>
-
-            <div class="card">
-                <h3>10. Future Continuous</h3>
-                <div class="formula">Subject + will be + Verb(-ing)</div>
-                <p><strong>Example:</strong> At 8 PM, I will be watching TV.</p>
-            </div>
-
-            <div class="card">
-                <h3>11. Future Perfect</h3>
-                <div class="formula">Subject + will have + Verb(v3)</div>
-                <p><strong>Example:</strong> By next week, I will have finished the project.</p>
-            </div>
-
-            <div class="card">
-                <h3>12. Future Perfect Continuous</h3>
-                <div class="formula">Subject + will have been + Verb(-ing)</div>
-                <p><strong>Example:</strong> By 2027, she will have been teaching here for 5 years.</p>
+            <div class="note-card">
+                <h3>2. Present Continuous Tense</h3>
+                <p style="font-size: 0.85rem; color: #cbd5e1;"><b>Form:</b> Subject + am/is/are + V-ing</p>
+                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">လက်ရှိ ပြောနေချိန်တွင် ပြုလုပ်နေဆဲ အလုပ်များကို ပြောရာတွင် သုံးသည်။</p>
             </div>
         </div>
 
-        <!-- QUESTION (QUIZ) TAB -->
-        <div id="question" class="tab-content">
-            <div class="card">
-                <h3>📝 Advanced Tenses Quiz (5000+ Variations)</h3>
-                <p id="quiz-question" style="font-size: 16px; margin: 15px 0; font-weight: 500;"></p>
-                <div id="quiz-options"></div>
-                <p id="quiz-feedback" style="margin-top: 12px; font-weight: bold; line-height: 1.4;"></p>
+        <!-- TAB 4: LEADERBOARD -->
+        <div id="tab-rank" class="tab-content">
+            <h2>🏆 Leaderboard (XP-Based)</h2>
+            <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 15px;">အမှတ်အများဆုံး သူငယ်ချင်းများ</p>
+
+            <div class="rank-item">
+                <span>🥇 1. Min Thant</span>
+                <span style="color: #6366f1; font-weight: bold;">450 XP</span>
+            </div>
+            <div class="rank-item">
+                <span>🥈 2. Su Su</span>
+                <span style="color: #6366f1; font-weight: bold;">320 XP</span>
+            </div>
+            <div class="rank-item">
+                <span>🥉 3. Aung Aung</span>
+                <span style="color: #6366f1; font-weight: bold;">210 XP</span>
+            </div>
+            <div class="rank-item" style="border: 1px solid #6366f1;">
+                <span>🎯 4. You (မင်း)</span>
+                <span style="color: #6366f1; font-weight: bold;" id="rankXP">140 XP</span>
             </div>
         </div>
 
-        <!-- LEADERBOARD TAB -->
-        <div id="leaderboard" class="tab-content">
-            <div class="card">
-                <h3>🏆 Top Students</h3>
-                <div id="leaderboard-list"></div>
+        <!-- TAB 5: ACCOUNT & 1v1 -->
+        <div id="tab-account" class="tab-content">
+            <h2>👤 Account & 1v1 Battle</h2>
+            <div class="note-card" style="margin-top: 15px;">
+                <h3>⚔️ 1v1 Room Battle (Coming Soon)</h3>
+                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">Room Code ရိုက်ထည့်ပြီး သူငယ်ချင်းနဲ့ အပြိုင် စကားလုံးဖြေဆိုနိုင်မည့် စနစ်။</p>
+                <input type="text" placeholder="Enter Room Code" style="width: 100%; padding: 10px; margin-top: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white;">
+                <button class="btn-action" style="margin-top: 8px;">Join Room</button>
             </div>
         </div>
 
-        <!-- ACCOUNT TAB -->
-        <div id="account" class="tab-content">
-            <div class="card">
-                <h3>👤 Profile Details</h3>
-                <p style="margin: 8px 0;"><strong>Name:</strong> <span id="acc-name">User</span></p>
-                <p style="margin: 8px 0;"><strong>Total Points:</strong> <span id="acc-score" style="color: #34c759;">0</span></p>
-                <p style="margin: 8px 0;"><strong>Rank:</strong> Grade 8 Advanced Student</p>
-            </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home')">
+            <span>🏠</span>
+            <span>ပင်မ</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('vocab')">
+            <span>🎴</span>
+            <span>Vocab</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('tense')">
+            <span>📚</span>
+            <span>Notes</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('rank')">
+            <span>🏆</span>
+            <span>Rank</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('account')">
+            <span>👤</span>
+            <span>အကောင့်</span>
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION -->
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="switchTab('home')">🏠<br>Home</div>
-        <div class="nav-item" onclick="switchTab('tense')">📚<br>Tense</div>
-        <div class="nav-item" onclick="switchTab('question')">❓<br>Question</div>
-        <div class="nav-item" onclick="switchTab('leaderboard')">🏆<br>Leaderboard</div>
-        <div class="nav-item" onclick="switchTab('account')">👤<br>Account</div>
-    </div>
-
-    <!-- Firebase & Advanced Dynamic Generator Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyClv4XqqbYFcRowwpV8StLFWwbjaOx-5gQ",
-            authDomain: "study-bot-61a39.firebaseapp.com",
-            databaseURL: "https://study-bot-61a39-default-rtdb.firebaseio.com",
-            projectId: "study-bot-61a39",
-            storageBucket: "study-bot-61a39.firebasestorage.app",
-            messagingSenderId: "637683324139",
-            appId: "1:637683324139:web:2d1577b62765f331f69aae"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
+    <script>
+        // Init Telegram WebApp
         const tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) tg.expand();
-
-        let username = "Moe Han";
-        let userId = "user_" + Math.floor(Math.random() * 10000);
-
-        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            username = tg.initDataUnsafe.user.first_name || "Telegram User";
-            userId = "user_" + tg.initDataUnsafe.user.id;
-        }
-
-        document.getElementById('user-name').innerText = username;
-        document.getElementById('acc-name').innerText = username;
-
-        let userScore = parseInt(localStorage.getItem('study_bot_score')) || 0;
-        updateScoreUI();
-
-        function updateScoreUI() {
-            document.getElementById('home-score').innerText = userScore;
-            document.getElementById('acc-score').innerText = userScore;
-            localStorage.setItem('study_bot_score', userScore);
-
-            const scoreRef = ref(db, 'leaderboard/' + userId);
-            set(scoreRef, {
-                name: username,
-                score: userScore,
-                timestamp: Date.now()
-            });
-        }
-
-        window.switchTab = function(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-
-            document.getElementById(tabId).classList.add('active');
-
-            const tabMap = { 'home': 0, 'tense': 1, 'question': 2, 'leaderboard': 3, 'account': 4 };
-            if (tabMap[tabId] !== undefined) {
-                document.querySelectorAll('.nav-item')[tabMap[tabId]].classList.add('active');
+        if(tg) {
+            tg.expand();
+            if(tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                document.getElementById('userName').innerText = user.first_name + ' ' + (user.last_name || '');
+                document.getElementById('userAvatar').innerText = user.first_name.charAt(0);
             }
+        }
 
-            if (tabId === 'question') generateAdvancedQuiz();
-        };
+        let currentXP = 140;
 
-        // 🔄 Advanced Dynamic Question Generator (Tense အဆင့်မြှင့်တင်ထားသော ပေါင်းစပ်စနစ်)
-        const subjects = ["She", "He", "They", "We", "I", "Moe Han", "The students", "My mother"];
-        const verbData = [
-            { base: "eat", s: "eats", ing: "eating", v2: "ate", v3: "eaten", obj: "an apple" },
-            { base: "play", s: "plays", ing: "playing", v2: "played", v3: "played", obj: "football" },
-            { base: "read", s: "reads", ing: "reading", v2: "read", v3: "read", obj: "a book" },
-            { base: "write", s: "writes", ing: "writing", v2: "wrote", v3: "written", obj: "a letter" },
-            { base: "clean", s: "cleans", ing: "cleaning", v2: "cleaned", v3: "cleaned", obj: "the room" },
-            { base: "drink", s: "drinks", ing: "drinking", v2: "drank", v3: "drunk", obj: "milk" },
-            { base: "build", s: "builds", ing: "building", v2: "built", v3: "built", obj: "a house" },
-            { base: "teach", s: "teaches", ing: "teaching", v2: "taught", v3: "taught", obj: "English" }
-        ];
-
-        let currentQuiz = null;
-
-        function generateAdvancedQuiz() {
-            const questionEl = document.getElementById('quiz-question');
-            const optionsContainer = document.getElementById('quiz-options');
-            const feedbackEl = document.getElementById('quiz-feedback');
-
-            questionEl.innerText = "";
-            optionsContainer.innerHTML = "";
-            feedbackEl.innerText = "";
-
-            const sub = subjects[Math.floor(Math.random() * subjects.length)];
-            const v = verbData[Math.floor(Math.random() * verbData.length)];
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             
-            // Tense အမျိုးအစား ၈ မျိုးအထိ အဆင့်မြှင့်တင်ထားခြင်း
-            const tenseType = Math.floor(Math.random() * 8);
-            let qText = "", correctAns = "", options = [], exp = "";
-
-            const isThirdPerson = (sub === "He" || sub === "She" || sub === "Moe Han" || sub === "My mother");
-
-            switch(tenseType) {
-                case 0: // Present Simple
-                    qText = `${sub} _____ (${v.base}) ${v.obj} every day.`;
-                    correctAns = isThirdPerson ? v.s : v.base;
-                    options = [correctAns, v.ing, v.v2, `will ${v.base}`];
-                    exp = "💡 'every day' ပါရှိသောကြောင့် Present Simple (V1 သို့မဟုတ် s/es) ကို သုံးရပါမည်။";
-                    break;
-                case 1: // Present Continuous
-                    qText = `${sub} _____ (${v.base}) ${v.obj} right now.`;
-                    let bePres = (sub === "I") ? "am" : (isThirdPerson ? "is" : "are");
-                    correctAns = `${bePres} ${v.ing}`;
-                    options = [correctAns, `${bePres} ${v.base}`, v.v2, `will be ${v.ing}`];
-                    exp = "💡 'right now' ပါရှိသောကြောင့် Present Continuous (am/is/are + V-ing) ကို သုံးရပါမည်။";
-                    break;
-                case 2: // Present Perfect
-                    qText = `${sub} _____ (${v.base}) ${v.obj} already.`;
-                    let haveHas = (sub === "I" || sub === "They" || sub === "We" || sub === "The students") ? "have" : "has";
-                    correctAns = `${haveHas} ${v.v3}`;
-                    options = [correctAns, `${haveHas} ${v.ing}`, v.v2, `had ${v.v3}`];
-                    exp = "💡 'already' ပါရှိသောကြောင့် Present Perfect (have/has + V3) ကို သုံးရပါမည်။";
-                    break;
-                case 3: // Past Simple
-                    qText = `${sub} _____ (${v.base}) ${v.obj} yesterday.`;
-                    correctAns = v.v2;
-                    options = [correctAns, v.base, isThirdPerson ? v.s : v.base, `had ${v.v3}`];
-                    exp = "💡 'yesterday' ပါရှိသောကြောင့် Past Simple (V2) ကို သုံးရပါမည်။";
-                    break;
-                case 4: // Past Continuous
-                    qText = `${sub} _____ (${v.base}) ${v.obj} when I saw him.`;
-                    let wasWere = (sub === "I" || isThirdPerson) ? "was" : "were";
-                    correctAns = `${wasWere} ${v.ing}`;
-                    options = [correctAns, `${wasWere} ${v.base}`, v.v2, `have ${v.v3}`];
-                    exp = "💡 အတိတ်တွင် အခြားလုပ်ငန်းက ဖြတ်ဝင်လုပ်နေစဉ် လုပ်ဆဲလုပ်ငန်းဖြစ်၍ Past Continuous (was/were + V-ing) သုံးရမည်။";
-                    break;
-                case 5: // Past Perfect
-                    qText = `The train _____ (${v.base}) before we arrived.`;
-                    correctAns = `had ${v.v3}`;
-                    options = [correctAns, v.v2, `have ${v.v3}`, `was ${v.ing}`];
-                    exp = "💡 အတိတ်ဖြစ်ရပ်နှစ်ခုထဲတွင် အရင်ဖြစ်ပျက်ပြီးသော အလုပ်အတွက် Past Perfect (had + V3) သုံးရမည်။";
-                    break;
-                case 6: // Future Simple
-                    qText = `${sub} _____ (${v.base}) ${v.obj} tomorrow.`;
-                    correctAns = `will ${v.base}`;
-                    options = [correctAns, `will be ${v.ing}`, v.v2, isThirdPerson ? v.s : v.base];
-                    exp = "💡 'tomorrow' ပါရှိသောကြောင့် Future Simple (will + V1) ကို သုံးရပါမည်။";
-                    break;
-                case 7: // Future Continuous
-                    qText = `At 8 PM tomorrow, ${sub} _____ (${v.base}) ${v.obj}.`;
-                    correctAns = `will be ${v.ing}`;
-                    options = [correctAns, `will ${v.base}`, `had been ${v.ing}`, `is ${v.ing}`];
-                    exp = "💡 အနာဂတ်၏ အချိန်ជាក់លាក់တစ်ခုတွင် လုပ်ဆောင်နေမည့်အလုပ်အတွက် Future Continuous (will be + V-ing) သုံးရမည်။";
-                    break;
-            }
-
-            // Options များကို နေရာရှုပ်ပြီး ကျပန်းဖြစ်အောင်လုပ်ခြင်း
-            options = options.sort(() => Math.random() - 0.5);
-            const correctIndex = options.indexOf(correctAns);
-
-            currentQuiz = {
-                q: qText,
-                options: options,
-                ans: correctIndex,
-                exp: exp
-            };
-
-            questionEl.innerText = currentQuiz.q;
-
-            currentQuiz.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = "quiz-option";
-                btn.innerText = (idx + 1) + ". " + opt;
-                btn.onclick = () => checkAnswer(idx);
-                optionsContainer.appendChild(btn);
-            });
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
 
-        function checkAnswer(selectedIndex) {
-            const feedback = document.getElementById('quiz-feedback');
-            document.querySelectorAll('.quiz-option').forEach(btn => btn.style.pointerEvents = 'none');
-
-            if (selectedIndex === currentQuiz.ans) {
-                feedback.style.color = "#34c759";
-                feedback.innerHTML = "✅ မှန်ပါတယ်! (+10 Points)<br><span style='font-size:13px; color:#a1a1a6; font-weight:normal;'>" + currentQuiz.exp + "</span>";
-                userScore += 10;
-                updateScoreUI();
-            } else {
-                feedback.style.color = "#ff3b30";
-                feedback.innerHTML = "❌ မှားသွားပါပြီ!<br>အဖြေမှန်: <strong>" + currentQuiz.options[currentQuiz.ans] + "</strong><br><span style='font-size:13px; color:#ff9500; font-weight:normal;'>" + currentQuiz.exp + "</span>";
-            }
-
-            setTimeout(() => { generateAdvancedQuiz(); }, 3000);
+        function flipCard() {
+            document.getElementById('card').classList.toggle('flipped');
         }
 
-        const leaderboardRef = ref(db, 'leaderboard');
-        onValue(leaderboardRef, (snapshot) => {
-            const data = snapshot.val();
-            const leaderboardList = document.getElementById('leaderboard-list');
-            if (!leaderboardList) return;
-
-            leaderboardList.innerHTML = "";
-            
-            if (data) {
-                let users = Object.values(data);
-                users.sort((a, b) => b.score - a.score);
-
-                users.slice(0, 10).forEach((user, index) => {
-                    let div = document.createElement('div');
-                    div.className = "leader-item";
-                    div.innerHTML = `<span>#${index + 1} ${user.name}</span> <strong style="color: #34c759;">${user.score} pts</strong>`;
-                    leaderboardList.appendChild(div);
-                });
-            }
-        });
+        function addXP(amount) {
+            currentXP += amount;
+            document.getElementById('userXP').innerText = currentXP;
+            document.getElementById('rankXP').innerText = currentXP + ' XP';
+            const percentage = Math.min((currentXP / 200) * 100, 100);
+            document.getElementById('xpBar').style.width = percentage + '%';
+            alert('🎉 +' + amount + ' XP ရရှိခဲ့ပါသည်။');
+        }
     </script>
 </body>
-</html>
-
+    </html>
+    
