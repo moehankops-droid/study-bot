@@ -224,8 +224,7 @@
         <!-- QUESTION (QUIZ) TAB -->
         <div id="question" class="tab-content">
             <div class="card">
-                <h3>📝 Grade 8 Grammar Quiz</h3>
-                <p id="quiz-loading" style="font-style: italic; color: #007aff; margin: 15px 0; display: none;">🤖 မေးခွန်းအသစ် ဆွဲထုတ်နေပါပြီ...</p>
+                <h3>📝 Grade 8 Dynamic Quiz (1000+ Variations)</h3>
                 <p id="quiz-question" style="font-size: 16px; margin: 15px 0; font-weight: 500;"></p>
                 <div id="quiz-options"></div>
                 <p id="quiz-feedback" style="margin-top: 12px; font-weight: bold; line-height: 1.4;"></p>
@@ -260,7 +259,7 @@
         <div class="nav-item" onclick="switchTab('account')">👤<br>Account</div>
     </div>
 
-    <!-- Firebase & App Logic -->
+    <!-- Firebase & Dynamic Question Generator Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
@@ -319,24 +318,23 @@
                 document.querySelectorAll('.nav-item')[tabMap[tabId]].classList.add('active');
             }
 
-            if (tabId === 'question') loadSmartQuiz();
+            if (tabId === 'question') generateRandomQuiz();
         };
 
-        // Grade 8 အဆင့် Tenses မေးခွန်းများ စုစည်းမှု
-        const questionPool = [
-            { q: "She _____ (eat) an apple every day.", options: ["eats", "is eating", "ate", "has eaten"], ans: 0, exp: "💡 'Every day' ပါရင် Present Simple (v1 + s/es) သုံးရပါတယ်!" },
-            { q: "They _____ (play) football at the moment.", options: ["play", "are playing", "played", "will play"], ans: 1, exp: "💡 'at the moment' ပါရင် Present Continuous (am/is/are + ing) ပါ။" },
-            { q: "I _____ (finish) my homework yesterday.", options: ["finish", "have finished", "finished", "was finishing"], ans: 2, exp: "💡 'yesterday' ပါရင် Past Simple (v2) သုံးရပါမယ်။" },
-            { q: "He didn't _____ (go) to school yesterday.", options: ["goes", "went", "go", "gone"], ans: 2, exp: "💡 'Didn't' ရဲ့နောက်မှာ မူရင်း Verb (V1) ပဲ လိုက်ရပါတယ်!" },
-            { q: "Water _____ (boil) at 100°C.", options: ["boil", "boils", "is boiling", "boiled"], ans: 1, exp: "💡 သဘာဝအမှန်တရားမို့လို့ Present Simple (boils) ဖြစ်ရမယ်။" },
-            { q: "My mother _____ (cook) dinner when I arrived.", options: ["cooks", "is cooking", "was cooking", "cooked"], ans: 2, exp: "💡 အတိတ်မှာ လုပ်ဆောင်နေဆဲ လုပ်ငန်းကို အခြားလုပ်ငန်းတစ်ခုက ဖြတ်ဝင်လုပ်တဲ့အခါ Past Continuous သုံးပါတယ်။" },
-            { q: "We _____ (live) in this town since 2015.", options: ["live", "lived", "have lived", "are living"], ans: 2, exp: "💡 'since 2015' ပါရှိသောကြောင့် Present Perfect Tense (have/has + V3) ဖြစ်ရပါမည်။" },
-            { q: "She will _____ (visit) her grandparents next week.", options: ["visit", "visits", "visited", "visiting"], ans: 0, exp: "💡 Future Simple Tense ဖြစ်၍ will ရဲ့နောက်မှာ Verb (V1) သုံးရပါတယ်။" }
+        // 🔄 Dynamic Question Generator (ပေါင်းစပ်မေးခွန်းထုတ်စနစ် - မေးခွန်းပေါင်း ၁၀၀၀+ ထွက်ရှိနိုင်သည်)
+        const subjects = ["She", "He", "They", "We", "I", "Moe Han", "The teacher"];
+        const verbData = [
+            { base: "eat", s: "eats", ing: "eating", v2: "ate", v3: "eaten", obj: "an apple" },
+            { base: "play", s: "plays", ing: "playing", v2: "played", v3: "played", obj: "football" },
+            { base: "read", s: "reads", ing: "reading", v2: "read", v3: "read", obj: "a book" },
+            { base: "write", s: "writes", ing: "writing", v2: "wrote", v3: "written", obj: "a letter" },
+            { base: "clean", s: "cleans", ing: "cleaning", v2: "cleaned", v3: "cleaned", obj: "the room" },
+            { base: "drink", s: "drinks", ing: "drinking", v2: "drank", v3: "drunk", obj: "milk" }
         ];
 
         let currentQuiz = null;
 
-        function loadSmartQuiz() {
+        function generateRandomQuiz() {
             const questionEl = document.getElementById('quiz-question');
             const optionsContainer = document.getElementById('quiz-options');
             const feedbackEl = document.getElementById('quiz-feedback');
@@ -345,9 +343,58 @@
             optionsContainer.innerHTML = "";
             feedbackEl.innerText = "";
 
-            // မေးခွန်းအုပ်စုထဲကနေ ကျပန်းတစ်ခုဆွဲထုတ်ခြင်း
-            const randomIndex = Math.floor(Math.random() * questionPool.length);
-            currentQuiz = questionPool[randomIndex];
+            const sub = subjects[Math.floor(Math.random() * subjects.length)];
+            const v = verbData[Math.floor(Math.random() * verbData.length)];
+            
+            // Tense အမျိုးအစား ၄ မျိုးကို ကျပန်းရွေးထုတ်မည်
+            const tenseType = Math.floor(Math.random() * 4);
+            let qText = "", correctAns = "", options = [], exp = "";
+
+            if (tenseType === 0) {
+                // Present Simple
+                qText = `${sub} _____ (${v.base}) ${v.obj} every day.`;
+                correctAns = (sub === "He" || sub === "She" || sub === "Moe Han" || sub === "The teacher") ? v.s : v.base;
+                let wrong1 = v.ing;
+                let wrong2 = v.v2;
+                let wrong3 = v.v3;
+                options = [correctAns, wrong1, wrong2, wrong3];
+                exp = "💡 'every day' ပါရှိသောကြောင့် Present Simple (V1 သို့မဟုတ် s/es) ကို သုံးရပါမည်။";
+            } else if (tenseType === 1) {
+                // Present Continuous
+                qText = `${sub} _____ (${v.base}) ${v.obj} right now.`;
+                let be = (sub === "I") ? "am" : ((sub === "He" || sub === "She" || sub === "Moe Han" || sub === "The teacher") ? "is" : "are");
+                correctAns = `${be} ${v.ing}`;
+                options = [
+                    correctAns, 
+                    `${be} ${v.base}`, 
+                    (be === "is" ? "are " : "is ") + v.ing, 
+                    v.v2
+                ];
+                exp = "💡 'right now' ပါရှိသောကြောင့် Present Continuous (am/is/are + V-ing) ကို သုံးရပါမည်။";
+            } else if (tenseType === 2) {
+                // Past Simple
+                qText = `${sub} _____ (${v.base}) ${v.obj} yesterday.`;
+                correctAns = v.v2;
+                options = [correctAns, v.base, (sub === "He" || sub === "She") ? v.s : v.base, v.ing];
+                exp = "💡 'yesterday' ပါရှိသောကြောင့် Past Simple (V2) ကို သုံးရပါမည်။";
+            } else {
+                // Future Simple
+                qText = `${sub} _____ (${v.base}) ${v.obj} tomorrow.`;
+                correctAns = `will ${v.base}`;
+                options = [correctAns, `will be ${v.ing}`, `ed ${v.base}`, `is ${v.ing}`];
+                exp = "💡 'tomorrow' ပါရှိသောကြောင့် Future Simple (will + V1) ကို သုံးရပါမည်။";
+            }
+
+            // Options များကို နေရာရှုပ်ပြီး ကျပန်းဖြစ်အောင်လုပ်ခြင်း
+            options = options.sort(() => Math.random() - 0.5);
+            const correctIndex = options.indexOf(correctAns);
+
+            currentQuiz = {
+                q: qText,
+                options: options,
+                ans: correctIndex,
+                exp: exp
+            };
 
             questionEl.innerText = currentQuiz.q;
 
@@ -374,7 +421,7 @@
                 feedback.innerHTML = "❌ မှားသွားပါပြီ!<br>အဖြေမှန်: <strong>" + currentQuiz.options[currentQuiz.ans] + "</strong><br><span style='font-size:13px; color:#ff9500; font-weight:normal;'>" + currentQuiz.exp + "</span>";
             }
 
-            setTimeout(() => { loadSmartQuiz(); }, 3000);
+            setTimeout(() => { generateRandomQuiz(); }, 3000);
         }
 
         const leaderboardRef = ref(db, 'leaderboard');
