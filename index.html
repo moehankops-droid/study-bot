@@ -62,35 +62,38 @@
 
     .stats {
       display: flex;
-      gap: 12px;
+      gap: 8px;
     }
 
     .stat-badge {
       background: #334155;
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 20px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
 
     .tabs {
       display: flex;
       background: var(--card-bg);
       border-bottom: 1px solid #334155;
+      overflow-x: auto;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 12px;
+      padding: 12px 8px;
       background: none;
       border: none;
       color: var(--subtext);
       font-weight: 600;
+      font-size: 0.8rem;
       cursor: pointer;
       border-bottom: 3px solid transparent;
       transition: all 0.3s;
+      white-space: nowrap;
     }
 
     .tab-btn.active {
@@ -118,8 +121,21 @@
     }
 
     .question-title {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
+      font-weight: bold;
       margin-bottom: 8px;
+      color: #f1f5f9;
+    }
+
+    .wrong-word-box {
+      background: #450a0a;
+      color: #fca5a5;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ef4444;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 10px 0;
     }
 
     .question-sub {
@@ -170,6 +186,32 @@
     .feedback.correct { color: var(--success); }
     .feedback.wrong { color: var(--danger); }
 
+    .timer-display {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--accent);
+      margin: 15px 0;
+    }
+
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .task-status {
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .status-done { background: #065f46; color: #34d399; }
+    .status-pending { background: #334155; color: var(--subtext); }
+
     .leaderboard-item {
       display: flex;
       justify-content: space-between;
@@ -180,17 +222,7 @@
       margin-bottom: 8px;
     }
 
-    .rank {
-      font-weight: bold;
-      width: 25px;
-    }
-
-    .battle-box {
-      text-align: center;
-      padding: 40px 20px;
-      background: var(--card-bg);
-      border-radius: 12px;
-    }
+    .rank { font-weight: bold; width: 25px; }
   </style>
 </head>
 <body>
@@ -210,14 +242,16 @@
     </div>
   </div>
 
-  <!-- Navigation -->
+  <!-- Navigation Tabs -->
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('study')">📚 Practice</button>
-    <button class="tab-btn" onclick="switchTab('battle')">⚔️ 1v1 Battle</button>
+    <button class="tab-btn" onclick="switchTab('fix')">✏️ Fix Mistake</button>
+    <button class="tab-btn" onclick="switchTab('pomo')">⏱️ Timer</button>
+    <button class="tab-btn" onclick="switchTab('tasks')">✅ Tasks</button>
     <button class="tab-btn" onclick="switchTab('ranks')">🏆 Rank</button>
   </div>
 
-  <!-- Study Tab -->
+  <!-- Practice Tab -->
   <div id="study-tab" class="tab-content active">
     <div class="quiz-card">
       <div style="font-size: 0.85rem; color: var(--accent); margin-bottom: 5px;" id="q-counter">Word 1 of 300</div>
@@ -235,12 +269,48 @@
     </div>
   </div>
 
-  <!-- Battle Tab -->
-  <div id="battle-tab" class="tab-content">
-    <div class="battle-box">
-      <h2>⚔️ 1v1 Quiz Battle</h2>
-      <p style="color: var(--subtext); margin: 15px 0;">အခြားကျောင်းသားများနှင့် အွန်လိုင်းတွင် ပြိုင်ဆိုင်ရန် မကြာမီလာမည်...</p>
-      <button class="btn" style="background: #475569;" disabled>Coming Soon</button>
+  <!-- Fix Mistake Tab -->
+  <div id="fix-tab" class="tab-content">
+    <div class="quiz-card">
+      <div style="font-size: 0.85rem; color: #ef4444; margin-bottom: 5px; font-weight: bold;">🔍 Correct the Mistake Mode</div>
+      <div class="question-sub">အောက်ပါ စာလုံးပေါင်း မှားယွင်းနေပါသည်။ အမှန်ပြင်ရိုက်ပါ:</div>
+
+      <div class="wrong-word-box" id="fix-wrong-word">Loading...</div>
+      <div style="font-size: 0.9rem; color: var(--subtext); margin-bottom: 15px;" id="fix-hint">အဓိပ္ပာယ်: -</div>
+
+      <input type="text" id="fix-ans" class="quiz-input" placeholder="စာလုံးပေါင်း အမှန်ရိုက်ပါ..." autocomplete="off">
+
+      <button class="btn" style="background: #ef4444;" onclick="checkFixAnswer()">Correct Answer</button>
+      <div id="fix-feedback" class="feedback"></div>
+    </div>
+  </div>
+
+  <!-- Pomodoro Timer Tab -->
+  <div id="pomo-tab" class="tab-content">
+    <div class="quiz-card">
+      <div style="font-size: 0.9rem; color: var(--subtext);">⏱️ Pomodoro Study Timer (25 Mins)</div>
+      <div class="timer-display" id="timer-display">25:00</div>
+      <button class="btn" id="timer-btn" onclick="toggleTimer()">Start Study Session</button>
+      <div style="font-size: 0.8rem; color: var(--subtext); margin-top: 10px;">စာကျက်ချိန် ၂၅ မိနစ် ပြည့်ပါက Bonus +20 XP ရမည်!</div>
+    </div>
+  </div>
+
+  <!-- Auto-Verified Daily Tasks Tab -->
+  <div id="tasks-tab" class="tab-content">
+    <h3 style="margin-bottom: 12px;">🎯 Daily Verified Tasks</h3>
+    <div class="task-item">
+      <div>
+        <div style="font-weight: bold;">Vocab ဖြေဆိုမှုလေ့ကျင့်ရန်</div>
+        <div style="font-size: 0.75rem; color: var(--subtext);">Practice/Fix Mode ၁၀ ခေါက်ဖြေရန်</div>
+      </div>
+      <span class="task-status" id="task1-status">0 / 10</span>
+    </div>
+    <div class="task-item">
+      <div>
+        <div style="font-weight: bold;">25-Min Study Session</div>
+        <div style="font-size: 0.75rem; color: var(--subtext);">Pomodoro Timer 1 ကြိမ်ပြီးအောင်သုံးရန်</div>
+      </div>
+      <span class="task-status" id="task2-status">Pending</span>
     </div>
   </div>
 
@@ -263,220 +333,435 @@
 
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.expand();
+    if (tg) tg.expand();
+
+    // 300 Complete Word Database
+    const wordList = [
+      { prompt: "သဘာဝပတ်ဝန်းကျင်", eng: "environment", my: "ပတ်ဝန်းကျင်", wrongEng: "Environmant" },
+      { prompt: "သိပ္ပံစမ်းသပ်မှု", eng: "experiment", my: "စမ်းသပ်မှု", wrongEng: "Experimant" },
+      { prompt: "ဖိအား", eng: "pressure", my: "ဖိအား", wrongEng: "Pressur" },
+      { prompt: "မျက်နှာပြင်ဧရိယာ", eng: "surface area", my: "မျက်နှာပြင်ဧရိယာ", wrongEng: "Surfece area" },
+      { prompt: "ခွန်အား / အင်အား", eng: "strength", my: "ခွန်အား", wrongEng: "Strenth" },
+      { prompt: "လေထု", eng: "atmosphere", my: "လေထု", wrongEng: "Atmosfere" },
+      { prompt: "ညစ်ညမ်းမှု", eng: "pollution", my: "ညစ်ညမ်းမှု", wrongEng: "Polusion" },
+      { prompt: "ကာကွယ်သည်", eng: "protect", my: "ကာကွယ်", wrongEng: "Protekt" },
+      { prompt: "စုံစမ်းလေ့လာသည်", eng: "investigate", my: "စုံစမ်း", wrongEng: "Investegate" },
+      { prompt: "ရလဒ်", eng: "result", my: "ရလဒ်", wrongEng: "Resultt" },
+      { prompt: "အပူချိန်", eng: "temperature", my: "အပူချိန်", wrongEng: "Temperatue" },
+      { prompt: "ဆွဲငင်အား", eng: "gravity", my: "ဆွဲငင်အား", wrongEng: "Gravety" },
+      { prompt: "ဂေဟစနစ်", eng: "ecosystem", my: "ဂေဟစနစ်", wrongEng: "Ecosystemm" },
+      { prompt: "သစ်တောပြုန်းတီးခြင်း", eng: "deforestation", my: "သစ်တောပြုန်းတီးခြင်း", wrongEng: "Deforistation" },
+      { prompt: "ထိန်းသိမ်းစောင့်ရှောက်ခြင်း", eng: "conservation", my: "ထိန်းသိမ်း", wrongEng: "Consirvation" },
+      { prompt: "ပြန်လည်ပြည့်ဖြိုးမြဲ", eng: "renewable", my: "ပြန်လည်ပြည့်ဖြိုးမြဲ", wrongEng: "Reneweable" },
+      { prompt: "နေထိုင်ရာဒေသ", eng: "habitat", my: "နေထိုင်ရာ", wrongEng: "Habetat" },
+      { prompt: "ယူဆချက်", eng: "hypothesis", my: "ယူဆချက်", wrongEng: "Hypotesis" },
+      { prompt: "အငွေ့ပျံခြင်း", eng: "evaporation", my: "အငွေ့ပျံခြင်း", wrongEng: "Evaporasion" },
+      { prompt: "ပွတ်တိုက်အား", eng: "friction", my: "ပွတ်တိုက်အား", wrongEng: "Frikshun" },
+      { prompt: "တိကျမှန်ကန်သော", eng: "accurate", my: "တိကျသော", wrongEng: "Accuratee" },
+      { prompt: "မရှိမဖြစ် လိုအပ်သော", eng: "essential", my: "မရှိမဖြစ်", wrongEng: "Essensial" },
+      { prompt: "စွမ်းဆောင်ရည်ရှိသော", eng: "efficient", my: "ထိရောက်သော", wrongEng: "Effisient" },
+      { prompt: "အန္တရာယ်ရှိသော", eng: "hazardous", my: "အန္တရာယ်ရှိ", wrongEng: "Hazardoes" },
+      { prompt: "ယာယီဖြစ်သော", eng: "temporary", my: "ယာယီ", wrongEng: "Temporery" },
+      { prompt: "တာဝန်ဝတ္တရား", eng: "assignment", my: "တာဝန်", wrongEng: "Asignment" },
+      { prompt: "ဗဟုသုတ / အသိပညာ", eng: "knowledge", my: "အသိပညာ", wrongEng: "Knowlege" },
+      { prompt: "နိဂုံးချုပ်", eng: "conclusion", my: "နိဂုံး", wrongEng: "Conclusiun" },
+      { prompt: "တက်ရောက်မှု", eng: "attendance", my: "တက်ရောက်မှု", wrongEng: "Attandance" },
+      { prompt: "နည်းလမ်း", eng: "method", my: "နည်းလမ်း", wrongEng: "Mettod" },
+      { prompt: "သုတေသနပြုသည်", eng: "research", my: "သုတေသန", wrongEng: "Reserch" },
+      { prompt: "ပြသသည်", eng: "demonstrate", my: "ပြသ", wrongEng: "Demonstrate" },
+      { prompt: "လေ့လာစောင့်ကြည့်သည်", eng: "observe", my: "စောင့်ကြည့်", wrongEng: "Obsirve" },
+      { prompt: "တွက်ချက်သည်", eng: "calculate", my: "တွက်ချက်", wrongEng: "Calculat" },
+      { prompt: "ခွဲခြမ်းစိတ်ဖြာသည်", eng: "analyze", my: "ခွဲခြမ်းစိတ်ဖြာ", wrongEng: "Analize" },
+      { prompt: "ဖွံ့ဖြိုးတိုးတက်မှု", eng: "development", my: "ဖွံ့ဖြိုးတိုးတက်မှု", wrongEng: "Devlopment" },
+      { prompt: "အမျိုးမျိုးအပြားပြား", eng: "various", my: "အမျိုးမျိုး", wrongEng: "Varios" },
+      { prompt: "အရေးပါသော", eng: "important", my: "အရေးကြီး", wrongEng: "Importent" },
+      { prompt: "ထူးခြားသော", eng: "special", my: "ထူးခြား", wrongEng: "Spesial" },
+      { prompt: "ဘုံဖြစ်သော / သာမန်", eng: "common", my: "သာမန်", wrongEng: "Comon" },
+      { prompt: "အောင်မြင်မှု", eng: "success", my: "အောင်မြင်မှု", wrongEng: "Sucsess" },
+      { prompt: "ကျရှုံးမှု", eng: "failure", my: "ကျရှုံးမှု", wrongEng: "Failur" },
+      { prompt: "ကြိုးစားအားထုတ်မှု", eng: "effort", my: "ကြိုးစားမှု", wrongEng: "Efort" },
+      { prompt: "အခွင့်အလမ်း", eng: "opportunity", my: "အခွင့်အလမ်း", wrongEng: "Oportunity" },
+      { prompt: "စိန်ခေါ်မှု", eng: "challenge", my: "စိန်ခေါ်မှု", wrongEng: "Chalenge" },
+      { prompt: "ဖြေရှင်းချက်", eng: "solution", my: "ဖြေရှင်းချက်", wrongEng: "Solusion" },
+      { prompt: "ပြဿနာ", eng: "problem", my: "ပြဿနာ", wrongEng: "Problim" },
+      { prompt: "အကျိုးကျေးဇူး", eng: "benefit", my: "အကျိုးကျေးဇူး", wrongEng: "Benifit" },
+      { prompt: "ထိခိုက်ပျက်စီးမှု", eng: "damage", my: "ထိခိုက်ပျက်စီး", wrongEng: "Damege" },
+      { prompt: "အန္တရာယ်", eng: "danger", my: "အန္တရာယ်", wrongEng: "Denger" },
+      { prompt: "ဘေးကင်းလုံခြုံမှု", eng: "safety", my: "ဘေးကင်းလုံခြုံ", wrongEng: "Safty" },
+      { prompt: "စည်းမျဉ်းစည်းကမ်း", eng: "rule", my: "စည်းမျဉ်း", wrongEng: "Rul" },
+      { prompt: "ဥပဒေ", eng: "law", my: "ဥပဒေ", wrongEng: "Lawe" },
+      { prompt: "တရားမျှတမှု", eng: "justice", my: "တရားမျှတမှု", wrongEng: "Justis" },
+      { prompt: "အသိုက်အဝန်း", eng: "community", my: "အသိုက်အဝန်း", wrongEng: "Comunity" },
+      { prompt: "လူ့အဖွဲ့အစည်း", eng: "society", my: "လူ့အဖွဲ့အစည်း", wrongEng: "Sosiety" },
+      { prompt: "အစိုးရ", eng: "government", my: "အစိုးရ", wrongEng: "Goverment" },
+      { prompt: "နိုင်ငံသား", eng: "citizen", my: "နိုင်ငံသား", wrongEng: "Sitizen" },
+      { prompt: "နိုင်ငံတကာ", eng: "international", my: "နိုင်ငံတကာ", wrongEng: "Internasional" },
+      { prompt: "ကမ္ဘာ့ဂြိုဟ်", eng: "planet", my: "ဂြိုဟ်", wrongEng: "Plannet" },
+      { prompt: "စကြဝဠာ", eng: "universe", my: "စကြဝဠာ", wrongEng: "Universe" },
+      { prompt: "ဂြိုဟ်တု", eng: "satellite", my: "ဂြိုဟ်တု", wrongEng: "Satelite" },
+      { prompt: "အကာအကွယ်", eng: "shield", my: "အကာအကွယ်", wrongEng: "Sheild" },
+      { prompt: "စွမ်းအင်", eng: "energy", my: "စွမ်းအင်", wrongEng: "Energi" },
+      { prompt: "လျှပ်စစ်မီး", eng: "electricity", my: "လျှပ်စစ်", wrongEng: "Electrisity" },
+      { prompt: "သံလိုက်ဓာတ်", eng: "magnetism", my: "သံလိုက်ဓာတ်", wrongEng: "Magnetisum" },
+      { prompt: "ဓာတုဗေဒပစ္စည်း", eng: "chemical", my: "ဓာတုပစ္စည်း", wrongEng: "Chemikal" },
+      { prompt: "အပင်ဆဲလ်", eng: "plant cell", my: "အပင်ဆဲလ်", wrongEng: "Plant cel" },
+      { prompt: "တိရစ္ဆာန်ဆဲလ်", eng: "animal cell", my: "တိရစ္ဆာန်ဆဲလ်", wrongEng: "Animal cel" },
+      { prompt: "အဏုဇီဝပိုးမွှား", eng: "microorganism", my: "အဏုဇီဝပိုး", wrongEng: "Mikroorganism" },
+      { prompt: "ရောဂါပိုး", eng: "germ", my: "ပိုးမွှား", wrongEng: "Jerm" },
+      { prompt: "ကိုယ်ခံအား", eng: "immunity", my: "ကိုယ်ခံအား", wrongEng: "Imunity" },
+      { prompt: "ကျန်းမာရေး", eng: "health", my: "ကျန်းမာရေး", wrongEng: "Helth" },
+      { prompt: "ရောဂါ", eng: "disease", my: "ရောဂါ", wrongEng: "Desease" },
+      { prompt: "ကုသမှု", eng: "treatment", my: "ကုသမှု", wrongEng: "Tretment" },
+      { prompt: "ဆေးဝါး", eng: "medicine", my: "ဆေးဝါး", wrongEng: "Medisin" },
+      { prompt: "ဆေးရုံ", eng: "hospital", my: "ဆေးရုံ", wrongEng: "Hospitel" },
+      { prompt: "သိပ္ပံပညာရှင်", eng: "scientist", my: "သိပ္ပံပညာရှင်", wrongEng: "Sientist" },
+      { prompt: "ဆရာဝန်", eng: "doctor", my: "ဆရာဝန်", wrongEng: "Doktor" },
+      { prompt: "ကျောင်းဆရာ", eng: "teacher", my: "ဆရာ", wrongEng: "Teacher" },
+      { prompt: "ကျောင်းသား", eng: "student", my: "ကျောင်းသား", wrongEng: "Student" },
+      { prompt: "စာကြည့်တိုက်", eng: "library", my: "စာကြည့်တိုက်", wrongEng: "Librery" },
+      { prompt: "ဓာတ်ခွဲခန်း", eng: "laboratory", my: "ဓာတ်ခွဲခန်း", wrongEng: "Labratory" },
+      { prompt: "စာအုပ်", eng: "book", my: "စာအုပ်", wrongEng: "Bok" },
+      { prompt: "ဘောပင်", eng: "pen", my: "ဘောပင်", wrongEng: "Penn" },
+      { prompt: "ခဲတံ", eng: "pencil", my: "ခဲတံ", wrongEng: "Pensil" },
+      { prompt: "စက္ကူ", eng: "paper", my: "စက္ကူ", wrongEng: "Papar" },
+      { prompt: "ကွန်ပျူတာ", eng: "computer", my: "ကွန်ပျူတာ", wrongEng: "Komputer" },
+      { prompt: "နည်းပညာ", eng: "technology", my: "နည်းပညာ", wrongEng: "Teknology" },
+      { prompt: "အင်တာနက်", eng: "internet", my: "အင်တာနက်", wrongEng: "Intirnet" },
+      { prompt: "သတင်းအချက်အလက်", eng: "information", my: "သတင်းအချက်အလက်", wrongEng: "Informasion" },
+      { prompt: "မက်ဆေ့ချ်", eng: "message", my: "မက်ဆေ့ချ်", wrongEng: "Mesage" },
+      { prompt: "ဖုန်းခေါ်ဆိုမှု", eng: "call", my: "ဖုန်းခေါ်", wrongEng: "Cal" },
+      { prompt: "ဓာတ်ပုံ", eng: "photo", my: "ဓာတ်ပုံ", wrongEng: "Foto" },
+      { prompt: "ဗီဒီယို", eng: "video", my: "ဗီဒီယို", wrongEng: "Vidio" },
+      { prompt: "ဂီတ", eng: "music", my: "ဂီတ", wrongEng: "Musick" },
+      { prompt: "သီချင်း", eng: "song", my: "သီချင်း", wrongEng: "Songg" },
+      { prompt: "ဇာတ်လမ်း", eng: "story", my: "ဇာတ်လမ်း", wrongEng: "Stori" },
+      { prompt: "ကဗျာ", eng: "poem", my: "ကဗျာ", wrongEng: "Pome" },
+      { prompt: "စာပေ", eng: "literature", my: "စာပေ", wrongEng: "Litrature" },
+      { prompt: "သမိုင်း", eng: "history", my: "သမိုင်း", wrongEng: "Histry" },
+      { prompt: "ပထဝီဝင်", eng: "geography", my: "ပထဝီ", wrongEng: "Geografy" },
+      { prompt: "သင်္ချာ", eng: "mathematics", my: "သင်္ချာ", wrongEng: "Mathmatics" },
+      { prompt: "ရူပဗေဒ", eng: "physics", my: "ရူပဗေဒ", wrongEng: "Fysics" },
+      { prompt: "ဇီဝဗေဒ", eng: "biology", my: "ဇီဝဗေဒ", wrongEng: "Biology" },
+      { prompt: "အားကစား", eng: "sport", my: "အားကစား", wrongEng: "Spport" },
+      { prompt: "ဘောလုံး", eng: "football", my: "ဘောလုံး", wrongEng: "Fotball" },
+      { prompt: "တင်းနစ်", eng: "tennis", my: "တင်းနစ်", wrongEng: "Tenis" },
+      { prompt: "ရေကူးခြင်း", eng: "swimming", my: "ရေကူး", wrongEng: "Swiming" },
+      { prompt: "ပြေးခြင်း", eng: "running", my: "ပြေး", wrongEng: "Runing" },
+      { prompt: "ခုန်ခြင်း", eng: "jumping", my: "ခုန်", wrongEng: "Jumping" },
+      { prompt: "ခရီးသွားသည်", eng: "travel", my: "ခရီးသွား", wrongEng: "Tavel" },
+      { prompt: "စွန့်စားခန်း", eng: "adventure", my: "စွန့်စားခန်း", wrongEng: "Adventur" },
+      { prompt: "တောင်တက်ခြင်း", eng: "climbing", my: "တောင်တက်", wrongEng: "Climing" },
+      { prompt: "စခန်းချခြင်း", eng: "camping", my: "စခန်းချ", wrongEng: "Kamping" },
+      { prompt: "သစ်တော", eng: "forest", my: "သစ်တော", wrongEng: "Forrest" },
+      { prompt: "တောင်တန်း", eng: "mountain", my: "တောင်", wrongEng: "Mountain" },
+      { prompt: "မြစ်", eng: "river", my: "မြစ်", wrongEng: "Rivir" },
+      { prompt: "ပင်လယ်", eng: "sea", my: "ပင်လယ်", wrongEng: "Seaa" },
+      { prompt: "သမုဒ္ဒရာ", eng: "ocean", my: "သမုဒ္ဒရာ", wrongEng: "Osean" },
+      { prompt: "ကျွန်း", eng: "island", my: "ကျွန်း", wrongEng: "Iland" },
+      { prompt: "သဲကန္တာရ", eng: "desert", my: "သဲကန္တာရ", wrongEng: "Dessert" },
+      { prompt: "မိုးခေါင်ရေရှား", eng: "drought", my: "မိုးခေါင်", wrongEng: "Drougt" },
+      { prompt: "ရေကြီးခြင်း", eng: "flood", my: "ရေကြီး", wrongEng: "Flod" },
+      { prompt: "မုန်တိုင်း", eng: "storm", my: "မုန်တိုင်း", wrongEng: "Stormm" },
+      { prompt: "မိုးကြိုး", eng: "lightning", my: "မိုးကြိုး", wrongEng: "Lightnin" },
+      { prompt: "လျှပ်စီး", eng: "thunder", my: "မိုးခြိမ်း", wrongEng: "Thundir" },
+      { prompt: "လေပြင်း", eng: "wind", my: "လေ", wrongEng: "Wynd" },
+      { prompt: "မိုးရွာသွန်းမှု", eng: "rain", my: "မိုး", wrongEng: "Rane" },
+      { prompt: "နှင်း", eng: "snow", my: "နှင်း", wrongEng: "Snoww" },
+      { prompt: "ရေခဲ", eng: "ice", my: "ရေခဲ", wrongEng: "Isce" },
+      { prompt: "နေရောင်ခြည်", eng: "sunlight", my: "နေရောင်", wrongEng: "Sunlite" },
+      { prompt: "လရောင်", eng: "moonlight", my: "လရောင်", wrongEng: "Moonlite" },
+      { prompt: "ကြယ်", eng: "star", my: "ကြယ်", wrongEng: "Starr" },
+      { prompt: "ကောင်းကင်", eng: "sky", my: "ကောင်းကင်", wrongEng: "Skai" },
+      { prompt: "မြေကြီး", eng: "earth", my: "မြေကြီး", wrongEng: "Erth" },
+      { prompt: "ကျောက်တုံး", eng: "stone", my: "ကျောက်တုံး", wrongEng: "Ston" },
+      { prompt: "သတ္တု", eng: "metal", my: "သတ္တု", wrongEng: "Metel" },
+      { prompt: "ရေနံ", eng: "oil", my: "ရေနံ", wrongEng: "Oill" },
+      { prompt: "ဓာတ်ငွေ့", eng: "gas", my: "ဓာတ်ငွေ့", wrongEng: "Gass" },
+      { prompt: "စက်ရုံ", eng: "factory", my: "စက်ရုံ", wrongEng: "Faktory" },
+      { prompt: "မြို့ပြ", eng: "city", my: "မြို့", wrongEng: "Sity" },
+      { prompt: "ကျေးလက်", eng: "village", my: "ရွာ", wrongEng: "Vilage" },
+      { prompt: "လမ်းမ", eng: "road", my: "လမ်း", wrongEng: "Rode" },
+      { prompt: "တံတား", eng: "bridge", my: "တံတား", wrongEng: "Brige" },
+      { prompt: "အဆောက်အအုံ", eng: "building", my: "အဆောက်အအုံ", wrongEng: "Bilding" },
+      { prompt: "အိမ်", eng: "house", my: "အိမ်", wrongEng: "Howse" },
+      { prompt: "အခန်း", eng: "room", my: "အခန်း", wrongEng: "Rume" },
+      { prompt: "တံခါး", eng: "door", my: "တံခါး", wrongEng: "Dor" },
+      { prompt: "ပြတင်းပေါက်", eng: "window", my: "ပြတင်းပေါက်", wrongEng: "Windoe" },
+      { prompt: "စားပွဲ", eng: "table", my: "စားပွဲ", wrongEng: "Tabel" },
+      { prompt: "ကုလားထိုင်", eng: "chair", my: "ကုလားထိုင်", wrongEng: "Chare" },
+      { prompt: "အိပ်ရာ", eng: "bed", my: "အိပ်ရာ", wrongEng: "Bedd" },
+      { prompt: "နာရီ", eng: "clock", my: "နာရီ", wrongEng: "Klock" },
+      { prompt: "မှန်", eng: "mirror", my: "မှန်", wrongEng: "Miror" },
+      { prompt: "မီးသီး", eng: "lamp", my: "မီးသီး", wrongEng: "Lampe" },
+      { prompt: "အစားအစာ", eng: "food", my: "အစားအစာ", wrongEng: "Fod" },
+      { prompt: "ရေ", eng: "water", my: "ရေ", wrongEng: "Water" },
+      { prompt: "သစ်သီး", eng: "fruit", my: "သစ်သီး", wrongEng: "Froot" },
+      { prompt: "ဟင်းသီးဟင်းရွက်", eng: "vegetable", my: "ဟင်းသီးဟင်းရွက်", wrongEng: "Vegtable" },
+      { prompt: "အသား", eng: "meat", my: "အသား", wrongEng: "Meete" },
+      { prompt: "ငါး", eng: "fish", my: "ငါး", wrongEng: "Fissh" },
+      { prompt: "ထမင်း", eng: "rice", my: "ထမင်း", wrongEng: "Ryce" },
+      { prompt: "ပေါင်မုန့်", eng: "bread", my: "ပေါင်မုန့်", wrongEng: "Bred" },
+      { prompt: "နို့", eng: "milk", my: "နို့", wrongEng: "Milke" },
+      { prompt: "လက်ဖက်ရည်", eng: "tea", my: "လက်ဖက်ရည်", wrongEng: "Teaa" },
+      { prompt: "ကော်ဖီ", eng: "coffee", my: "ကော်ဖီ", wrongEng: "Cofee" },
+      { prompt: "သကြား", eng: "sugar", my: "သကြား", wrongEng: "Shugar" },
+      { prompt: "ဆား", eng: "salt", my: "ဆား", wrongEng: "Solt" },
+      { prompt: "ဆီ", eng: "oil", my: "ဆီ", wrongEng: "Oyle" },
+      { prompt: "မီးဖိုချောင်", eng: "kitchen", my: "မီးဖိုချောင်", wrongEng: "Kitchen" },
+      { prompt: "ချက်ပြုတ်သည်", eng: "cook", my: "ချက်ပြုတ်", wrongEng: "Kook" },
+      { prompt: "စားသုံးသည်", eng: "eat", my: "စား", my: "စား", wrongEng: "Eate" },
+      { prompt: "သောက်သည်", eng: "drink", my: "သောက်", wrongEng: "Drinc" },
+      { prompt: "အိပ်စက်သည်", eng: "sleep", my: "အိပ်", wrongEng: "Slep" },
+      { prompt: "နိုးထသည်", eng: "wake", my: "နိုး", wrongEng: "Wayk" },
+      { prompt: "ပြေးလွှားသည်", eng: "run", my: "ပြေး", wrongEng: "Runn" },
+      { prompt: "လမ်းလျှောက်သည်", eng: "walk", my: "လမ်းလျှောက်", wrongEng: "Wak" },
+      { prompt: "ထိုင်သည်", eng: "sit", my: "ထိုင်", wrongEng: "Sitt" },
+      { prompt: "ရပ်သည်", eng: "stand", my: "ရပ်", wrongEng: "Stend" },
+      { prompt: "ပြောဆိုသည်", eng: "speak", my: "ပြော", wrongEng: "Speek" },
+      { prompt: "နားထောင်သည်", eng: "listen", my: "နားထောင်", wrongEng: "Lisen" },
+      { prompt: "ကြည့်ရှုသည်", eng: "look", my: "ကြည့်", wrongEng: "Luk" },
+      { prompt: "ဖတ်ရှုသည်", eng: "read", my: "ဖတ်", wrongEng: "Reede" },
+      { prompt: "ရေးသားသည်", eng: "write", my: "ရေး", wrongEng: "Rite" },
+      { prompt: "စဉ်းစားသည်", eng: "think", my: "စဉ်းစား", wrongEng: "Thinc" },
+      { prompt: "နားလည်သည်", eng: "understand", my: "နားလည်", wrongEng: "Understend" },
+      { prompt: "မှတ်မိသည်", eng: "remember", my: "မှတ်မိ", wrongEng: "Remimber" },
+      { prompt: "မေ့လျော့သည်", eng: "forget", my: "မေ့", wrongEng: "Forget" },
+      { prompt: "သင်ယူသည်", eng: "learn", my: "သင်ယူ", wrongEng: "Lern" },
+      { prompt: "သင်ကြားသည်", eng: "teach", my: "သင်ကြား", wrongEng: "Teech" },
+      { prompt: "လုပ်ဆောင်သည်", eng: "do", my: "လုပ်", wrongEng: "Doo" },
+      { prompt: "ပြုလုပ်သည်", eng: "make", my: "လုပ်", wrongEng: "Mayk" },
+      { prompt: "ယူဆောင်သည်", eng: "take", my: "ယူ", wrongEng: "Tayk" },
+      { prompt: "ပေးသည်", eng: "give", my: "ပေး", wrongEng: "Giv" },
+      { prompt: "ဝယ်ယူသည်", eng: "buy", my: "ဝယ်", wrongEng: "By" },
+      { prompt: "ရောင်းချသည်", eng: "sell", my: "ရောင်း", wrongEng: "Sel" },
+      { prompt: "ရှာဖွေသည်", eng: "find", my: "ရှာ", wrongEng: "Fynd" },
+      { prompt: "ဆုံးရှုံးသည်", eng: "lose", my: "ရှုံး", wrongEng: "Looze" },
+      { prompt: "ရရှိသည်", eng: "gain", my: "ရရှိ", wrongEng: "Gayn" },
+      { prompt: "အနိုင်ရသည်", eng: "win", my: "အနိုင်", wrongEng: "Winn" },
+      { prompt: "ကူညီသည်", eng: "help", my: "ကူညီ", wrongEng: "Help" },
+      { prompt: "ချစ်ခင်သည်", eng: "love", my: "ချစ်", wrongEng: "Luv" },
+      { prompt: "နှစ်သက်သည်", eng: "like", my: "ကြိုက်", wrongEng: "Lyk" },
+      { prompt: "မုန်းတီးသည်", eng: "hate", my: "မုန်း", wrongEng: "Hayt" },
+      { prompt: "ပျော်ရွှင်သည်", eng: "happy", my: "ပျော်ရွှင်", wrongEng: "Hapy" },
+      { prompt: "ဝမ်းနည်းသည်", eng: "sad", my: "ဝမ်းနည်း", wrongEng: "Sadd" },
+      { prompt: "ဒေါသထွက်သည်", eng: "angry", my: "ဒေါသ", wrongEng: "Angri" },
+      { prompt: "ကြောက်ရွံ့သည်", eng: "afraid", my: "ကြောက်", wrongEng: "Affraid" },
+      { prompt: "အံ့သြသည်", eng: "surprised", my: "အံ့သြ", wrongEng: "Suprised" },
+      { prompt: "စိတ်လှုပ်ရှားသည်", eng: "excited", my: "စိတ်လှုပ်ရှား", wrongEng: "Exited" },
+      { prompt: "ငြီးငွေ့သည်", eng: "bored", my: "ငြီးငွေ့", wrongEng: "Boared" },
+      { prompt: "ပင်ပန်းသည်", eng: "tired", my: "ပင်ပန်း", wrongEng: "Tyrd" },
+      { prompt: "သန်မာသည်", eng: "strong", my: "သန်မာ", wrongEng: "Strung" },
+      { prompt: "အားနည်းသည်", eng: "weak", my: "အားနည်း", wrongEng: "Weeke" },
+      { prompt: "ကြီးမားသည်", eng: "big", my: "ကြီး", wrongEng: "Bigg" },
+      { prompt: "သေးငယ်သည်", eng: "small", my: "သေး", wrongEng: "Smal" },
+      { prompt: "ရှည်လျားသည်", eng: "long", my: "ရှည်", wrongEng: "Lung" },
+      { prompt: "တိုတောင်းသည်", eng: "short", my: "တို", wrongEng: "Short" },
+      { prompt: "မြင့်မားသည်", eng: "high", my: "မြင့်", wrongEng: "Hie" },
+      { prompt: "နိမ့်ကျသည်", eng: "low", my: "နိမ့်", wrongEng: "Loe" },
+      { prompt: "မြန်ဆန်သည်", eng: "fast", my: "မြန်", wrongEng: "Fasst" },
+      { prompt: "နှေးကွေးသည်", eng: "slow", my: "နှေး", wrongEng: "Sloe" },
+      { prompt: "ပူပြင်းသည်", eng: "hot", my: "ပူ", wrongEng: "Hott" },
+      { prompt: "အေးမြသည်", eng: "cold", my: "အေး", wrongEng: "Kold" },
+      { prompt: "နွေးထွေးသည်", eng: "warm", my: "နွေး", wrongEng: "Worm" },
+      { prompt: "အလင်းရောင်ရှိသည်", eng: "bright", my: "လင်း", wrongEng: "Brite" },
+      { prompt: "မှောင်မိုက်သည်", eng: "dark", my: "မှောင်", wrongEng: "Darck" },
+      { prompt: "လှပသည်", eng: "beautiful", my: "လှ", wrongEng: "Beutiful" },
+      { prompt: "ဆိုးရွားသည်", eng: "ugly", my: "ဆိုး", wrongEng: "Ugli" },
+      { prompt: "သန့်ရှင်းသည်", eng: "clean", my: "သန့်ရှင်း", wrongEng: "Klean" },
+      { prompt: "ညစ်ပတ်သည်", eng: "dirty", my: "ညစ်ပတ်", wrongEng: "Derty" },
+      { prompt: "အသစ်", eng: "new", my: "အသစ်", wrongEng: "Knew" },
+      { prompt: "အဟောင်း", eng: "old", my: "အဟောင်း", wrongEng: "Olde" },
+      { prompt: "မှန်ကန်သော", eng: "right", my: "မှန်", wrongEng: "Rite" },
+      { prompt: "မှားယွင်းသော", eng: "wrong", my: "မှား", wrongEng: "Rong" },
+      { prompt: "လွယ်ကူသော", eng: "easy", my: "လွယ်", wrongEng: "Easy" },
+      { prompt: "ခက်ခဲသော", eng: "difficult", my: "ခက်", wrongEng: "Dificult" },
+      { prompt: "ကြွယ်ဝသော", eng: "rich", my: "ချမ်းသာ", wrongEng: "Ritch" },
+      { prompt: "ဆင်းရဲသော", eng: "poor", my: "ဆင်းရဲ", wrongEng: "Poore" },
+      { prompt: "ကျန်းမာသော", eng: "healthy", my: "ကျန်းမာ", wrongEng: "Helthy" },
+      { prompt: "ဖျားနာသော", eng: "sick", my: "ဖျား", wrongEng: "Sik" },
+      { prompt: "အသက်ရှင်သော", eng: "alive", my: "အသက်ရှင်", wrongEng: "Alyve" },
+      { prompt: "သေဆုံးသော", eng: "dead", my: "သေ", wrongEng: "Dedd" },
+      { prompt: "မိတ်ဆွေ", eng: "friend", my: "သူငယ်ချင်း", wrongEng: "Freind" },
+      { prompt: "ရန်သူ", eng: "enemy", my: "ရန်သူ", wrongEng: "Enemy" },
+      { prompt: "မိသားစု", eng: "family", my: "မိသားစု", wrongEng: "Famly" },
+      { prompt: "ဖခင်", eng: "father", my: "အဖေ", wrongEng: "Father" },
+      { prompt: "မိခင်", eng: "mother", my: "အမေ", wrongEng: "Mather" },
+      { prompt: "ညီအကိုမောင်နှမ", eng: "sibling", my: "ညီအကို", wrongEng: "Cibling" },
+      { prompt: "သား", eng: "son", my: "သား", wrongEng: "Sonn" },
+      { prompt: "သမီး", eng: "daughter", my: "သမီး", wrongEng: "Dauter" },
+      { prompt: "ဘိုးဘွား", eng: "grandparent", my: "ဘိုးဘွား", wrongEng: "Granparent" },
+      { prompt: "မြေး", eng: "grandchild", my: "မြေး", wrongEng: "Granchild" },
+      { prompt: "ဆွေမျိုး", eng: "relative", my: "ဆွေမျိုး", wrongEng: "Relativ" },
+      { prompt: "ဧည့်သည်", eng: "guest", my: "ဧည့်သည်", wrongEng: "Gest" },
+      { prompt: "အိမ်နီးချင်း", eng: "neighbor", my: "အိမ်နီးချင်း", wrongEng: "Nabor" },
+      { prompt: "လူသား", eng: "human", my: "လူ", wrongEng: "Humen" },
+      { prompt: "လူမျိုး", eng: "race", my: "လူမျိုး", wrongEng: "Rase" },
+      { prompt: "ယဉ်ကျေးမှု", eng: "culture", my: "ယဉ်ကျေးမှု", wrongEng: "Kulchur" },
+      { prompt: "ဓလေ့ထုံးစံ", eng: "tradition", my: "ဓလေ့ထုံးစံ", wrongEng: "Tradision" },
+      { prompt: "ပွဲတော်", eng: "festival", my: "ပွဲတော်", wrongEng: "Festival" },
+      { prompt: "အားလပ်ရက်", eng: "holiday", my: "အားလပ်ရက်", wrongEng: "Holida" },
+      { prompt: "မွေးနေ့", eng: "birthday", my: "မွေးနေ့", wrongEng: "Berthday" },
+      { prompt: "လက်ဆောင်", eng: "gift", my: "လက်ဆောင်", wrongEng: "Gyft" },
+      { prompt: "ပါတီပွဲ", eng: "party", my: "ပါတီ", wrongEng: "Parti" },
+      { prompt: "ဂုဏ်ပြုပွဲ", eng: "ceremony", my: "အခမ်းအနား", wrongEng: "Seremony" },
+      { prompt: "သီချင်းဆိုပွဲ", eng: "concert", my: "ကွန်ဆာတ်", wrongEng: "Konsert" },
+      { prompt: "ပြတိုက်", eng: "museum", my: "ပြတိုက်", wrongEng: "Muesum" },
+      { prompt: "တိရစ္ဆာန်ရုံ", eng: "zoo", my: "တိရစ္ဆာန်ရုံ", wrongEng: "Zoo" },
+      { prompt: "ဥယျာဉ်", eng: "park", my: "ဥယျာဉ်", wrongEng: "Parck" },
+      { prompt: "ပန်းခြံ", eng: "garden", my: "ပန်းခြံ", wrongEng: "Gardan" },
+      { prompt: "ဈေး", eng: "market", my: "ဈေး", wrongEng: "Marlat" },
+      { prompt: "ဆိုင်", eng: "shop", my: "ဆိုင်", wrongEng: "Shopp" },
+      { prompt: "ငွေကြေး", eng: "money", my: "ငွေ", wrongEng: "Moni" },
+      { prompt: "ဘဏ်", eng: "bank", my: "ဘဏ်", wrongEng: "Banc" },
+      { prompt: "လက်မှတ်", eng: "ticket", my: "လက်မှတ်", wrongEng: "Tiket" },
+      { prompt: "ကား", eng: "car", my: "ကား", wrongEng: "Karr" },
+      { prompt: "ဘတ်စ်ကား", eng: "bus", my: "ဘတ်စ်ကား", wrongEng: "Buss" },
+      { prompt: "ရထား", eng: "train", my: "ရထား", wrongEng: "Trane" },
+      { prompt: "လေယာဉ်", eng: "airplane", my: "လေယာဉ်", wrongEng: "Airplan" },
+      { prompt: "သင်္ဘော", eng: "ship", my: "သင်္ဘော", wrongEng: "Shipp" },
+      { prompt: "စက်ဘီး", eng: "bicycle", my: "စက်ဘီး", wrongEng: "Bicicle" },
+      { prompt: "မော်တော်ဆိုင်ကယ်", eng: "motorcycle", my: "ဆိုင်ကယ်", wrongEng: "Motorsycle" }
+    ];
+
+    let currentIndex = 0;
+    let fixIndex = 0;
+    let userXP = parseInt(localStorage.getItem('userXP') || '0');
+    let userStreak = parseInt(localStorage.getItem('userStreak') || '1');
+    let solvedCount = parseInt(localStorage.getItem('solvedCount') || '0');
+
+    // Pomodoro Timer Logic
+    let timerSeconds = 1500; // 25 mins
+    let timerInterval = null;
+    let timerDone = localStorage.getItem('timerDone') === 'true';
+
+    function updateUI() {
+      document.getElementById('xp').innerText = userXP;
+      document.getElementById('rank-xp').innerText = userXP;
+      document.getElementById('streak').innerText = userStreak;
+      document.getElementById('level-title').innerText = `Level ${Math.floor(userXP / 50) + 1} Student`;
+
+      // Practice Mode
+      const q = wordList[currentIndex];
+      document.getElementById('q-counter').innerText = `Word ${currentIndex + 1} of ${wordList.length}`;
+      document.getElementById('q-word').innerText = `"${q.prompt}"`;
+      document.getElementById('ans-eng').value = '';
+      document.getElementById('ans-my').value = '';
+      document.getElementById('feedback').innerText = '';
+
+      // Fix Mode
+      const fixQ = wordList[fixIndex];
+      document.getElementById('fix-wrong-word').innerText = fixQ.wrongEng;
+      document.getElementById('fix-hint').innerText = `မြန်မာအဓိပ္ပာယ်: ${fixQ.prompt} (${fixQ.my})`;
+      document.getElementById('fix-ans').value = '';
+      document.getElementById('fix-feedback').innerText = '';
+
+      // Auto Tasks UI
+      document.getElementById('task1-status').innerText = `${Math.min(solvedCount, 10)} / 10`;
+      if (solvedCount >= 10) {
+        document.getElementById('task1-status').className = 'task-status status-done';
+        document.getElementById('task1-status').innerText = '✅ Done (+20 XP)';
+      }
+
+      if (timerDone) {
+        document.getElementById('task2-status').className = 'task-status status-done';
+        document.getElementById('task2-status').innerText = '✅ Done (+20 XP)';
+      }
     }
 
-    // 300 Comprehensive Grade 8 Focus Vocabulary & Academic Database
-    const wordList = [
-      { prompt: "သဘာဝပတ်ဝန်းကျင်", eng: "environment", my: "ပတ်ဝန်းကျင်" },
-      { prompt: "သိပ္ပံစမ်းသပ်မှု", eng: "experiment", my: "စမ်းသပ်မှု" },
-      { prompt: "ဖိအား", eng: "pressure", my: "ဖိအား" },
-      { prompt: "မျက်နှာပြင်ဧရိယာ", eng: "surface area", my: "မျက်နှာပြင်ဧရိယာ" },
-      { prompt: "ခွန်အား / အင်အား", eng: "strength", my: "ခွန်အား" },
-      { prompt: "လေထု", eng: "atmosphere", my: "လေထု" },
-      { prompt: "ညစ်ညမ်းမှု", eng: "pollution", my: "ညစ်ညမ်းမှု" },
-      { prompt: "ကာကွယ်သည်", eng: "protect", my: "ကာကွယ်" },
-      { prompt: "စုံစမ်းလေ့လာသည်", eng: "investigate", my: "စုံစမ်း" },
-      { prompt: "ရလဒ်", eng: "result", my: "ရလဒ်" },
-      { prompt: "အပူချိန်", eng: "temperature", my: "အပူချိန်" },
-      { prompt: "ဆွဲငင်အား", eng: "gravity", my: "ဆွဲငင်အား" },
-      { prompt: "ဂေဟစနစ်", eng: "ecosystem", my: "ဂေဟစနစ်" },
-      { prompt: "သစ်တောပြုန်းတီးခြင်း", eng: "deforestation", my: "သစ်တောပြုန်းတီးခြင်း" },
-      { prompt: "ထိန်းသိမ်းစောင့်ရှောက်ခြင်း", eng: "conservation", my: "ထိန်းသိမ်း" },
-      { prompt: "ပြန်လည်ပြည့်ဖြိုးမြဲ", eng: "renewable", my: "ပြန်လည်ပြည့်ဖြိုးမြဲ" },
-      { prompt: "နေထိုင်ရာဒေသ", eng: "habitat", my: "နေထိုင်ရာ" },
-      { prompt: " υπόθεση / ယူဆချက်", eng: "hypothesis", my: "ယူဆချက်" },
-      { prompt: "ငွေ့ရည်ဖွဲ့ခြင်း", eng: "evaporation", my: "အငွေ့ပျံခြင်း" },
-      { prompt: "ပွတ်တိုက်အား", eng: "friction", my: "ပွတ်တိုက်အား" },
-      { prompt: "တိကျမှန်ကန်သော", eng: "accurate", my: "တိကျသော" },
-      { prompt: "မရှိမဖြစ် လိုအပ်သော", eng: "essential", my: "မရှိမဖြစ်" },
-      { prompt: "စွမ်းဆောင်ရည်ရှိသော", eng: "efficient", my: "ထိရောက်သော" },
-      { prompt: "အန္တရာယ်ရှိသော", eng: "hazardous", my: "အန္တရာယ်ရှိ" },
-      { prompt: "ယာယီဖြစ်သော", eng: "temporary", my: "ယာယီ" },
-      { prompt: "တာဝန်ဝတ္တရား", eng: "assignment", my: "တာဝန်" },
-      { prompt: "ဗဟုသုတ / အသိပညာ", eng: "knowledge", my: "အသိပညာ" },
-      { prompt: "နိဂုံးချုပ်", eng: "conclusion", my: "နိဂုံး" },
-      { prompt: "တက်ရောက်မှု", eng: "attendance", my: "တက်ရောက်မှု" },
-      { prompt: "နည်းလမ်း", eng: "method", my: "နည်းလမ်း" },
-      { prompt: "သုတေသနပြုသည်", eng: "research", my: "သုတေသန" },
-      { prompt: "ပြသသည်", eng: "demonstrate", my: "ပြသ" },
-      { prompt: "လေ့လာစောင့်ကြည့်သည်", eng: "observe", my: "စောင့်ကြည့်" },
-      { prompt: "တွက်ချက်သည်", eng: "calculate", my: "တွက်ချက်" },
-      { prompt: "ခွဲခြမ်းစိတ်ဖြာသည်", eng: "analyze", my: "ခွဲခြမ်းစိတ်ဖြာ" },
-      { prompt: "ဖွံ့ဖြိုးတိုးတက်မှု", eng: "development", my: "ဖွံ့ဖြိုးတိုးတက်မှု" },
-      { prompt: "အမျိုးမျိုးအပြားပြား", eng: "various", my: "အမျိုးမျိုး" },
-      { prompt: "အရေးပါသော", eng: "important", my: "အရေးကြီး" },
-      { prompt: "ထူးခြားသော", eng: "special", my: "ထူးခြား" },
-      { prompt: "ဘုံဖြစ်သော / သာမန်", eng: "common", my: "သာမန်" },
-      { prompt: "အောင်မြင်မှု", eng: "success", my: "အောင်မြင်မှု" },
-      { prompt: "ကျရှုံးမှု", eng: "failure", my: "ကျရှုံးမှု" },
-      { prompt: "ကြိုးစားအားထုတ်မှု", eng: "effort", my: "ကြိုးစားမှု" },
-      { prompt: "အခွင့်အလမ်း", eng: "opportunity", my: "အခွင့်အလမ်း" },
-      { prompt: "စိန်ခေါ်မှု", eng: "challenge", my: "စိန်ခေါ်မှု" },
-      { prompt: "ဖြေရှင်းချက်", eng: "solution", my: "ဖြေရှင်းချက်" },
-      { prompt: "ပြဿနာ", eng: "problem", my: "ပြဿနာ" },
-      { prompt: "အကျိုးကျေးဇူး", eng: "benefit", my: "အကျိုးကျေးဇူး" },
-      { prompt: "ထိခိုက်ပျက်စီးမှု", eng: "damage", my: "ထိခိုက်ပျက်စီး" },
-      { prompt: "အန္တရာယ်", eng: "danger", my: "အန္တရာယ်" },
-      { prompt: "ဘေးကင်းလုံခြုံမှု", eng: "safety", my: "ဘေးကင်းလုံခြုံ" },
-      { prompt: "စည်းမျဉ်းစည်းကမ်း", eng: "rule", my: "စည်းမျဉ်း" },
-      { prompt: "ဥပဒေ", eng: "law", my: "ဥပဒေ" },
-      { prompt: "တရားမျှတမှု", eng: "justice", my: "တရားမျှတမှု" },
-      { prompt: "အသိုက်အဝန်း", eng: "community", my: "အသိုက်အဝန်း" },
-      { prompt: "လူ့အဖွဲ့အစည်း", eng: "society", my: "လူ့အဖွဲ့အစည်း" },
-      { prompt: "အစိုးရ", eng: "government", my: "အစိုးရ" },
-      { prompt: "နိုင်ငံသား", eng: "citizen", my: "နိုင်ငံသား" },
-      { prompt: "နိုင်ငံတကာ", eng: "international", my: "နိုင်ငံတကာ" },
-      { prompt: "ကမ္ဘာ့ဂြိုဟ်", eng: "planet", my: "ဂြိုဟ်" },
-      { prompt: "စကြဝဠာ", eng: "universe", my: "စကြဝဠာ" },
-      { prompt: "ဂြိုဟ်တု", eng: "satellite", my: "ဂြိုဟ်တု" },
-      { prompt: "အကာအကွယ်", eng: "shield", my: "အကာအကွယ်" },
-      { prompt: "စွမ်းအင်", eng: "energy", my: "စွမ်းအင်" },
-      { prompt: "လျှပ်စစ်မီး", eng: "electricity", my: "လျှပ်စစ်" },
-      { prompt: "သံလိုက်ဓာတ်", eng: "magnetism", my: "သံလိုက်ဓာတ်" },
-      { prompt: "ဓာတုဗေဒပစ္စည်း", eng: "chemical", my: "ဓာတုပစ္စည်း" },
-      { prompt: "အပင်ဆဲလ်", eng: "plant cell", my: "အပင်ဆဲလ်" },
-      { prompt: "တိရစ္ဆာန်ဆဲလ်", eng: "animal cell", my: "တိရစ္ဆာန်ဆဲလ်" },
-      { prompt: "အဏုဇီဝပိုးမွှား", eng: "microorganism", my: "အဏုဇီဝပိုး" },
-      { prompt: "ရောဂါပိုး", eng: "germ", my: "ပိုးမွှား" },
-      { prompt: "ကိုယ်ခံအား", eng: "immunity", my: "ကိုယ်ခံအား" },
-      { prompt: "ကျန်းမာရေး", eng: "health", my: "ကျန်းမာရေး" },
-      { prompt: "ရောဂါ", eng: "disease", my: "ရောဂါ" },
-      { prompt: "ကုသမှု", eng: "treatment", my: "ကုသမှု" },
-      { prompt: "ဆေးဝါး", eng: "medicine", my: "ဆေးဝါး" },
-      { prompt: "ဆေးရုံ", eng: "hospital", my: "ဆေးရုံ" },
-      { prompt: "ექီင်္ဆပညာရှင်", eng: "scientist", my: "သိပ္ပံပညာရှင်" },
-      { prompt: "ဆရာဝန်", eng: "doctor", my: "ဆရာဝန်" },
-      { prompt: "ကျောင်းဆရာ", eng: "teacher", my: "ဆရာ" },
-      { prompt: "ကျောင်းသား", eng: "student", my: "ကျောင်းသား" },
-      { prompt: "စာကြည့်တိုက်", eng: "library", my: "စာကြည့်တိုက်" },
-      { prompt: "ဓာတ်ခွဲခန်း", eng: "laboratory", my: "ဓာတ်ခွဲခန်း" },
-      { prompt: "စာအုပ်", eng: "book", my: "စာအုပ်" },
-      { prompt: "പേင် / ဘောပင်", eng: "pen", my: "ဘောပင်" },
-      { prompt: "ခဲံတံ", eng: "pencil", my: "ခဲတံ" },
-      { prompt: "စက္ကူ", eng: "paper", my: "စက္ကူ" },
-      { prompt: "ကွန်ပျူတာ", eng: "computer", my: "ကွန်ပျူတာ" },
-      { prompt: "နည်းပညာ", eng: "technology", my: "နည်းပညာ" },
-      { prompt: "အင်တာနက်", eng: "internet", my: "အင်တာနက်" },
-      { prompt: "သတင်းအချက်အလက်", eng: "information", my: "သတင်းအချက်အလက်" },
-      { prompt: "မက်ဆေ့ချ်", eng: "message", my: "မက်ဆေ့ချ်" },
-      { prompt: "ဖုန်းခေါ်ဆိုမှု", eng: "call", my: "ဖုန်းခေါ်" },
-      { prompt: "ဓာတ်ပုံ", eng: "photo", my: "ဓာတ်ပုံ" },
-      { prompt: "ဗီဒီယို", eng: "video", my: "ဗီဒီယို" },
-      { prompt: "ဂီတ", eng: "music", my: "ဂီတ" },
-      { prompt: "သီချင်း", eng: "song", my: "သီချင်း" },
-      { prompt: "ဇာတ်လမ်း", eng: "story", my: "ဇာတ်လမ်း" },
-      { prompt: "ကဗျာ", eng: "poem", my: "ကဗျာ" },
-      { prompt: "စာပေ", eng: "literature", my: "စာပေ" },
-      { prompt: "သမိုင်း", eng: "history", my: "သမိုင်း" },
-      { prompt: "ပထဝီဝင်", eng: "geography", my: "ပထဝီ" },
-      { prompt: "သင်္ချာ", eng: "mathematics", my: "သင်္ချာ" },
-      { prompt: "ရူပဗေဒ", eng: "physics", my: "ရူပဗေဒ" },
-      { prompt: "ဇီဝဗေဒ", eng: "biology", my: "ဇီဝဗေဒ" },
-      { prompt: "အားကစား", eng: "sport", my: "အားကစား" },
-      { prompt: "ဘောလုံး", eng: "football", my: "ဘောလုံး" },
-      { prompt: "တင်းနစ်", eng: "tennis", my: "တင်းနစ်" },
-      { prompt: "ရေကူးခြင်း", eng: "swimming", my: "ရေကူး" },
-      { prompt: "ပြေးခြင်း", eng: "running", my: "ပြေး" },
-      { prompt: "ခုန်ခြင်း", eng: "jumping", my: "ခုန်" },
-      { prompt: "ခရီးသွားသည်", eng: "travel", my: "ခရီးသွား" },
-      { prompt: "စွန့်စားခန်း", eng: "adventure", my: "စွန့်စားခန်း" },
-      { prompt: "တောင်တက်ခြင်း", eng: "climbing", my: "တောင်တက်" },
-      { prompt: "စခန်းချခြင်း", eng: "camping", my: "စခန်းချ" },
-      { prompt: "သစ်တော", eng: "forest", my: "သစ်တော" },
-      { prompt: "တောင်တန်း", eng: "mountain", my: "တောင်" },
-      { prompt: "မြစ်", eng: "river", my: "မြစ်" },
-      { prompt: "ပင်လယ်", eng: "sea", my: "ပင်လယ်" },
-      { prompt: "သမုဒ္ဒရာ", eng: "ocean", my: "သမုဒ္ဒရာ" },
-      { prompt: "ကျွန်း", eng: "island", my: "ကျွန်း" },
-      { prompt: "သဲကန္တာရ", eng: "desert", my: "သဲကန္တာရ" },
-      { prompt: "မိုးခေါင်ရေရှား", eng: "drought", my: "မိုးခေါင်" },
-      { prompt: "ရေကြီးခြင်း", eng: "flood", my: "ရေကြီး" },
-      { prompt: "မုန်တိုင်း", eng: "storm", my: "မုန်တိုင်း" },
-      { prompt: "မိုးကြိုး", eng: "lightning", my: "မိုးကြိုး" },
-      { prompt: "လျှပ်စီး", eng: "thunder", my: "မိုးခြိမ်း" },
-      { prompt: "လေပြင်း", eng: "wind", my: "လေ" },
-      { prompt: "မိုးရွာသွန်းမှု", eng: "rain", my: "မိုး" },
-      { prompt: "နှင်း", eng: "snow", my: "နှင်း" },
-      { prompt: "ရေခဲ", eng: "ice", my: "ရေခဲ" },
-      { prompt: "နေရောင်ခြည်", eng: "sunlight", my: "နေရောင်" },
-      { prompt: "လရောင်", eng: "moonlight", my: "လရောင်" },
-      { prompt: "ကြယ်", eng: "star", my: "ကြယ်" },
-      { prompt: "ကောင်းကင်", eng: "sky", my: "ကောင်းကင်" },
-      { prompt: "မြေကြီး", eng: "earth", my: "မြေကြီး" },
-      { prompt: "ကျောက်တုံး", eng: "stone", my: "ကျောက်တုံး" },
-      { prompt: "သတ္တု", eng: "metal", my: "သတ္တု" },
-      { prompt: "ရေနံ", eng: "oil", my: "ရေနံ" },
-      { prompt: "ဓာတ်ငွေ့", eng: "gas", my: "ဓာတ်ငွေ့" },
-      { prompt: "စက်ရုံ", eng: "factory", my: "စက်ရုံ" },
-      { prompt: "မြို့ပြ", eng: "city", my: "မြို့" },
-      { prompt: "ကျေးလက်", eng: "village", my: "ရွာ" },
-      { prompt: "လမ်းမ", eng: "road", my: "လမ်း" },
-      { prompt: "တံတား", eng: "bridge", my: "တံတား" },
-      { prompt: "အဆောက်အအုံ", eng: "building", my: "အဆောက်အအုံ" },
-      { prompt: "အိမ်", eng: "house", my: "အိမ်" },
-      { prompt: "အခန်း", eng: "room", my: "အခန်း" },
-      { prompt: "တံခါး", eng: "door", my: "တံခါး" },
-      { prompt: "ပြတင်းပေါက်", eng: "window", my: "ပြတင်းပေါက်" },
-      { prompt: "စားပွဲ", eng: "table", my: "စားပွဲ" },
-      { prompt: "ကုလားထိုင်", eng: "chair", my: "ကုလားထိုင်" },
-      { prompt: "အိပ်ရာ", eng: "bed", my: "အိပ်ရာ" },
-      { prompt: "နာရီ", eng: "clock", my: "နာရီ" },
-      { prompt: "မှန်", eng: "mirror", my: "မှန်" },
-      { prompt: "မီးသီး", eng: "lamp", my: "မီးသီး" },
-      { prompt: "အစားအစာ", eng: "food", my: "အစားအစာ" },
-      { prompt: "ရေ", eng: "water", my: "ရေ" },
-      { prompt: "သစ်သီး", eng: "fruit", my: "သစ်သီး" },
-      { prompt: "ဟင်းသီးဟင်းရွက်", eng: "vegetable", my: "ဟင်းသီးဟင်းရွက်" },
-      { prompt: "အသား", eng: "meat", my: "အသား" },
-      { prompt: "ငါး", eng: "fish", my: "ငါး" },
-      { prompt: "ထမင်း", eng: "rice", my: "ထမင်း" },ပေါက်ပါဝင်ပါတယ်။
-      { prompt: "ပေါင်မုန့်", eng: "bread", my: "ပေါင်မုန့်" },
-      { prompt: "နို့", eng: "milk", my: "နို့" },
-      { prompt: "လက်ဖက်ရည်", eng: "tea", my: "လက်ဖက်ရည်" },
-      { prompt: "ကော်ဖီ", eng: "coffee", my: "ကော်ဖီ" },
-      { prompt: "သကြား", eng: "sugar", my: "သကြား" },
-      { prompt: "ဆား", eng: "salt", my: "ဆား" },
-      { prompt: "ဆီ", eng: "oil", my: "ဆီ" },
-      { prompt: "မီးဖိုချောင်", eng: "kitchen", my: "မီးဖိုချောင်" },
-      { prompt: "ချက်ပြုတ်သည်", eng: "cook", my: "ချက်ပြုတ်" },
-      { prompt: "စားသုံးသည်", eng: "eat", my: "စား" },
-      { prompt: "သောက်သည်", eng: "drink", my: "သောက်" },
-      { prompt: "အိပ်စက်သည်", eng: "sleep", my: "အိပ်" },
-      { prompt: "နိုးထသည်", eng: "wake", my: "နိုး" },
-      { prompt: "ပြေးလွှားသည်", eng: "run", my: "ပြေး" },
-      { prompt: "လမ်းလျှောက်သည်", eng: "walk", my: "လမ်းလျှောက်" },
-      { prompt: "ထိုင်သည်", eng: "sit", my: "ထိုင်" },
-      { prompt: "ရပ်သည်", eng: "stand", my: "ရပ်" },
-      { prompt: "ပြောဆိုသည်", eng: "speak", my: "ပြော" },
-      { prompt: "နားထောင်သည်", eng: "listen", my: "နားထောင်" },
-      { prompt: "ကြည့်ရှုသည်", eng: "look", my: "ကြည့်" },
-      { prompt: "ဖတ်ရှုသည်", eng: "read", my: "ဖတ်" },
-      { prompt: "ရေးသားသည်", eng: "write", my: "ရေး" },
-      { prompt: "စဉ်းစားသည်", eng: "think", my: "စဉ်းစား" },
-      { prompt: "နားလည်သည်", eng: "understand", my: "နားလည်" },
-      { prompt: "မှတ်မိသည်", eng: "remember", my: "မှတ်မိ" },
-      { prompt: "မေ့လျော့သည်", eng: "forget", my: "မေ့" },
-      { prompt: "သင်ယူသည်", eng: "learn", my: "သင်ယူ" },
-      { prompt: "သင်ကြားသည်", eng: "teach", my: "သင်ကြား" },
-      { prompt: "လုပ်ဆောင်သည်", eng: "do", my: "လုပ်" },
-      { prompt: "ပြုလုပ်သည်", eng: "make", my: "လုပ်" },
-      { prompt: "ယူဆောင်သည်", eng: "take", my: "ယူ" },
-      { prompt: "ပေးသည်", eng: "give", my: "ပေး" },
-      { prompt: "ဝယ်ယူသည်", eng: "buy", my: "ဝယ်" },
-      { prompt: "ရောင်းချသည်", eng: "sell", my: "ရောင်း" },
-      { prompt: "ရှာဖွေသည်", eng: "find", my: "ရှာ" },
-      { prompt: "ဆုံးရှုံးသည်", eng: "lose", my: "ရှုံး" },
-      { prompt: "ရရှိသည်", eng: "gain", my: "ရရှိ" },
-      { prompt: "အနိုင်ရသည်", eng: "win", my: "အနိုင်" },
-      { prompt: "ကူညီသည်", eng: "help", my: "ကူညီ" },
-      { prompt: "ချစ်ခင်သည်", eng: "love", my: "ချစ်" },
-      { prompt: "နှစ်သက်သည်", eng: "like", my: "ကြိုက်" },
-      { prompt: "မုန်းတီးသည်", eng: "hate", my: "မုန်း" },
-      { prompt: "ပျော်ရွှင်သည်", eng: "happy", my: "ပျော်ရွှင်" },
-      { prompt: "ဝမ်းနည်းသည်", eng: "sad", my: "ဝမ်းနည်း" },
-      { prompt: "ဒေါသထွက်သည်", eng: "angry", my: "ဒေါသ" },
-      { prompt: "ကြောက်ရွံ့သည်", eng: "afraid", my: "ကြောက်" },
-      { prompt: "အံ့သြသည်", eng: "surprised", my: "အံ့သြ" },
-      { prompt: "စိတ
+    function checkAnswer() {
+      const inputEng = document.getElementById('ans-eng').value.trim().toLowerCase();
+      const inputMy = document.getElementById('ans-my').value.trim();
+      const q = wordList[currentIndex];
+
+      const isEngCorrect = inputEng === q.eng.toLowerCase();
+      const isMyCorrect = inputMy.length > 0 && q.my.includes(inputMy);
+      const fb = document.getElementById('feedback');
+
+      if (isEngCorrect && isMyCorrect) {
+        fb.className = 'feedback correct';
+        fb.innerText = '✅ မှန်ကန်ပါသည်။ +10 XP ရရှိသည်!';
+        userXP += 10;
+        solvedCount++;
+        localStorage.setItem('userXP', userXP);
+        localStorage.setItem('solvedCount', solvedCount);
+
+        setTimeout(() => {
+          currentIndex = (currentIndex + 1) % wordList.length;
+          updateUI();
+        }, 1200);
+      } else {
+        fb.className = 'feedback wrong';
+        let msg = '❌ မှားယွင်းနေပါသည်။ ';
+        if (!isEngCorrect) msg += `(Eng: ${q.eng}) `;
+        if (!isMyCorrect) msg += `(မြန်မာ: ${q.my})`;
+        fb.innerText = msg;
+      }
+    }
+
+    function checkFixAnswer() {
+      const inputFix = document.getElementById('fix-ans').value.trim().toLowerCase();
+      const fixQ = wordList[fixIndex];
+      const fb = document.getElementById('fix-feedback');
+
+      if (inputFix === fixQ.eng.toLowerCase()) {
+        fb.className = 'feedback correct';
+        fb.innerText = '✅ အမှားကို တိကျစွာ ပြင်နိုင်ခဲ့သည်! +10 XP ရရှိသည်!';
+        userXP += 10;
+        solvedCount++;
+        localStorage.setItem('userXP', userXP);
+        localStorage.setItem('solvedCount', solvedCount);
+
+        setTimeout(() => {
+          fixIndex = (fixIndex + 1) % wordList.length;
+          updateUI();
+        }, 1200);
+      } else {
+        fb.className = 'feedback wrong';
+        fb.innerText = `❌ စာလုံးပေါင်း မှားနေသေးသည်! အမှန်မှာ: ${fixQ.eng}`;
+      }
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById('timer-btn');
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        btn.innerText = 'Resume Study Session';
+      } else {
+        btn.innerText = 'Pause Timer';
+        timerInterval = setInterval(() => {
+          timerSeconds--;
+          let m = Math.floor(timerSeconds / 60);
+          let s = timerSeconds % 60;
+          document.getElementById('timer-display').innerText = `${m < 10 ? '0':''}${m}:${s < 10 ? '0':''}${s}`;
+
+          if (timerSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerDone = true;
+            localStorage.setItem('timerDone', 'true');
+            userXP += 20;
+            localStorage.setItem('userXP', userXP);
+            alert('🎉 25 မိနစ် စာကျက်ချိန် ပြည့်သွားပါပြီ! Bonus +20 XP ရရှိပါသည်!');
+            updateUI();
+          }
+        }, 1000);
+      }
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      const tabs = ['study', 'fix', 'pomo', 'tasks', 'ranks'];
+      const index = tabs.indexOf(tabName);
+      if (index !== -1) {
+        document.querySelectorAll('.tab-btn')[index].classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+      }
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>
