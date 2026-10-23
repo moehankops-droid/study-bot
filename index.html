@@ -666,12 +666,12 @@
       { unit: "Poem1", eng: "rhyming pairs", my: "အသံတူစကားလုံးတွဲများ" },
       { unit: "Poem1", eng: "ends", my: "အဆုံးသတ်သည်" }  ];
 
-    let filteredData = [...vocabData];
-    let currentIndex = 0;
+        let filteredData = [...vocabData];
+    let currentIndex = parseInt(localStorage.getItem('currentIndex') || '0');
     let userXP = parseInt(localStorage.getItem('userXP') || '0');
     let currentQuestionType = 'my_to_eng'; 
     let activeQuestionItem = null;
-
+        
     document.getElementById('xp').innerText = userXP;
     document.getElementById('rank-xp').innerText = userXP;
 
@@ -703,11 +703,16 @@
       });
     }
 
-    function loadQuestion() {
+        function loadQuestion() {
       if (filteredData.length === 0) {
         document.getElementById('q-word').innerText = "ဒီ သင်ခန်းစာ မှာ စာလုံးမရှိသေးပါ";
         return;
       }
+      // Index က Filter လုပ်ထားတဲ့ စာရင်းထ้ารد ထკနေရင် 0 ကို ပြန်ပို့ပေးရန်
+      if (currentIndex >= filteredData.length) {
+        currentIndex = 0;
+      }
+
       activeQuestionItem = filteredData[currentIndex];
       currentQuestionType = Math.random() < 0.5 ? 'my_to_eng' : 'eng_to_my';
 
@@ -721,7 +726,11 @@
 
       document.getElementById('ans-single').value = '';
       document.getElementById('feedback').innerText = '';
-    }
+      
+      // လက်ရှိရောက်နေသော နေရာကို သိမ်းထားမည်
+      localStorage.setItem('currentIndex', currentIndex);
+        }
+    
 
         function checkAnswer() {
       if (!activeQuestionItem) return;
