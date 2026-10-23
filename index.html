@@ -669,6 +669,8 @@
         let filteredData = [...vocabData];
     let currentIndex = parseInt(localStorage.getItem('currentIndex') || '0');
     let userXP = parseInt(localStorage.getItem('userXP') || '0');
+let streak = 0; // ဒီနေရာလေးမှာ ထည့်လိုက်ပါ
+    
     let currentQuestionType = 'my_to_eng'; 
     let activeQuestionItem = null;
         
@@ -726,22 +728,25 @@
       localStorage.setItem('currentIndex', currentIndex);
     }
 
-    function checkAnswer() {
+            function checkAnswer() {
       if (!activeQuestionItem) return;
       const userAns = document.getElementById('ans-single').value.trim().toLowerCase();
       const fb = document.getElementById('feedback');
 
       let isCorrect = false;
 
-      // အင်္ဂလိပ်စာလုံး တိုက်ဆိုင်မှု ရှိမရှိ စစ်ဆေးခြင်း
       if (userAns === activeQuestionItem.eng.toLowerCase()) {
         isCorrect = true;
       }
 
       if (isCorrect) {
+        streak++; // မှန်ရင် streak တက်မည်
+        let earnedXP = streak * 10; // ၁ ခုမှန် ၁၀၊ ၂ ခုမှန် ၂၀ စသည်ဖြင့် တွက်မည်
+        
         fb.className = "feedback correct";
-        fb.innerText = "✅ မှန်ကန်ပါသည်! +10 XP ရရှိသည်!";
-        userXP += 10;
+        fb.innerText = `✅ မှန်ကန်ပါသည်! (Streak x${streak}) +${earnedXP} XP ရရှိသည်!`;
+        
+        userXP += earnedXP;
         localStorage.setItem('userXP', userXP);
         document.getElementById('xp').innerText = userXP;
         document.getElementById('rank-xp').innerText = userXP;
@@ -751,10 +756,20 @@
           loadQuestion();
         }, 1200);
       } else {
+        streak = 0; // မှားသွားရင် streak ပြန်စညွှန်းမည်
         fb.className = "feedback wrong";
-        fb.innerText = `❌ မှားနေပါသည်! အမှန်မှာ: ${activeQuestionItem.eng}`;
+        fb.innerText = `❌ မှားနေပါသည်! Streak ပြန်ကျသွားပါပြီ။ အမှန်မှာ: ${activeQuestionItem.eng}`;
+        
+        // မှားရင် ၁၀ မှတ် လျော့မည်
+        userXP = Math.max(0, userXP - 10);
+        localStorage.setItem('userXP', userXP);
+        document.getElementById('xp').innerText = userXP;
+        document.getElementById('rank-xp').innerText = userXP;
       }
-    }
+            
+    
+    
+      
     
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
