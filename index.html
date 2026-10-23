@@ -723,7 +723,7 @@
       document.getElementById('feedback').innerText = '';
     }
 
-    function checkAnswer() {
+        function checkAnswer() {
       if (!activeQuestionItem) return;
       const userAns = document.getElementById('ans-single').value.trim().toLowerCase();
       const fb = document.getElementById('feedback');
@@ -736,7 +736,7 @@
         }
       } else {
         const correctMy = activeQuestionItem.my.toLowerCase();
-        if (userAns.length > 0 && correctMy.includes(userAns)) {
+        if (userAns.length > 0 && (correctMy.includes(userAns) || userAns.includes(correctMy))) {
           isCorrect = true;
         }
       }
@@ -772,6 +772,7 @@
 
     renderVocab();
     loadQuestion();
+    
   </script>
 </body>
 </html>
