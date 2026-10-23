@@ -703,51 +703,39 @@
       });
     }
 
-        function loadQuestion() {
+            function loadQuestion() {
       if (filteredData.length === 0) {
         document.getElementById('q-word').innerText = "ဒီ သင်ခန်းစာ မှာ စာလုံးမရှိသေးပါ";
         return;
       }
-      // Index က Filter လုပ်ထားတဲ့ စာရင်းထ้ารد ထკနေရင် 0 ကို ပြန်ပို့ပေးရန်
+      
       if (currentIndex >= filteredData.length) {
         currentIndex = 0;
       }
 
       activeQuestionItem = filteredData[currentIndex];
-      currentQuestionType = Math.random() < 0.5 ? 'my_to_eng' : 'eng_to_my';
 
       document.getElementById('counter').innerText = `Word ${currentIndex + 1} of ${filteredData.length}`;
       
-      if (currentQuestionType === 'my_to_eng') {
-        document.getElementById('q-word').innerText = `မြန်မာလို: "${activeQuestionItem.my}"\n(အင်္ဂလိပ်လို ဖြေပါ)`;
-      } else {
-        document.getElementById('q-word').innerText = `English: "${activeQuestionItem.eng}"\n(မြန်မာလို ဖြေပါ)`;
-      }
+      // မြန်မာလိုပြပြီး အင်္ဂလိပ်လို ဖြေရသည့် ပုံစံ တခုတည်းကိုသာ ပြမည်
+      document.getElementById('q-word').innerText = `မြန်မာလို: "${activeQuestionItem.my}"\n(အင်္ဂလိပ်လို ဖြေပါ)`;
 
       document.getElementById('ans-single').value = '';
       document.getElementById('feedback').innerText = '';
       
-      // လက်ရှိရောက်နေသော နေရာကို သိမ်းထားမည်
       localStorage.setItem('currentIndex', currentIndex);
-        }
-    
+    }
 
-        function checkAnswer() {
+    function checkAnswer() {
       if (!activeQuestionItem) return;
       const userAns = document.getElementById('ans-single').value.trim().toLowerCase();
       const fb = document.getElementById('feedback');
 
       let isCorrect = false;
 
-      if (currentQuestionType === 'my_to_eng') {
-        if (userAns === activeQuestionItem.eng.toLowerCase()) {
-          isCorrect = true;
-        }
-      } else {
-        const correctMy = activeQuestionItem.my.toLowerCase();
-        if (userAns.length > 0 && (correctMy.includes(userAns) || userAns.includes(correctMy))) {
-          isCorrect = true;
-        }
+      // အင်္ဂလိပ်စာလုံး တိုက်ဆိုင်မှု ရှိမရှိ စစ်ဆေးခြင်း
+      if (userAns === activeQuestionItem.eng.toLowerCase()) {
+        isCorrect = true;
       }
 
       if (isCorrect) {
@@ -764,10 +752,10 @@
         }, 1200);
       } else {
         fb.className = "feedback wrong";
-        fb.innerText = `❌ မှားနေပါသည်! အမှန်မှာ: Eng: ${activeQuestionItem.eng} | My: ${activeQuestionItem.my}`;
+        fb.innerText = `❌ မှားနေပါသည်! အမှန်မှာ: ${activeQuestionItem.eng}`;
       }
     }
-
+    
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
