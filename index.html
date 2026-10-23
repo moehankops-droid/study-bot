@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grade 8 English Master App</title>
+  <title>Grade 8 English Complete Master</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -17,496 +17,732 @@
       --subtext: #94a3b8;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background: var(--bg); color: var(--text); max-width: 500px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      max-width: 500px;
-      margin: 0 auto;
-    }
+    .header { background: var(--card-bg); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .stat-badge { background: #334155; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; }
 
-    .header {
-      background: var(--card-bg);
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #334155;
-    }
+    .unit-selector { padding: 10px 15px; background: #1e293b; border-bottom: 1px solid #334155; }
+    select { width: 100%; padding: 10px; border-radius: 8px; background: #0f172a; color: white; border: 1px solid #3b82f6; font-size: 0.95rem; outline: none; }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .tabs { display: flex; background: var(--card-bg); border-bottom: 1px solid #334155; }
+    .tab-btn { flex: 1; padding: 12px 8px; background: none; border: none; color: var(--subtext); font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; font-size: 0.85rem; }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
+    .tab-content { padding: 15px; display: none; flex-direction: column; flex: 1; }
+    .tab-content.active { display: flex; }
 
-    .stats {
-      display: flex;
-      gap: 8px;
-    }
+    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
+    .question { font-size: 1.2rem; font-weight: bold; margin: 15px 0; color: #f1f5f9; }
+    
+    .input-box { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #334155; background: #0f172a; color: white; margin-bottom: 10px; font-size: 1rem; outline: none; }
+    .input-box:focus { border-color: var(--accent); }
+    
+    .btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+    .btn:active { background: var(--accent-hover); }
 
-    .stat-badge {
-      background: #334155;
-      padding: 6px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+    .feedback { margin-top: 10px; font-weight: bold; min-height: 25px; }
+    .correct { color: var(--success); }
+    .wrong { color: var(--danger); }
 
-    .tabs {
-      display: flex;
-      background: var(--card-bg);
-      border-bottom: 1px solid #334155;
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 12px 8px;
-      background: none;
-      border: none;
-      color: var(--subtext);
-      font-weight: 600;
-      font-size: 0.8rem;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.3s;
-      white-space: nowrap;
-    }
-
-    .tab-btn.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
-
-    .tab-content {
-      padding: 15px;
-      flex: 1;
-      display: none;
-    }
-
-    .tab-content.active {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .quiz-card {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-
-    .question-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 8px;
-      color: #f1f5f9;
-      line-height: 1.5;
-    }
-
-    .wrong-word-box {
-      background: #450a0a;
-      color: #fca5a5;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ef4444;
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin: 10px 0;
-    }
-
-    .question-sub {
-      color: var(--subtext);
-      font-size: 0.85rem;
-      margin-bottom: 15px;
-    }
-
-    .quiz-input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 2px solid #334155;
-      background: #0f172a;
-      color: white;
-      font-size: 1rem;
-      margin-bottom: 12px;
-      outline: none;
-    }
-
-    .quiz-input:focus {
-      border-color: var(--accent);
-    }
-
-    .btn {
-      width: 100%;
-      padding: 12px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .btn:active {
-      background: var(--accent-hover);
-    }
-
-    .feedback {
-      margin-top: 12px;
-      font-weight: bold;
-      min-height: 24px;
-    }
-
-    .feedback.correct { color: var(--success); }
-    .feedback.wrong { color: var(--danger); }
-
-    .timer-display {
-      font-size: 3rem;
-      font-weight: bold;
-      color: var(--accent);
-      margin: 15px 0;
-    }
-
-    .leaderboard-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px;
-      background: var(--card-bg);
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
-
-    .rank { font-weight: bold; width: 25px; }
-
-    .vocab-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      border-bottom: 1px solid #334155;
-      font-size: 0.9rem;
-    }
-
-    .banner {
-      background: #1e3a8a;
-      color: #93c5fd;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      margin-bottom: 15px;
-      text-align: center;
-      border: 1px solid #3b82f6;
-    }
+    .vocab-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #334155; font-size: 0.9rem; }
   </style>
 </head>
 <body>
 
   <!-- Header -->
   <div class="header">
-    <div class="user-info">
-      <div class="avatar" id="avatar">M</div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div class="avatar">M</div>
       <div>
-        <div style="font-weight: bold;" id="username">Moe Han</div>
-        <div style="font-size: 0.75rem; color: var(--subtext);" id="level-title">Level 1 Student</div>
+        <div style="font-weight: bold;">Moe Han</div>
+        <div style="font-size: 0.75rem; color: var(--subtext);">Grade 8 Complete Vocab Master</div>
       </div>
     </div>
-    <div class="stats">
-      <div class="stat-badge">🔥 <span id="streak">1</span></div>
-      <div class="stat-badge">⭐ <span id="xp">0</span> XP</div>
-    </div>
+    <div class="stat-badge">⭐ <span id="xp">0</span> XP</div>
   </div>
 
-  <!-- Navigation Tabs -->
+  <!-- Lesson Selector -->
+  <div class="unit-selector">
+    <select id="unit-select" onchange="changeUnit()">
+      <option value="all">📚 ပို့ထားသမျှ သင်ခန်းစာ အားလုံး</option>
+      <option value="U1L1">Unit 1 - Lesson 1: Eating habits (Page 10-11)</option>
+      <option value="U1L2">Unit 1 - Lesson 2: Learning starts at home (Page 12-16)</option>
+      <option value="U1L3">Unit 1 - Lesson 3: Busy dad! (Page 17-20)</option>
+      <option value="U1L4">Unit 1 - Lesson 4: Work routine (Page 20-22)</option>
+      <option value="U2L1">Unit 2 - Lesson 1: At a new school (Page 23-25)</option>
+      <option value="U2L2">Unit 2 - Lesson 2: School types & life (Page 26-28)</option>
+      <option value="U3">Unit 3: Activities & Hobbies (Page 39-44)</option>
+      <option value="U4">Unit 4: School Band & Instruments (Page 45-48)</option>
+      <option value="Poem1">Poem 1: On the Vowels (Page 49-50)</option>
+    </select>
+  </div>
+
+  <!-- Tabs -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('vocab')">📚 Vocab List</button>
-    <button class="tab-btn" onclick="switchTab('blanks')">✍️ Fill Blanks</button>
-    <button class="tab-btn" onclick="switchTab('fix')">✏️ Fix Mistake</button>
-    <button class="tab-btn" onclick="switchTab('pomo')">⏱️ Timer</button>
-    <button class="tab-btn" onclick="switchTab('ranks')">🏆 Leaderboard</button>
+    <button class="tab-btn active" onclick="switchTab('vocab')">📖 Word Bank</button>
+    <button class="tab-btn" onclick="switchTab('practice')">✍️ Practice</button>
+    <button class="tab-btn" onclick="switchTab('rank')">🏆 Leaderboard</button>
   </div>
 
-  <!-- Vocab Dictionary Tab -->
-  <div id="vocab-tab" class="tab-content active">
-    <div class="banner">📖 Grade 8 English Word Bank (စာလုံးပေါင်း + အဓိပ္ပာယ်)</div>
-    <input type="text" id="search-vocab" class="quiz-input" placeholder="🔍 စာလုံးရှာရန်..." onkeyup="filterVocab()">
-    <div id="vocab-container" style="background: var(--card-bg); border-radius: 8px; max-height: 380px; overflow-y: auto;">
-      <!-- JS injected list -->
-    </div>
+  <!-- Vocab Tab -->
+  <div id="vocab" class="tab-content active">
+    <input type="text" id="search" class="input-box" placeholder="🔍 စာလုံးရှာရန်..." onkeyup="filterVocab()">
+    <div id="vocab-list-box" style="background: var(--card-bg); border-radius: 8px; max-height: 380px; overflow-y: auto;"></div>
   </div>
 
-  <!-- Fill in the Blanks Tab -->
-  <div id="blanks-tab" class="tab-content">
-    <div class="quiz-card">
-      <div style="font-size: 0.85rem; color: var(--accent); margin-bottom: 5px;" id="blank-counter">Question 1</div>
-      <div class="question-title" id="blank-q">Sentence Loading...</div>
-      <div class="question-sub">ကွက်လပ်တွင် ကိုက်ညီသော အင်္ဂလိပ်စာလုံး ဖြည့်ပါ</div>
+  <!-- Practice Tab -->
+  <div id="practice" class="tab-content">
+    <div class="card">
+      <div style="font-size: 0.85rem; color: var(--accent);" id="counter">Word 1</div>
+      <div class="question" id="q-word">Loading...</div>
       
-      <input type="text" id="blank-ans" class="quiz-input" placeholder="Answer in English..." autocomplete="off">
-      <button class="btn" onclick="checkBlankAnswer()">Submit Answer</button>
-      <div id="blank-feedback" class="feedback"></div>
+      <input type="text" id="ans-eng" class="input-box" placeholder="1. အင်္ဂလိပ်စာလုံးပေါင်း" autocomplete="off">
+      <input type="text" id="ans-my" class="input-box" placeholder="2. မြန်မာအဓိပ္ပာယ်" autocomplete="off">
+      
+      <button class="btn" onclick="checkAnswer()">Submit Answer</button>
+      <div id="feedback" class="feedback"></div>
     </div>
   </div>
 
-  <!-- Fix Mistake Tab -->
-  <div id="fix-tab" class="tab-content">
-    <div class="quiz-card">
-      <div style="font-size: 0.85rem; color: #ef4444; margin-bottom: 5px; font-weight: bold;">🔍 Correct Spelling Mode</div>
-      <div class="question-sub">အောက်ပါ စာလုံးပေါင်း မှားယွင်းနေပါသည်။ အမှန်ပြင်ရိုက်ပါ:</div>
-
-      <div class="wrong-word-box" id="fix-wrong-word">Loading...</div>
-      <div style="font-size: 0.9rem; color: var(--subtext); margin-bottom: 15px;" id="fix-hint">အဓိပ္ပာယ်: -</div>
-
-      <input type="text" id="fix-ans" class="quiz-input" placeholder="စာလုံးပေါင်း အမှန်ရိုက်ပါ..." autocomplete="off">
-      <button class="btn" style="background: #ef4444;" onclick="checkFixAnswer()">Correct Answer</button>
-      <div id="fix-feedback" class="feedback"></div>
+  <!-- Rank Tab -->
+  <div id="rank" class="tab-content">
+    <div class="card">
+      <h3>👑 Weekly Champion</h3>
+      <p style="margin-top: 10px; color: var(--subtext);">အပတ်စဉ် XP အများဆုံးရရှိသူအား Weekly Champion 👑 Badge ပေးအပ်မည်!</p>
+      <div style="margin-top: 20px; text-align: left;">
+        <div style="padding: 10px; background: #0f172a; border-radius: 8px; margin-bottom: 5px;">👑 Moe Han - <span id="rank-xp">0</span> XP</div>
+      </div>
     </div>
   </div>
 
-  <!-- Pomodoro Timer Tab -->
-  <div id="pomo-tab" class="tab-content">
-    <div class="quiz-card">
-      <div style="font-size: 0.9rem; color: var(--subtext);">⏱️ Study Timer (25 Mins)</div>
-      <div class="timer-display" id="timer-display">25:00</div>
-      <button class="btn" id="timer-btn" onclick="toggleTimer()">Start Study Session</button>
-      <div style="font-size: 0.8rem; color: var(--subtext); margin-top: 10px;">စာကျက်ချိန် ၂၅ မိနစ် ပြည့်ပါက Bonus +20 XP ရမည်!</div>
-    </div>
-  </div>
-
-  <!-- Ranks & Leaderboard Tab -->
-  <div id="ranks-tab" class="tab-content">
-    <div class="banner">👑 Weekly Champion 👑<br><small>အပတ်စဉ် အများဆုံး XP ရရှိသူအား Weekly Champion Badge ပေးအပ်မည်!</small></div>
-    <h3 style="margin-bottom: 12px;">Top Grade 8 Learners</h3>
-    <div class="leaderboard-item">
-      <div><span class="rank">👑</span> <strong>Moe Han</strong> <small style="color:#eab308;">(Champion)</small></div>
-      <div style="color: var(--accent);"><span id="rank-xp">0</span> XP</div>
-    </div>
-    <div class="leaderboard-item">
-      <div><span class="rank">🥈</span> Aung Aung</div>
-      <div style="color: var(--subtext);">120 XP</div>
-    </div>
-    <div class="leaderboard-item">
-      <div><span class="rank">🥉</span> Su Su</div>
-      <div style="color: var(--subtext);">80 XP</div>
-    </div>
-  </div>
-    <script>
+  <script>
     const tg = window.Telegram?.WebApp;
     if (tg) tg.expand();
 
-    // Complete Word Bank List
-    const vocabList = [
-      { eng: "environment", my: "သဘာဝပတ်ဝန်းကျင်", wrongEng: "Environmant" },
-      { eng: "experiment", my: "သိပ္ပံစမ်းသပ်မှု", wrongEng: "Experimant" },
-      { eng: "pressure", my: "ဖိအား", wrongEng: "Pressur" },
-      { eng: "surface area", my: "မျက်နှာပြင်ဧရိယာ", wrongEng: "Surfece area" },
-      { eng: "strength", my: "ခွန်အား / အင်အား", wrongEng: "Strenth" },
-      { eng: "atmosphere", my: "လေထု", wrongEng: "Atmosfere" },
-      { eng: "pollution", my: "ညစ်ညမ်းမှု", wrongEng: "Polusion" },
-      { eng: "protect", my: "ကာကွယ်သည်", wrongEng: "Protekt" },
-      { eng: "investigate", my: "စုံစမ်းလေ့လာသည်", wrongEng: "Investegate" },
-      { eng: "result", my: "ရလဒ်", wrongEng: "Resultt" },
-      { eng: "temperature", my: "အပူချိန်", wrongEng: "Temperatue" },
-      { eng: "gravity", my: "ဆွဲငင်အား", wrongEng: "Gravety" },
-      { eng: "ecosystem", my: "ဂေဟစနစ်", wrongEng: "Ecosystemm" },
-      { eng: "deforestation", my: "သစ်တောပြုန်းတီးခြင်း", wrongEng: "Deforistation" },
-      { eng: "conservation", my: "ထိန်းသိမ်းခြင်း", wrongEng: "Consirvation" },
-      { eng: "renewable", my: "ပြန်လည်ပြည့်ဖြိုးမြဲ", wrongEng: "Reneweable" },
-      { eng: "habitat", my: "နေထိုင်ရာဒေသ", wrongEng: "Habetat" },
-      { eng: "hypothesis", my: "ယူဆချက်", wrongEng: "Hypotesis" },
-      { eng: "evaporation", my: "အငွေ့ပျံခြင်း", wrongEng: "Evaporasion" },
-      { eng: "friction", my: "ပွတ်တိုက်အား", wrongEng: "Frikshun" },
-      { eng: "accurate", my: "တိကျမှန်ကန်သော", wrongEng: "Accuratee" },
-      { eng: "essential", my: "မရှိမဖြစ် လိုအပ်သော", wrongEng: "Essensial" },
-      { eng: "efficient", my: "စွမ်းဆောင်ရည်ရှိသော", wrongEng: "Effisient" },
-      { eng: "hazardous", my: "အန္တရာယ်ရှိသော", wrongEng: "Hazardoes" },
-      { eng: "temporary", my: "ယာယီဖြစ်သော", wrongEng: "Temporery" },
-      { eng: "assignment", my: "တာဝန်ဝတ္တရား", wrongEng: "Asignment" },
-      { eng: "knowledge", my: "ဗဟုသုတ / အသိပညာ", wrongEng: "Knowlege" },
-      { eng: "conclusion", my: "နိဂုံးချုပ်", wrongEng: "Conclusiun" },
-      { eng: "attendance", my: "တက်ရောက်မှု", wrongEng: "Attandance" },
-      { eng: "method", my: "နည်းလမ်း", wrongEng: "Mettod" },
-      { eng: "research", my: "သုတေသနပြုသည်", wrongEng: "Reserch" },
-      { eng: "demonstrate", my: "ပြသသည်", wrongEng: "Demonstrate" },
-      { eng: "observe", my: "လေ့လာစောင့်ကြည့်သည်", wrongEng: "Obsirve" },
-      { eng: "calculate", my: "တွက်ချက်သည်", wrongEng: "Calculat" },
-      { eng: "analyze", my: "ခွဲခြမ်းစိတ်ဖြာသည်", wrongEng: "Analize" },
-      { eng: "development", my: "ဖွံ့ဖြိုးတိုးတက်မှု", wrongEng: "Devlopment" },
-      { eng: "various", my: "အမျိုးမျိုးအပြားပြား", wrongEng: "Varios" },
-      { eng: "important", my: "အရေးပါသော", wrongEng: "Importent" },
-      { eng: "special", my: "ထူးခြားသော", wrongEng: "Spesial" },
-      { eng: "common", my: "ဘုံဖြစ်သော / သာမန်", wrongEng: "Comon" }
+    // ဓာတ်ပုံများအားလုံးမှ စုစည်းထားသော Data အပြည့်အစုံ
+    const vocabData = [
+      // Unit 1 - Lesson 1 (Page 10 - 11)
+      { unit: "U1L1", eng: "habits", my: "အလေ့အကျင့်များ" },[span_31](start_span)[span_31](end_span)
+      { unit: "U1L1", eng: "choke", my: "အသက်ရှူကျပ်သည်" },[span_32](start_span)[span_32](end_span)
+      { unit: "U1L1", eng: "digestion", my: "အစားကိုကြေစေခြင်း" },[span_33](start_span)[span_33](end_span)
+      { unit: "U1L1", eng: "unable", my: "မတတ်နိုင်သော" },[span_34](start_span)[span_34](end_span)
+      { unit: "U1L1", eng: "breathe", my: "အသက်ရှူသည်" },[span_35](start_span)[span_35](end_span)
+      { unit: "U1L1", eng: "something", my: "တစ်ခုခု" },[span_36](start_span)[span_36](end_span)
+      { unit: "U1L1", eng: "blocking", my: "ပိတ်ဆို့နေခြင်း" },[span_37](start_span)[span_37](end_span)
+      { unit: "U1L1", eng: "throat", my: "လည်ပင်း" },[span_38](start_span)[span_38](end_span)
+      { unit: "U1L1", eng: "process", my: "ဖြစ်စဉ်လုပ်ငန်းစဉ်" },[span_39](start_span)[span_39](end_span)
+      { unit: "U1L1", eng: "changed", my: "ပြောင်းလဲသည်" },[span_40](start_span)[span_40](end_span)
+      { unit: "U1L1", eng: "substances", my: "အရာဝတ္ထုများ" },[span_41](start_span)[span_41](end_span)
+      { unit: "U1L1", eng: "junk food", my: "အာဟာရဓာတ်မပါသောအဓိကအစားအစာများ" },[span_42](start_span)[span_42](end_span)
+      { unit: "U1L1", eng: "unhealthy", my: "နာမကျန်းဖြစ်စေသော" },[span_43](start_span)[span_43](end_span)
+      { unit: "U1L1", eng: "quick", my: "လျှင်မြန်သော" },[span_44](start_span)[span_44](end_span)
+      { unit: "U1L1", eng: "mindfully", my: "သတိရှိစွာ" },[span_45](start_span)[span_45](end_span)
+      { unit: "U1L1", eng: "consciously", my: "အသိရှိစွာ" },[span_46](start_span)[span_46](end_span)
+      { unit: "U1L1", eng: "aware of", my: "သတိပြုမိသည်" },[span_47](start_span)[span_47](end_span)
+      { unit: "U1L1", eng: "action", my: "လှုပ်ရှားမှု" },[span_48](start_span)[span_48](end_span)
+      { unit: "U1L1", eng: "mindlessly", my: "အဓိပ္ပါယ်မဲ့စွာ" },[span_49](start_span)[span_49](end_span)
+      { unit: "U1L1", eng: "mineral water", my: "သဘာဝရေ တွင်းထွက်ရေ" },[span_50](start_span)[span_50](end_span)
+      { unit: "U1L1", eng: "containing", my: "ပါဝင်သော" },[span_51](start_span)[span_51](end_span)
+      { unit: "U1L1", eng: "dissolved", my: "အရည်ပျော်စေသည်" },[span_52](start_span)[span_52](end_span)
+      { unit: "U1L1", eng: "minerals", my: "သတ္တုဓာတ်များ" },[span_53](start_span)[span_53](end_span)
+      { unit: "U1L1", eng: "obesity", my: "အလွန်ဝခြင်း" },[span_54](start_span)[span_54](end_span)
+      { unit: "U1L1", eng: "condition", my: "အခြေအနေ" },[span_55](start_span)[span_55](end_span)
+      { unit: "U1L1", eng: "healthy", my: "ကျန်းမာသော" },[span_56](start_span)[span_56](end_span)
+      { unit: "U1L1", eng: "sugar", my: "သကြား" },[span_57](start_span)[span_57](end_span)
+      { unit: "U1L1", eng: "sugary", my: "သကြားဓာတ်ပါဝင်သော" },[span_58](start_span)[span_58](end_span)
+      { unit: "U1L1", eng: "described", my: "ဖော်ပြသည်" },[span_59](start_span)[span_59](end_span)
+      { unit: "U1L1", eng: "variety", my: "မျိုးစုံ" },[span_60](start_span)[span_60](end_span)
+      { unit: "U1L1", eng: "mentioned", my: "ဖော်ပြသည်" },[span_61](start_span)[span_61](end_span)
+      { unit: "U1L1", eng: "takes", my: "ကြာသည်" },[span_62](start_span)[span_62](end_span)
+      { unit: "U1L1", eng: "finish", my: "ပြီးစီးသည်" },[span_63](start_span)[span_63](end_span)
+      { unit: "U1L1", eng: "taking sugary drinks", my: "သကြားဓာတ်ပါသောအချိုရည်များသောက်ခြင်း" },[span_64](start_span)[span_64](end_span)
+      { unit: "U1L1", eng: "having a meal", my: "အစားအသောက်စားခြင်း" },[span_65](start_span)[span_65](end_span)
+      { unit: "U1L1", eng: "variety of vegetables", my: "ဟင်းသီးဟင်းရွက်မျိုးစုံ" },[span_66](start_span)[span_66](end_span)
+      { unit: "U1L1", eng: "how much", my: "ဘယ်လောက်များများ" },[span_67](start_span)[span_67](end_span)
+      { unit: "U1L1", eng: "at a time", my: "တစ်ကြိမ်မှာ" },[span_68](start_span)[span_68](end_span)
+      { unit: "U1L1", eng: "how long she takes", my: "သူမ ဘယ်လောက်ကြာသလဲ" },[span_69](start_span)[span_69](end_span)
+      { unit: "U1L1", eng: "at weekends", my: "စနေ တနင်္ဂနွေနေ့တွေမှာ" },[span_70](start_span)[span_70](end_span)
+      { unit: "U1L1", eng: "between meals", my: "နံနက်စာနဲ့ညစာကြားမှာ" },[span_71](start_span)[span_71](end_span)
+      { unit: "U1L1", eng: "at the dining table", my: "ထမင်းစား စားပွဲမှာ" },[span_72](start_span)[span_72](end_span)
+      { unit: "U1L1", eng: "litres of water", my: "ရေလီတာများ" },[span_73](start_span)[span_73](end_span)
+      { unit: "U1L1", eng: "burgers and chip", my: "ဘာဂါနှင့်အာလူးကြော်များ" },[span_74](start_span)[span_74](end_span)
+      { unit: "U1L1", eng: "often eat", my: "စားလေ့ရှိသည်" },[span_75](start_span)[span_75](end_span)
+      { unit: "U1L1", eng: "less than 10 minutes", my: "၁၀ မိနစ်မပြည့်ခင်" },[span_76](start_span)[span_76](end_span)
+      { unit: "U1L1", eng: "in the living room", my: "ဧည့်ခန်းထဲမှာ" },[span_77](start_span)[span_77](end_span)
+
+      // Unit 1 - Lesson 2 (Page 12 - 16)
+      { unit: "U1L2", eng: "learning", my: "သင်ယူခြင်း" },[span_78](start_span)[span_78](end_span)
+      { unit: "U1L2", eng: "starts", my: "စတင်သည်" },[span_79](start_span)[span_79](end_span)
+      { unit: "U1L2", eng: "routines", my: "လုပ်ရိုးလုပ်စဉ်အလုပ်များ" },[span_80](start_span)[span_80](end_span)
+      { unit: "U1L2", eng: "benefits", my: "အကျိုးကျေးဇူးများ" },[span_81](start_span)[span_81](end_span)
+      { unit: "U1L2", eng: "activities", my: "လုပ်ငန်းဆောင်တာများ" },[span_82](start_span)[span_82](end_span)
+      { unit: "U1L2", eng: "together", my: "အတူတကွ" },[span_83](start_span)[span_83](end_span)
+      { unit: "U1L2", eng: "beneficial", my: "အကျိုးရှိသော" },[span_84](start_span)[span_84](end_span)
+      { unit: "U1L2", eng: "welcome", my: "ကြိုဆိုသည်" },[span_85](start_span)[span_85](end_span)
+      { unit: "U1L2", eng: "blog", my: "အကြောင်းအရာတစ်ခုကိုအွန်လိုင်းပေါ်တွင်တင်ထားခြင်း" },[span_86](start_span)[span_86](end_span)
+      { unit: "U1L2", eng: "share", my: "ဝေမျှသည်" },[span_87](start_span)[span_87](end_span)
+      { unit: "U1L2", eng: "experiences", my: "အတွေ့အကြုံများ" },[span_88](start_span)[span_88](end_span)
+      { unit: "U1L2", eng: "mum", my: "မေမေ" },[span_89](start_span)[span_89](end_span)
+      { unit: "U1L2", eng: "links", my: "အဆက်အသွယ်များ" },[span_90](start_span)[span_90](end_span)
+      { unit: "U1L2", eng: "posts", my: "သိသင့်သိထိုက်သည်များကိုအွန်လိုင်းပေါ်တွင်တင်ထားခြင်း" },[span_91](start_span)[span_91](end_span)
+      { unit: "U1L2", eng: "believe", my: "ယုံကြည်သည်" },[span_92](start_span)[span_92](end_span)
+      { unit: "U1L2", eng: "developing", my: "ဖွံ့ဖြိုးဆဲဖြစ်သော" },[span_93](start_span)[span_93](end_span)
+      { unit: "U1L2", eng: "whole", my: "တစ်ခုလုံးဖြစ်သော" },[span_94](start_span)[span_94](end_span)
+      { unit: "U1L2", eng: "sense", my: "သိစိတ်အသိ" },[span_95](start_span)[span_95](end_span)
+      { unit: "U1L2", eng: "responsibility", my: "တာဝန်သိမှု" },[span_96](start_span)[span_96](end_span)
+      { unit: "U1L2", eng: "unity", my: "ညီညွတ်မှု" },[span_97](start_span)[span_97](end_span)
+      { unit: "U1L2", eng: "skills", my: "ကျွမ်းကျင်မှုများ" },[span_98](start_span)[span_98](end_span)
+      { unit: "U1L2", eng: "remind", my: "သတိပေးသည်" },[span_99](start_span)[span_99](end_span)
+      { unit: "U1L2", eng: "become", my: "ဖြစ်လာသည်" },[span_100](start_span)[span_100](end_span)
+      { unit: "U1L2", eng: "importance", my: "အရေးပါမှု" },[span_101](start_span)[span_101](end_span)
+      { unit: "U1L2", eng: "balanced", my: "မျှတသော" },[span_102](start_span)[span_102](end_span)
+      { unit: "U1L2", eng: "manners", my: "အမူအကျင့်များ" },[span_103](start_span)[span_103](end_span)
+      { unit: "U1L2", eng: "diet", my: "အာဟာရ" },[span_104](start_span)[span_104](end_span)
+      { unit: "U1L2", eng: "occasionally", my: "တစ်ခါတစ်ရံ" },[span_105](start_span)[span_105](end_span)
+      { unit: "U1L2", eng: "spend", my: "ကုန်စေသည်" },[span_106](start_span)[span_106](end_span)
+      { unit: "U1L2", eng: "household chores", my: "အိမ်မှုကိစ္စများ" },[span_107](start_span)[span_107](end_span)
+      { unit: "U1L2", eng: "sweeping", my: "တံမြက်စည်းလှည်းခြင်း" },[span_108](start_span)[span_108](end_span)
+      { unit: "U1L2", eng: "floor", my: "ကြမ်းပြင်" },[span_109](start_span)[span_109](end_span)
+      { unit: "U1L2", eng: "dishes", my: "ပန်းကန်ခွက်ယောက်များ" },[span_110](start_span)[span_110](end_span)
+      { unit: "U1L2", eng: "responsible", my: "တာဝန်သိသော" },[span_111](start_span)[span_111](end_span)
+      { unit: "U1L2", eng: "cooperative", my: "ပူးပေါင်းလုပ်ကိုင်တတ်သော" },[span_112](start_span)[span_112](end_span)
+      { unit: "U1L2", eng: "engage", my: "လုပ်ကိုင်နေကြသည်" },[span_113](start_span)[span_113](end_span)
+      { unit: "U1L2", eng: "outdoor activities", my: "အိမ်အပြင်တွင် လုပ်ရသောအလုပ်များ" },[span_114](start_span)[span_114](end_span)
+      { unit: "U1L2", eng: "jogging", my: "ခပ်ဖြည်းဖြည်းပြေးခြင်း" },[span_115](start_span)[span_115](end_span)
+      { unit: "U1L2", eng: "park", my: "ပန်းခြံ" },[span_116](start_span)[span_116](end_span)
+      { unit: "U1L2", eng: "indoor activities", my: "အိမ်တွင်းတွင် လုပ်ရသောအလုပ်များ" },[span_117](start_span)[span_117](end_span)
+      { unit: "U1L2", eng: "especially", my: "အထူးသဖြင့်" },[span_118](start_span)[span_118](end_span)
+      { unit: "U1L2", eng: "rains", my: "မိုးရွာသည်" },[span_119](start_span)[span_119](end_span)
+      { unit: "U1L2", eng: "physical exercise", my: "ကိုယ်လက်လေ့ကျင့်ခန်းများ" },[span_120](start_span)[span_120](end_span)
+      { unit: "U1L2", eng: "realise", my: "သဘောပေါက်လာသည်" },[span_121](start_span)[span_121](end_span)
+      { unit: "U1L2", eng: "value", my: "တန်ဖိုး" },[span_122](start_span)[span_122](end_span)
+      { unit: "U1L2", eng: "settled", my: "အသားကျနေပြီဖြစ်သော" },[span_123](start_span)[span_123](end_span)
+      { unit: "U1L2", eng: "regular", my: "ပုံမှန်ဖြစ်သော" },[span_124](start_span)[span_124](end_span)
+      { unit: "U1L2", eng: "difficult", my: "ခက်ခဲသော" },[span_125](start_span)[span_125](end_span)
+      { unit: "U1L2", eng: "highlighted", my: "အရေးကြီးသော" },[span_126](start_span)[span_126](end_span)
+      { unit: "U1L2", eng: "similar", my: "အလားတူဖြစ်သော" },[span_127](start_span)[span_127](end_span)
+      { unit: "U1L2", eng: "located", my: "တည်ရှိသော" },[span_128](start_span)[span_128](end_span)
+      { unit: "U1L2", eng: "duty", my: "တာဝန်" },[span_129](start_span)[span_129](end_span)
+      { unit: "U1L2", eng: "particular", my: "သီးသန့်ဖြစ်သော" },[span_130](start_span)[span_130](end_span)
+      { unit: "U1L2", eng: "advantages", my: "အကျိုးကျေးဇူးများ" },[span_131](start_span)[span_131](end_span)
+      { unit: "U1L2", eng: "helpful", my: "ကူညီတတ်သော" },[span_132](start_span)[span_132](end_span)
+      { unit: "U1L2", eng: "take part", my: "ပါဝင်သည်" },[span_133](start_span)[span_133](end_span)
+      { unit: "U1L2", eng: "behaviour", my: "အပြုအမူ" },[span_134](start_span)[span_134](end_span)
+      { unit: "U1L2", eng: "considered", my: "ယူဆသည်" },[span_135](start_span)[span_135](end_span)
+      { unit: "U1L2", eng: "appropriate", my: "သင့်လျော်သော" },[span_136](start_span)[span_136](end_span)
+      { unit: "U1L2", eng: "while", my: "စဉ်တွင်" },[span_137](start_span)[span_137](end_span)
+      { unit: "U1L2", eng: "trying", my: "ကြိုးစားနေသော" },[span_138](start_span)[span_138](end_span)
+      { unit: "U1L2", eng: "games", my: "ကစားပွဲများ" },[span_139](start_span)[span_139](end_span)
+      { unit: "U1L2", eng: "actively", my: "တက်ကြွစွာ" },[span_140](start_span)[span_140](end_span)
+      { unit: "U1L2", eng: "created", my: "ဖန်တီးထားသော" },[span_141](start_span)[span_141](end_span)
+      { unit: "U1L2", eng: "knowledge", my: "အသိပညာ" },[span_142](start_span)[span_142](end_span)
+      { unit: "U1L2", eng: "gain", my: "ရရှိသည်" },[span_143](start_span)[span_143](end_span)
+      { unit: "U1L2", eng: "readers", my: "စာဖတ်သူများ" },[span_144](start_span)[span_144](end_span)
+      { unit: "U1L2", eng: "mealtime", my: "ထမင်းစားချိန်များ" },[span_145](start_span)[span_145](end_span)
+      { unit: "U1L2", eng: "a sense of responsibility", my: "တာဝန်သိစိတ်" },[span_146](start_span)[span_146](end_span)
+      { unit: "U1L2", eng: "as a whole family", my: "မိသားစုတစ်ခုလုံးအနေနဲ့" },[span_147](start_span)[span_147](end_span)
+      { unit: "U1L2", eng: "table manners", my: "ထမင်းစားနေစဉ် လိုက်နာရသောအမူအကျင့်များ" },[span_148](start_span)[span_148](end_span)
+      { unit: "U1L2", eng: "doing the dishes", my: "ပန်းကန်ခွက်ယောက်များ ဆေးကြောခြင်း" },[span_149](start_span)[span_149](end_span)
+      { unit: "U1L2", eng: "as a result", my: "ရလဒ်အနေနဲ့" },[span_150](start_span)[span_150](end_span)
+      { unit: "U1L2", eng: "regular routines", my: "ပုံမှန်လုပ်နေကျ အလုပ်များ" },[span_151](start_span)[span_151](end_span)
+      { unit: "U1L2", eng: "why don't you try them out", my: "သင်လည်း စမ်းလုပ်ကြည့်ပါလား" },[span_152](start_span)[span_152](end_span)
+      { unit: "U1L2", eng: "preparing meals", my: "နံနက်စာ ညစာများအတွက် ပြင်ဆင်ချက်ပြုတ်ခြင်း" },[span_153](start_span)[span_153](end_span)
+      { unit: "U1L2", eng: "take part in something", my: "တစ်ခုခုတွင် ပါဝင်ခြင်း" },[span_154](start_span)[span_154](end_span)
+      { unit: "U1L2", eng: "family gathering", my: "မိသားစု စုံစုံညီညီတွေ့ဆုံခြင်း" },[span_155](start_span)[span_155](end_span)
+      { unit: "U1L2", eng: "No matter where and who", my: "ဘယ်နေရာ ဘယ်သူဆိုတာ အရေးမကြီးပါဘူး" },[span_156](start_span)[span_156](end_span)
+      { unit: "U1L2", eng: "going out", my: "အပြင်ထွက်ခြင်း" },[span_157](start_span)[span_157](end_span)
+      { unit: "U1L2", eng: "team sports", my: "အသင်းလိုက်လုပ်ရသော အားကစား လုပ်ငန်းများ" },[span_158](start_span)[span_158](end_span)
+      { unit: "U1L2", eng: "extra-curricular activities", my: "ပညာရေးဖွံ့ဖြိုးမှုလုပ်ငန်းများ" },[span_159](start_span)[span_159](end_span)
+            { unit: "U1L2", eng: "great fun", my: "အလွန်ပျော်စရာကောင်းတယ်" },
+      { unit: "U1L3", eng: "busy", my: "အလုပ်ရှုပ်နေသော" },
+      { unit: "U1L3", eng: "adverbs", my: "ကြိယာဝိသေသနများ" },
+      { unit: "U1L3", eng: "indefinite", my: "မတိကျသော" },
+      { unit: "U1L3", eng: "frequency", my: "ကြိမ်နှုန်း" },
+      { unit: "U1L3", eng: "definite", my: "တိကျသော" },
+      { unit: "U1L3", eng: "challenge", my: "စိန်ခေါ်မှု" },
+      { unit: "U1L3", eng: "single", my: "တစ်ယောက်တည်းဖြစ်နေသော" },
+      { unit: "U1L3", eng: "office work", my: "ရုံးအလုပ်" },
+      { unit: "U1L3", eng: "busiest time", my: "အလုပ်အများဆုံးအချိန်" },
+      { unit: "U1L3", eng: "gets up", my: "အိပ်ရာထသည်" },
+      { unit: "U1L3", eng: "skips", my: "လွတ်သွားသည်" },
+      { unit: "U1L3", eng: "boils", my: "ပြုတ်သည်" },
+      { unit: "U1L3", eng: "bread", my: "ပေါင်မုန့်" },
+      { unit: "U1L3", eng: "butter", my: "ထောပတ်" },
+      { unit: "U1L3", eng: "frequently", my: "မကြာခဏ" },
+      { unit: "U1L3", eng: "packs", my: "ထုတ်ပေးသည်" },
+      { unit: "U1L3", eng: "lunch boxes", my: "နေ့လယ်စာထမင်းဘူးများ" },
+      { unit: "U1L3", eng: "thin", my: "ပါးသော" },
+      { unit: "U1L3", eng: "slice", my: "အချပ်" },
+      { unit: "U1L3", eng: "ketchup", my: "အချဉ်ရည်" },
+      { unit: "U1L3", eng: "fries", my: "ကြော်သည်" },
+      { unit: "U1L3", eng: "works out", my: "လေ့ကျင့်ခန်းများလုပ်သည်" },
+      { unit: "U1L3", eng: "electric bike", my: "လျှပ်စစ်စက်ဘီး" },
+      { unit: "U1L3", eng: "heads", my: "ဦးတည်သည်/ထွက်ခွာသည်" },
+      { unit: "U1L3", eng: "always", my: "အမြဲတမ်း" },
+      { unit: "U1L3", eng: "never", my: "ဘယ်တော့မှ(မလုပ်)" },
+      { unit: "U1L3", eng: "usually", my: "များသောအားဖြင့်" },
+      { unit: "U1L3", eng: "generally", my: "များသောအားဖြင့်" },
+      { unit: "U1L3", eng: "normally", my: "ပုံမှန်အားဖြင့်" },
+      { unit: "U1L3", eng: "occasionally", my: "တစ်ခါတစ်ရံ" },
+      { unit: "U1L3", eng: "often", my: "မကြာခဏ" },
+      { unit: "U1L3", eng: "seldom", my: "လုပ်ခဲစွာ" },
+      { unit: "U1L3", eng: "rarely", my: "ရှားရှားပါးပါး" },
+      { unit: "U1L3", eng: "hardly", my: "လုပ်ခဲစွာ" },
+      { unit: "U1L3", eng: "alternative", my: "နှစ်ခုအနက် တစ်ခုကို ရွေးချယ်ရန်ဖြစ်သော" },
+      { unit: "U1L3", eng: "expressions", my: "စကားအသုံးအနှုန်းများ" },
+      { unit: "U1L3", eng: "placed", my: "ထားသည်" },
+      { unit: "U1L3", eng: "main verbs", my: "အဓိကကြိယာများ" },
+      { unit: "U1L3", eng: "auxiliary verbs", my: "အကူကြိယာများ" },
+      { unit: "U1L3", eng: "punctual", my: "အချိန်တိကျသော" },
+      { unit: "U1L3", eng: "eat out", my: "အပြင်ထွက်စားသည်" },
+      { unit: "U1L3", eng: "occasions", my: "အရေးကိစ္စများ" },
+      { unit: "U1L3", eng: "classical music", my: "ဂန္ထဝင်တေးဂီတ" },
+      { unit: "U1L3", eng: "once", my: "တစ်ကြိမ်" },
+      { unit: "U1L3", eng: "twice", my: "နှစ်ကြိမ်" },
+      { unit: "U1L3", eng: "three times", my: "သုံးကြိမ်" },
+      { unit: "U1L3", eng: "daily", my: "နေ့စဉ်ဖြစ်သော" },
+      { unit: "U1L3", eng: "weekly", my: "အပတ်စဉ်ဖြစ်သော" },
+      { unit: "U1L3", eng: "monthly", my: "လစဉ်ဖြစ်သော" },
+      { unit: "U1L3", eng: "yearly", my: "နှစ်စဉ်ဖြစ်သော" },
+      { unit: "U1L3", eng: "dentist", my: "သွားဆရာဝန်" },
+      { unit: "U1L3", eng: "seasonal", my: "ရာသီအလိုက်ဖြစ်သော" },
+      { unit: "U1L3", eng: "cabbages", my: "ဂေါ်ဖီထုပ်များ" },
+      { unit: "U1L3", eng: "cauliflowers", my: "ပန်းဂေါ်ဖီများ" },
+      { unit: "U1L3", eng: "festival", my: "ပွဲတော်" },
+      { unit: "U1L3", eng: "desert", my: "သဲကန္တာရ" },
+      { unit: "U1L3", eng: "cinema", my: "ရုပ်ရှင်ရုံ" },
+      { unit: "U1L3", eng: "yoga", my: "ယောဂကျင့်စဉ်" },
+      { unit: "U1L3", eng: "bring me up", my: "ပြုစုစောင့်ရှောက်ခဲ့သည်" },
+      { unit: "U1L3", eng: "skips his breakfast", my: "မနက်စာထမင်းလွတ်သွားသည်" },
+      { unit: "U1L3", eng: "takes a quick shower", my: "ရေအမြန်ချိုးသည်" },
+      { unit: "U1L3", eng: "a quarter past eight", my: "၈ နာရီ ၁၅ မိနစ်" },
+      { unit: "U1L3", eng: "at the beginning", my: "အစတွင်" },
+      { unit: "U1L3", eng: "at the end of", my: "အဆုံးတွင်" },
+      { unit: "U1L3", eng: "Take this medicine", my: "ဒီဆေးကိုသောက်" },
+      { unit: "U1L3", eng: "Olympic Games", my: "အိုလံပစ်အားကစားပြိုင်ပွဲများ" },
+      { unit: "U1L3", eng: "go to the cinema", my: "ရုပ်ရှင်သွားကြည့်သည်" },
+      { unit: "U1L3", eng: "in the correct order", my: "အစီအစဉ်မှန်အောင်" },
+      { unit: "U1L4", eng: "civil engineer", my: "မြို့ပြအင်ဂျင်နီယာ" },
+      { unit: "U1L4", eng: "construction site", my: "ဆောက်လုပ်ရေးလုပ်ငန်းခွင်" },
+      { unit: "U1L4", eng: "weekdays", my: "တနင်္လာမှသောကြာနေ့အထိ နေ့ရက်များ" },
+      { unit: "U1L4", eng: "meeting", my: "အစည်းအဝေး" },
+      { unit: "U1L4", eng: "office staff", my: "ရုံးအဖွဲ့" },
+      { unit: "U1L4", eng: "plan", my: "အစီအစဉ်" },
+      { unit: "U1L4", eng: "checks", my: "စစ်ဆေးသည်" },
+      { unit: "U1L4", eng: "assigns", my: "တာဝန်ပေးသည်" },
+      { unit: "U1L4", eng: "resume", my: "ပြန်စသည်" },
+      { unit: "U1L4", eng: "explains", my: "ရှင်းပြသည်" },
+      { unit: "U1L4", eng: "gets home", my: "အိမ်ပြန်ရောက်သည်" },
+      { unit: "U1L4", eng: "sure", my: "သေချာသော" },
+      { unit: "U1L4", eng: "protective", my: "အကာအကွယ်ပေးနိုင်သော" },
+      { unit: "U1L4", eng: "clothing", my: "အဝတ်အစား" },
+      { unit: "U1L4", eng: "inspect", my: "စစ်ဆေးသည်" },
+      { unit: "U1L4", eng: "puts on", my: "ဝတ်ဆင်သည်" },
+      { unit: "U1L4", eng: "worksite", my: "လုပ်ငန်းခွင်" },
+      { unit: "U1L4", eng: "safety", my: "ဘေးကင်းလုံခြုံမှု" },
+      { unit: "U1L4", eng: "jacket", my: "အပေါ်အင်္ကျီဂျာကင်" },
+      { unit: "U1L4", eng: "hard hat", my: "ဦးထုပ်အမာ" },
+      { unit: "U1L4", eng: "boots", my: "ဘုတ်ဖိနပ်" },
+      { unit: "U1L4", eng: "headmaster", my: "ကျောင်းအုပ်ဆရာကြီး" },
+      { unit: "U1L4", eng: "based", my: "အခြေခံသော" },
+      { unit: "U1L4", eng: "information", my: "သတင်းအချက်အလက်" },
+      { unit: "U1L4", eng: "spelling errors", my: "စာလုံးပေါင်းအမှားများ" },
+      { unit: "U1L4", eng: "a break for lunch", my: "နေ့လယ်စာစားရန် အလုပ်ရပ်နားချိန်" },
+      { unit: "U1L4", eng: "has a shower", my: "ရေချိုးသည်" },
+      { unit: "U1L4", eng: "enjoys dinner", my: "ညစာကို မြိန်မြိန်ရှက်ရှက်စားသည်" },
+      { unit: "U1L4", eng: "goes to bed", my: "အိပ်ရာဝင်သည်" },
+      { unit: "U1L4", eng: "always aware of safety", my: "ဘေးကင်းလုံခြုံမှုကို အမြဲသတိထားသည်" },
+      { unit: "U1L4", eng: "hands over", my: "လွှဲပြောင်းပေးသည်" },
+      { unit: "U1L4", eng: "assists in", my: "အကူအညီပေးသည်" },
+      { unit: "U1L4", eng: "gives treatment", my: "ကုသပေးသည်" },
+      { unit: "U1L4", eng: "take over", my: "လွှဲယူသည်" },
+      { unit: "U2L1", eng: "places", my: "နေရာများ" },
+      { unit: "U2L1", eng: "things", my: "အရာဝတ္ထုပစ္စည်းများ" },
+      { unit: "U2L1", eng: "classrooms", my: "စာသင်ခန်းများ" },
+      { unit: "U2L1", eng: "principal", my: "ကျောင်းအုပ်ကြီး" },
+      { unit: "U2L1", eng: "playground", my: "ကစားကွင်း" },
+      { unit: "U2L1", eng: "staff room", my: "ဆရာ/မများ နားနေခန်း" },
+      { unit: "U2L1", eng: "timetable", my: "အချိန်ဇယား" },
+      { unit: "U2L1", eng: "gatekeeper", my: "ဂိတ်စောင့်" },
+      { unit: "U2L1", eng: "vice-principal", my: "ဒု-ကျောင်းအုပ်" },
+      { unit: "U2L1", eng: "library", my: "စာကြည့်တိုက်" },
+      { unit: "U2L1", eng: "librarian", my: "စာကြည့်တိုက်မှူး" },
+      { unit: "U2L1", eng: "dustbin", my: "အမှိုက်ပုံး" },
+      { unit: "U2L1", eng: "assembly hall", my: "စုဝေးခန်းမ" },
+      { unit: "U2L1", eng: "backpacks", my: "ကျောပိုးအိတ်များ" },
+      { unit: "U2L1", eng: "toilet", my: "အိမ်သာ" },
+      { unit: "U2L1", eng: "canteen", my: "ကျောင်းစားသောက်ဆိုင်" },
+      { unit: "U2L1", eng: "clerk", my: "စာရေး" },
+      { unit: "U2L1", eng: "laboratory", my: "ဓာတ်ခွဲခန်း" },
+      { unit: "U2L1", eng: "cleaner", my: "သန့်ရှင်းရေးဝန်ထမ်း" },
+      { unit: "U2L1", eng: "imagine", my: "စဉ်းစားတွေးတောသည်" },
+      { unit: "U2L1", eng: "school rules", my: "ကျောင်းစည်းကမ်းများ" },
+      { unit: "U2L1", eng: "start", my: "စတင်သည်" },
+      { unit: "U2L1", eng: "is over", my: "ပြီးဆုံးသည်" },
+      { unit: "U2L1", eng: "next to", my: "ကပ်လျက်ဖြစ်သော" },
+      { unit: "U2L1", eng: "journals", my: "ဂျာနယ်များ" },
+      { unit: "U2L1", eng: "attend", my: "တက်ရောက်သည်" },
+      { unit: "U2L1", eng: "regularly", my: "အချိန်မှန်မှန်" },
+      { unit: "U2L1", eng: "late", my: "နောက်ကျသော" },
+      { unit: "U2L1", eng: "bring", my: "ယူလာသည်" },
+      { unit: "U2L1", eng: "large", my: "များပြားသော" },
+      { unit: "U2L1", eng: "sums", my: "ပမာဏ" },
+      { unit: "U2L1", eng: "valuable", my: "အဖိုးတန်သော" },
+      { unit: "U2L2", eng: "types", my: "အမျိုးအစားများ" },
+      { unit: "U2L2", eng: "schooldays", my: "ကျောင်းတက်ရက်များ" },
+      { unit: "U2L2", eng: "unhappy", my: "စိတ်မချမ်းသာသော" },
+      { unit: "U2L2", eng: "carefree", my: "အပူအပင်ကင်းသော" },
+      { unit: "U2L2", eng: "memorable", my: "အမှတ်တရဖြစ်သော" },
+      { unit: "U2L2", eng: "boring", my: "ငြီးငွေ့ဖွယ်ကောင်းသော" },
+      { unit: "U2L2", eng: "play", my: "ပါဝင်သည်" },
+      { unit: "U2L2", eng: "lives", my: "ဘဝများ" },
+      { unit: "U2L2", eng: "reach", my: "ရောက်ရှိသည်" },
+      { unit: "U2L2", eng: "send", my: "ပို့သည်/စေလွှတ်သည်" },
+      { unit: "U2L2", eng: "government", my: "အစိုးရ" },
+      { unit: "U2L2", eng: "private school", my: "ကိုယ်ပိုင်ကျောင်း" },
+      { unit: "U2L2", eng: "monastic school", my: "ဘုန်းတော်ကြီးသင်ကျောင်း" },
+      { unit: "U2L2", eng: "learn", my: "သင်ယူသည်" },
+      { unit: "U2L2", eng: "shape", my: "ပုံသဏ္ဌာန်" },
+      { unit: "U2L2", eng: "primary school", my: "မူလတန်းကျောင်း" },
+      { unit: "U2L2", eng: "mixed", my: "(ကျား/မ) ရောထားသော" },
+      { unit: "U2L2", eng: "street", my: "လမ်း" },
+      { unit: "U2L2", eng: "rather", my: "အတော်" },
+      { unit: "U2L2", eng: "strict", my: "စည်းကမ်းတင်းကျပ်သော" },
+      { unit: "U2L2", eng: "develop", my: "ဖွံ့ဖြိုးတိုးတက်စေသည်" },
+      { unit: "U2L2", eng: "fundamental", my: "အခြေခံကျသော" },
+      { unit: "U2L2", eng: "mathematics", my: "သင်္ချာ" },
+      { unit: "U2L2", eng: "formed", my: "ဖွဲ့စည်းဖြစ်ပေါ်စေသည်" },
+      { unit: "U2L2", eng: "solid", my: "ခိုင်မာတောင့်တင်းသော" },
+      { unit: "U2L2", eng: "foundation", my: "အခြေခံအုတ်မြစ်" },
+      { unit: "U2L2", eng: "favourite", my: "အကြိုက်ဆုံးဖြစ်သော" },
+      { unit: "U2L2", eng: "great", my: "အလွန်တော်သော" },
+      { unit: "U2L2", eng: "strengths", my: "အားသာချက်များ" },
+      { unit: "U2L2", eng: "weaknesses", my: "အားနည်းချက်များ" },
+      { unit: "U2L2", eng: "encouraged", my: "အားပေးသည်" },
+      { unit: "U2L2", eng: "won", my: "(ဆု)ရသည်" },
+      { unit: "U2L2", eng: "prize", my: "ဆု" },
+      { unit: "U2L2", eng: "essay competition", my: "စာစီစာကုံးပြိုင်ပွဲ" },
+      { unit: "U2L2", eng: "joy", my: "ပျော်ရွှင်မှု" },
+      { unit: "U2L2", eng: "inspiring", my: "အားတက်အောင် လှုံ့ဆော်ပေးတတ်သော" },
+      { unit: "U2L2", eng: "secondary education", my: "အလယ်တန်းပညာရေး" },
+      { unit: "U2L2", eng: "all-girls school", my: "မိန်းကလေးကျောင်း" },
+      { unit: "U2L2", eng: "compound", my: "ခြံဝင်း" },
+      { unit: "U2L2", eng: "dedicated", my: "စိတ်အားထက်သန်စွာ မြှုပ်နှံထားသော" },
+      { unit: "U2L2", eng: "excellent", my: "အလွန်ကောင်းသော" },
+      { unit: "U2L2", eng: "concept", my: "အယူအဆသဘောထား" },
+      { unit: "U2L2", eng: "simple", my: "လွယ်ကူရှင်းလင်းသော" },
+      { unit: "U2L2", eng: "example", my: "ဥပမာ" },
+      { unit: "U2L2", eng: "explained", my: "ရှင်းပြခဲ့သည်" },
+      { unit: "U2L2", eng: "step by step", my: "တစ်ဆင့်ပြီးတစ်ဆင့်" },
+      { unit: "U2L2", eng: "feedback", my: "အကြံပြု အကဲဖြတ်ပေးသည်" },
+      { unit: "U2L2", eng: "stern", my: "ခက်ထန်သော" },
+      { unit: "U2L2", eng: "truly", my: "အမှန်တကယ်" },
+      { unit: "U2L2", eng: "national museum", my: "အမျိုးသားပြတိုက်" },
+      { unit: "U2L2", eng: "people's park", my: "ပြည်သူ့ဥယျာဉ်" },
+      { unit: "U2L2", eng: "physically", my: "ရုပ်ပိုင်းဆိုင်ရာ" },
+      { unit: "U2L2", eng: "mentally", my: "စိတ်ပိုင်းဆိုင်ရာ" },
+      { unit: "U2L2", eng: "emotionally", my: "စိတ်လှုပ်ရှားစွာ" }
+          { unit: "U3", eng: "helps", my: "ကူညီသည်" },[span_20](start_span)[span_20](end_span)
+      { unit: "U3", eng: "reduce", my: "လျှော့ချပေးသည်" },[span_21](start_span)[span_21](end_span)
+      { unit: "U3", eng: "stress", my: "စိတ်ဖိစီးမှု" },[span_22](start_span)[span_22](end_span)
+      { unit: "U3", eng: "boost", my: "တိုးမြှင့်ပေးသည်" },[span_23](start_span)[span_23](end_span)
+      { unit: "U3", eng: "creativity", my: "ဖန်တီးနိုင်စွမ်း" },[span_24](start_span)[span_24](end_span)
+      { unit: "U3", eng: "hope", my: "မျှော်လင့်သည်" },[span_25](start_span)[span_25](end_span)
+      { unit: "U3", eng: "sooner or later", my: "အစောနဲ့အမြန်" },[span_26](start_span)[span_26](end_span)
+      { unit: "U3", eng: "different", my: "ကွဲပြားခြားနားသော" },[span_27](start_span)[span_27](end_span)
+      { unit: "U3", eng: "items", my: "ပစ္စည်းများ" },[span_28](start_span)[span_28](end_span)
+      { unit: "U3", eng: "clothing", my: "အဝတ်အစား" },[span_29](start_span)[span_29](end_span)
+      { unit: "U3", eng: "shawls", my: "တာဘတ်/ခြုံစောင်များ" },[span_30](start_span)[span_30](end_span)
+      { unit: "U3", eng: "socks", my: "ခြေအိတ်များ" },[span_31](start_span)[span_31](end_span)
+      { unit: "U3", eng: "sweaters", my: "ဆွယ်တာများ" },[span_32](start_span)[span_32](end_span)
+      { unit: "U3", eng: "music notes", my: "ဂီတကောက်တမာများ" },[span_33](start_span)[span_33](end_span)
+      { unit: "U3", eng: "songs", my: "သီချင်းများ" },[span_34](start_span)[span_34](end_span)
+      { unit: "U3", eng: "birthday present", my: "မွေးနေ့လက်ဆောင်" },[span_35](start_span)[span_35](end_span)
+      { unit: "U3", eng: "strings", my: "ကြိုးများ" },[span_36](start_span)[span_36](end_span)
+      { unit: "U3", eng: "bow", my: "တိုးတံ" },[span_37](start_span)[span_37](end_span)
+      { unit: "U3", eng: "orchestra", my: "သံစုံတီးဝိုင်း" },[span_38](start_span)[span_38](end_span)
+      { unit: "U3", eng: "melody", my: "တေးသွား" },[span_39](start_span)[span_39](end_span)
+      { unit: "U3", eng: "improve", my: "တိုးတက်စေသည်" },[span_40](start_span)[span_40](end_span)
+      { unit: "U3", eng: "memory", my: "မှတ်ဉာဏ်" },[span_41](start_span)[span_41](end_span)
+      { unit: "U3", eng: "social", my: "လူမှုရေးနှင့်ဆိုင်သော" },[span_42](start_span)[span_42](end_span)
+      { unit: "U3", eng: "professional", my: "ကျွမ်းကျင်ပိုင်နိုင်သော" },[span_43](start_span)[span_43](end_span)
+      { unit: "U3", eng: "violinist", my: "တယောသမား" },[span_44](start_span)[span_44](end_span)
+      { unit: "U3", eng: "grow up", my: "အရွယ်ရောက်သည်" },[span_45](start_span)[span_45](end_span)
+      { unit: "U3", eng: "weekend", my: "စနေတနင်္ဂနွေ" },[span_46](start_span)[span_46](end_span)
+      { unit: "U3", eng: "martial art", my: "သိုင်းပညာ" },[span_47](start_span)[span_47](end_span)
+      { unit: "U3", eng: "moves", my: "လှုပ်ရှားမှုများ" },[span_48](start_span)[span_48](end_span)
+      { unit: "U3", eng: "punches", my: "လက်သီးထိုးချက်များ" },[span_49](start_span)[span_49](end_span)
+      { unit: "U3", eng: "kicks", my: "ခြေကန်ချက်များ" },[span_50](start_span)[span_50](end_span)
+      { unit: "U3", eng: "reasons", my: "အကြောင်းရင်းများ" },[span_51](start_span)[span_51](end_span)
+      { unit: "U3", eng: "self-defence", my: "ကိုယ်ကိုကိုယ်ကာကွယ်ရေး" },[span_52](start_span)[span_52](end_span)
+      { unit: "U3", eng: "health", my: "ကျန်းမာရေး" },[span_53](start_span)[span_53](end_span)
+      { unit: "U3", eng: "leisure", my: "အားလပ်ချိန်" },[span_54](start_span)[span_54](end_span)
+      { unit: "U3", eng: "outfits", my: "ဝတ်စုံများ" },[span_55](start_span)[span_55](end_span)
+      { unit: "U3", eng: "belt", my: "ခါးပတ်" },[span_56](start_span)[span_56](end_span)
+      { unit: "U3", eng: "medals", my: "ဆုတံဆိပ်များ" },[span_57](start_span)[span_57](end_span)
+      { unit: "U3", eng: "prizes", my: "ဆုများ" },[span_58](start_span)[span_58](end_span)
+      { unit: "U3", eng: "muscles", my: "ကြွက်သားများ" },[span_59](start_span)[span_59](end_span)
+      { unit: "U3", eng: "build up", my: "တည်ဆောက်ပေးသည်" },[span_60](start_span)[span_60](end_span)
+      { unit: "U3", eng: "stamina", my: "သက်လုံကောင်းမှု" },[span_61](start_span)[span_61](end_span)
+      { unit: "U3", eng: "champion", my: "ချန်ပီယံ" },[span_62](start_span)[span_62](end_span)
+      { unit: "U3", eng: "scout", my: "ကင်းထောက်" },[span_63](start_span)[span_63](end_span)
+      { unit: "U3", eng: "several", my: "အတော်များသော" },[span_64](start_span)[span_64](end_span)
+      { unit: "U3", eng: "practical", my: "လက်တွေ့ပြုလုပ်ရသော" },[span_65](start_span)[span_65](end_span)
+      { unit: "U3", eng: "basic knots", my: "အခြေခံကြိုးထုံးနည်းများ" },[span_66](start_span)[span_66](end_span)
+      { unit: "U3", eng: "scout uniform", my: "ကင်းထောက်ယူနီဖောင်း" },[span_67](start_span)[span_67](end_span)
+      { unit: "U3", eng: "khaki shirt", my: "ကာကီရောင်ရှပ်အင်္ကျီ" },[span_68](start_span)[span_68](end_span)
+      { unit: "U3", eng: "neckerchief", my: "လည်စည်းပဝါ" },[span_69](start_span)[span_69](end_span)
+      { unit: "U3", eng: "blue pants", my: "ဘောင်းဘီအပြာ" },[span_70](start_span)[span_70](end_span)
+      { unit: "U3", eng: "go camping", my: "စခန်းချရန်ထွက်ခြင်း" },[span_71](start_span)[span_71](end_span)
+      { unit: "U3", eng: "sleeping bags", my: "အိပ်ရာလိပ်များ" },[span_72](start_span)[span_72](end_span)
+      { unit: "U3", eng: "put up", my: "တည်ဆောက်သည်" },[span_73](start_span)[span_73](end_span)
+      { unit: "U3", eng: "tents", my: "တဲများ" },[span_74](start_span)[span_74](end_span)
+      { unit: "U3", eng: "campsite", my: "စခန်းချမည့်နေရာ" },[span_75](start_span)[span_75](end_span)
+      { unit: "U3", eng: "confident", my: "ယုံကြည်မှုရှိသော" },[span_76](start_span)[span_76](end_span)
+      { unit: "U3", eng: "responsible", my: "တာဝန်သိသော" },[span_77](start_span)[span_77](end_span)
+      { unit: "U3", eng: "friendship", my: "ခင်မင်ရင်းနှီးမှု" },[span_78](start_span)[span_78](end_span)
+      { unit: "U3", eng: "season", my: "ရာသီ" },[span_79](start_span)[span_79](end_span)
+      { unit: "U3", eng: "at the foot of the mountain", my: "တောင်ခြေမှာ" },[span_80](start_span)[span_80](end_span)
+      { unit: "U3", eng: "golfer", my: "ဂေါ့ဖ်ရိုက်သမား" },[span_81](start_span)[span_81](end_span)
+      { unit: "U3", eng: "regarded", my: "သဘောထားသည်" },[span_82](start_span)[span_82](end_span)
+      { unit: "U3", eng: "contains", my: "ပါဝင်သည်" },[span_83](start_span)[span_83](end_span)
+      { unit: "U3", eng: "calcium", my: "ထုံးဓာတ်" },[span_84](start_span)[span_84](end_span)
+      { unit: "U3", eng: "wish", my: "ဆန္ဒရှိသည်" },[span_85](start_span)[span_85](end_span)
+      { unit: "U3", eng: "texts", my: "ရေးသားထားမှုများ" },[span_86](start_span)[span_86](end_span)
+      { unit: "U3", eng: "a piece of cheesecake", my: "ဒိန်ခဲမုန့်တစ်ခုတည်း" },[span_87](start_span)[span_87](end_span)
+      { unit: "U3", eng: "requests", my: "ပန်ကြားချက်များ" },[span_88](start_span)[span_88](end_span)
+      { unit: "U3", eng: "offers", my: "ကမ်းလှမ်းချက်များ" },[span_89](start_span)[span_89](end_span)
+      { unit: "U3", eng: "permission", my: "ခွင့်ပြုချက်" },[span_90](start_span)[span_90](end_span)
+      { unit: "U3", eng: "responses", my: "တုံ့ပြန်ပြောဆိုမှုများ" },[span_91](start_span)[span_91](end_span)
+      { unit: "U3", eng: "address", my: "နေရပ်လိပ်စာ" },[span_92](start_span)[span_92](end_span)
+      { unit: "U3", eng: "rice", my: "ထမင်း" },[span_93](start_span)[span_93](end_span)
+      { unit: "U3", eng: "bubble tea", my: "အမြှုပ်လက်ဖက်ရည်" },[span_94](start_span)[span_94](end_span)
+      { unit: "U3", eng: "decide", my: "ဆုံးဖြတ်သည်" },[span_95](start_span)[span_95](end_span)
+      { unit: "U3", eng: "function", my: "လုပ်ဆောင်ချက်" },[span_96](start_span)[span_96](end_span)
+      { unit: "U3", eng: "manager", my: "မန်နေဂျာ" },[span_97](start_span)[span_97](end_span)
+      { unit: "U3", eng: "papers", my: "စာရွက်များ" },[span_98](start_span)[span_98](end_span)
+      { unit: "U3", eng: "return", my: "ပြန်ပေးသည်" },[span_99](start_span)[span_99](end_span)
+      { unit: "U3", eng: "tomatoes", my: "ခရမ်းချဉ်သီးများ" },[span_100](start_span)[span_100](end_span)
+      { unit: "U3", eng: "washing machine", my: "အဝတ်လျှော်စက်" },[span_101](start_span)[span_101](end_span)
+      { unit: "U3", eng: "dessert", my: "အချိုပွဲ" },[span_102](start_span)[span_102](end_span)
+      { unit: "U3", eng: "fridge", my: "ရေခဲသေတ္တာ" },[span_103](start_span)[span_103](end_span)
+      { unit: "U3", eng: "ringing", my: "အသံမြည်နေသော" },[span_104](start_span)[span_104](end_span)
+      { unit: "U3", eng: "cousin", my: "ဝမ်းကွဲအစ်ကို/မောင်/အစ်မ" },[span_105](start_span)[span_105](end_span)
+      { unit: "U3", eng: "pass", my: "လွှဲပေးသည်" },[span_106](start_span)[span_106](end_span)
+      { unit: "U3", eng: "salt", my: "ဆား" },[span_107](start_span)[span_107](end_span)
+      { unit: "U3", eng: "visitor", my: "ဧည့်သည်" },[span_108](start_span)[span_108](end_span)
+      { unit: "U3", eng: "turn on", my: "(ခလုတ်)ဖွင့်သည်" },[span_109](start_span)[span_109](end_span)
+      { unit: "U3", eng: "fan", my: "ပန်ကာ" },[span_110](start_span)[span_110](end_span)
+      { unit: "U3", eng: "feeling well", my: "နေကောင်းသော" },[span_111](start_span)[span_111](end_span)
+      { unit: "U3", eng: "leave", my: "ထွက်ခွာသည်" },[span_112](start_span)[span_112](end_span)
+      { unit: "U3", eng: "try on", my: "စမ်းဝတ်ကြည့်သည်" },[span_113](start_span)[span_113](end_span)
+      { unit: "U3", eng: "blouse", my: "ဘလောက်အင်္ကျီ" },[span_114](start_span)[span_114](end_span)
+      { unit: "U3", eng: "going shopping", my: "ဈေးဝယ်ထွက်ခြင်း" },[span_115](start_span)[span_115](end_span)
+      { unit: "U3", eng: "cheeseburger", my: "ဒိန်ခဲဘာဂါ" },[span_116](start_span)[span_116](end_span)
+      { unit: "U3", eng: "refusing", my: "ငြင်းပယ်ခြင်း" },[span_117](start_span)[span_117](end_span)
+      { unit: "U3", eng: "menu", my: "စာသောက်ဖွယ်စာရင်း" },[span_118](start_span)[span_118](end_span)
+      { unit: "U3", eng: "prepare", my: "အသင့်ပြင်ဆင်သည်" },[span_119](start_span)[span_119](end_span)
+      { unit: "U4", eng: "play", my: "တီးမှုတ်သည်" },[span_120](start_span)[span_120](end_span)
+      { unit: "U4", eng: "band", my: "တီးဝိုင်း" },[span_121](start_span)[span_121](end_span)
+      { unit: "U4", eng: "discuss", my: "ဆွေးနွေးသည်" },[span_122](start_span)[span_122](end_span)
+      { unit: "U4", eng: "groups", my: "အုပ်စုများ" },[span_123](start_span)[span_123](end_span)
+      { unit: "U4", eng: "musical instruments", my: "တူရိယာများ" },[span_124](start_span)[span_124](end_span)
+      { unit: "U4", eng: "wind instruments", my: "လေမှုတ်တူရိယာများ" },[span_125](start_span)[span_125](end_span)
+      { unit: "U4", eng: "percussion instruments", my: "တီးခတ်တူရိယာများ" },[span_126](start_span)[span_126](end_span)
+      { unit: "U4", eng: "produce", my: "ထုတ်လုပ်သည်" },[span_127](start_span)[span_127](end_span)
+      { unit: "U4", eng: "blow", my: "လေမှုတ်သွင်းသည်" },[span_128](start_span)[span_128](end_span)
+      { unit: "U4", eng: "wood", my: "သစ်သား" },[span_129](start_span)[span_129](end_span)
+      { unit: "U4", eng: "brass", my: "ကြေး(တူရိယာ)" },[span_130](start_span)[span_130](end_span)
+      { unit: "U4", eng: "flute", my: "ပလွေ" },[span_131](start_span)[span_131](end_span)
+      { unit: "U4", eng: "clarinet", my: "ကလာရီနက်" },[span_132](start_span)[span_132](end_span)
+      { unit: "U4", eng: "trumpet", my: "ခရာ" },[span_133](start_span)[span_133](end_span)
+      { unit: "U4", eng: "trombone", my: "သံစုံခရာ" },[span_134](start_span)[span_134](end_span)
+      { unit: "U4", eng: "saxophone", my: "ကြေးလေမှုတ်တူရိယာ" },[span_135](start_span)[span_135](end_span)
+      { unit: "U4", eng: "sounds", my: "အသံများ" },[span_136](start_span)[span_136](end_span)
+      { unit: "U4", eng: "struck", my: "ရိုက်သည်၊ ခတ်သည်" },[span_137](start_span)[span_137](end_span)
+      { unit: "U4", eng: "beaten", my: "ရိုက်ခတ်သည်" },[span_138](start_span)[span_138](end_span)
+      { unit: "U4", eng: "drumsticks", my: "ဒရမ်တီးတုတ်ချောင်းများ" },[span_139](start_span)[span_139](end_span)
+      { unit: "U4", eng: "bass drum", my: "ဘယ်သံထွက်ဒရမ်" },[span_140](start_span)[span_140](end_span)
+      { unit: "U4", eng: "side drum", my: "ဘယ်သံထွက်ဒရမ်" },[span_141](start_span)[span_141](end_span)
+      { unit: "U4", eng: "cymbals", my: "လင်းကွင်း" },[span_142](start_span)[span_142](end_span)
+      { unit: "U4", eng: "triangle", my: "ကြိမ်ပုံတူရိယာ" },[span_143](start_span)[span_143](end_span)
+      { unit: "U4", eng: "metal bar", my: "သတ္တုဘားတန်းလေး" },[span_144](start_span)[span_144](end_span)
+      { unit: "U4", eng: "shake", my: "လှုပ်ခတ်သည်" },[span_145](start_span)[span_145](end_span)
+      { unit: "U4", eng: "tambourine", my: "ချိုတဗုံ" },[span_146](start_span)[span_146](end_span)
+      { unit: "U4", eng: "major mace", my: "အဓိကဖြစ်သောကျောင်း" },[span_147](start_span)[span_147](end_span)
+      { unit: "U4", eng: "conductor", my: "တီးမှူး" },[span_148](start_span)[span_148](end_span)
+      { unit: "U4", eng: "events", my: "ပွဲစဉ်များ" },[span_149](start_span)[span_149](end_span)
+      { unit: "U4", eng: "soft drinks", my: "အချိုရည်များ" },[span_150](start_span)[span_150](end_span)
+      { unit: "U4", eng: "tidiness", my: "သန့်ရှင်းသပ်ရပ်မှု" },[span_151](start_span)[span_151](end_span)
+      { unit: "U4", eng: "scientific", my: "သိပ္ပံနည်းကျသော" },[span_152](start_span)[span_152](end_span)
+      { unit: "U4", eng: "experiments", my: "လက်တွေ့စမ်းသပ်မှုများ" },[span_153](start_span)[span_153](end_span)
+      { unit: "U4", eng: "closed", my: "ပိတ်ထားသော" },[span_154](start_span)[span_154](end_span)
+      { unit: "U4", eng: "patient", my: "သည်းခံစိတ်ရှိသော" },[span_155](start_span)[span_155](end_span)
+      { unit: "U4", eng: "understanding", my: "နားလည်မှုရှိသော" },[span_156](start_span)[span_156](end_span)
+      { unit: "U4", eng: "friendly", my: "ဖော်ရွေသော" },[span_157](start_span)[span_157](end_span)
+      { unit: "U4", eng: "nephew", my: "တူ" },[span_158](start_span)[span_158](end_span)
+      { unit: "U4", eng: "pigeons", my: "ခိုများ" },[span_159](start_span)[span_159](end_span)
+      { unit: "U4", eng: "vegetarian", my: "သတ်သတ်လွတ်စားသူ" },[span_160](start_span)[span_160](end_span)
+      { unit: "U4", eng: "meat", my: "အသား" },[span_161](start_span)[span_161](end_span)
+      { unit: "U4", eng: "normally", my: "ပုံမှန်အားဖြင့်" },[span_162](start_span)[span_162](end_span)
+      { unit: "U4", eng: "stingy", my: "ကပ်စေးနှဲသော" },[span_163](start_span)[span_163](end_span)
+      { unit: "U4", eng: "grandpa", my: "အဘိုး" },[span_164](start_span)[span_164](end_span)
+      { unit: "U4", eng: "except", my: "မှတပါး" },[span_165](start_span)[span_165](end_span)
+      { unit: "U4", eng: "independent", my: "ကိုယ်အားကိုယ်ကိုးတတ်သော" },[span_166](start_span)[span_166](end_span)
+      { unit: "U4", eng: "located", my: "တည်ရှိသည်" },[span_167](start_span)[span_167](end_span)
+      { unit: "U4", eng: "manners", my: "အမူအရာများ" },[span_168](start_span)[span_168](end_span)
+      { unit: "U4", eng: "respect", my: "ရိုသေလေးစားမှု" },[span_169](start_span)[span_169](end_span)
+      { unit: "U4", eng: "protect", my: "ကာကွယ်သည်" },[span_170](start_span)[span_170](end_span)
+      { unit: "U4", eng: "scored", my: "ဂိုးသွင်းသည်" },[span_171](start_span)[span_171](end_span)
+      { unit: "U4", eng: "firm", my: "ခိုင်မြဲသော" },[span_172](start_span)[span_172](end_span)
+      { unit: "U4", eng: "determination", my: "သန္ဓိဋ္ဌာန်(ဆုံးဖြတ်ချက်)" },[span_173](start_span)[span_173](end_span)
+      { unit: "U4", eng: "identity card", my: "စိစစ်ရေးကတ်" },[span_174](start_span)[span_174](end_span)
+      { unit: "U4", eng: "Red Cross", my: "ကြက်ခြေနီအသင်း" },[span_175](start_span)[span_175](end_span)
+      { unit: "U4", eng: "switch off", my: "(လွှတ်)ပိတ်သည်" },[span_176](start_span)[span_176](end_span)
+      { unit: "U4", eng: "map", my: "မြေပုံ" },[span_177](start_span)[span_177](end_span)
+      { unit: "U4", eng: "Opening Ceremony", my: "ဖွင့်ပွဲအခမ်းအနား" },[span_178](start_span)[span_178](end_span)
+      { unit: "U4", eng: "urgently need", my: "အရေးတကြီးလိုအပ်နေသည်" },[span_179](start_span)[span_179](end_span)
+      { unit: "U4", eng: "Township Football Tournament", my: "မြို့နယ်ဘောလုံးပြိုင်ပွဲ" },[span_180](start_span)[span_180](end_span)
+      { unit: "U4", eng: "puts on weight", my: "ကိုယ်အလေးချိန်တက်လာသည်" },[span_181](start_span)[span_181](end_span)
+      { unit: "U4", eng: "woollen covers", my: "သိုးမွေးစောင်များ" },[span_182](start_span)[span_182](end_span)
+      { unit: "U4", eng: "plays the flute", my: "ပလွေမှုတ်သည်" },[span_183](start_span)[span_183](end_span)
+      { unit: "U4", eng: "pocket money", my: "မုန့်ဖိုး" },[span_184](start_span)[span_184](end_span)
+      { unit: "U4", eng: "except in an emergency", my: "အရေးပေါ်ကိစ္စမှတပါး" },[span_185](start_span)[span_185](end_span)
+      { unit: "U4", eng: "language skills competitions", my: "ဘာသာစကားကျွမ်းကျင်မှုပြိုင်ပွဲ" },[span_186](start_span)[span_186](end_span)
+      { unit: "U4", eng: "winning goal", my: "အနိုင်ဂိုး" },[span_187](start_span)[span_187](end_span)
+      { unit: "U4", eng: "turn the volume down", my: "အသံတိုးလိုက်သည်" }[span_188](start_span)[span_188](end_span)
+  
+      { unit: "Poem1", eng: "vowels", my: "သရများ (a, e, i, o, u)" },[span_1](start_span)[span_1](end_span)
+      { unit: "Poem1", eng: "little", my: "သေးငယ်သော" },[span_2](start_span)[span_2](end_span)
+      { unit: "Poem1", eng: "airy", my: "လေနှင့်တူသော" },[span_3](start_span)[span_3](end_span)
+      { unit: "Poem1", eng: "creatures", my: "သတ္တဝါများ" },[span_4](start_span)[span_4](end_span)
+      { unit: "Poem1", eng: "different", my: "ကွဲပြားခြားနားသော" },[span_5](start_span)[span_5](end_span)
+      { unit: "Poem1", eng: "voice", my: "အသံ" },[span_6](start_span)[span_6](end_span)
+      { unit: "Poem1", eng: "features", my: "အင်္ဂါရပ်များ" },[span_7](start_span)[span_7](end_span)
+      { unit: "Poem1", eng: "glass", my: "မှန်ခွက်" },[span_8](start_span)[span_8](end_span)
+      { unit: "Poem1", eng: "find", my: "ရှာတွေ့သည်" },[span_9](start_span)[span_9](end_span)
+      { unit: "Poem1", eng: "set", my: "မပြောင်းလဲဘဲရှိနေသော" },[span_10](start_span)[span_10](end_span)
+      { unit: "Poem1", eng: "jet", my: "ဂျက်လေယာဉ်" },[span_11](start_span)[span_11](end_span)
+      { unit: "Poem1", eng: "see", my: "မြင်သည်" },[span_12](start_span)[span_12](end_span)
+      { unit: "Poem1", eng: "tin", my: "သံဗူး" },[span_13](start_span)[span_13](end_span)
+      { unit: "Poem1", eng: "the fourth", my: "စတုတ္ထမြောက်အရာ" },[span_14](start_span)[span_14](end_span)
+      { unit: "Poem1", eng: "box", my: "သေတ္တာ" },[span_15](start_span)[span_15](end_span)
+      { unit: "Poem1", eng: "within", my: "အတွင်းမှာ" },[span_16](start_span)[span_16](end_span)
+      { unit: "Poem1", eng: "the fifth", my: "ပဉ္စမမြောက်အရာ" },[span_17](start_span)[span_17](end_span)
+      { unit: "Poem1", eng: "pursue", my: "လိုက်ဖမ်းသည်" },[span_18](start_span)[span_18](end_span)
+      { unit: "Poem1", eng: "never", my: "ဘယ်တော့မှမလုပ်" },[span_19](start_span)[span_19](end_span)
+      { unit: "Poem1", eng: "fly", my: "ပျံသန်းသည်" },[span_20](start_span)[span_20](end_span)
+      { unit: "Poem1", eng: "T'other (The other)", my: "အခြားတစ်ဖက်" },[span_21](start_span)[span_21](end_span)
+      { unit: "Poem1", eng: "may see", my: "မြင်နိုင်သည်" },[span_22](start_span)[span_22](end_span)
+      { unit: "Poem1", eng: "letter", my: "စာစာလုံး" },[span_23](start_span)[span_23](end_span)
+      { unit: "Poem1", eng: "alphabet", my: "အက္ခရာ" },[span_24](start_span)[span_24](end_span)
+      { unit: "Poem1", eng: "faster", my: "ပို၍မြန်သော" },[span_25](start_span)[span_25](end_span)
+      { unit: "Poem1", eng: "propellers", my: "ပန်ကာလက်များ" },[span_26](start_span)[span_26](end_span)
+      { unit: "Poem1", eng: "last line", my: "နောက်ဆုံးစာကြောင်း" },[span_27](start_span)[span_27](end_span)
+      { unit: "Poem1", eng: "refer to", my: "ရည်ညွှန်းသည်" },[span_28](start_span)[span_28](end_span)
+      { unit: "Poem1", eng: "loud", my: "ကျယ်လောင်သော" },[span_29](start_span)[span_29](end_span)
+      { unit: "Poem1", eng: "clear", my: "ရှင်းလင်းသော" },[span_30](start_span)[span_30](end_span)
+      { unit: "Poem1", eng: "lost", my: "ပျောက်ဆုံးသည်" },[span_31](start_span)[span_31](end_span)
+      { unit: "Poem1", eng: "anywhere", my: "ဘယ်နေရာမဆို" },[span_32](start_span)[span_32](end_span)
+      { unit: "Poem1", eng: "although", my: "သော်လည်း" },[span_33](start_span)[span_33](end_span)
+      { unit: "Poem1", eng: "twins", my: "အမြွှာများ" },[span_34](start_span)[span_34](end_span)
+      { unit: "Poem1", eng: "looks", my: "တူသည်" },[span_35](start_span)[span_35](end_span)
+      { unit: "Poem1", eng: "personality", my: "ပင်ကိုစရိုက်" },[span_36](start_span)[span_36](end_span)
+      { unit: "Poem1", eng: "rhyming pairs", my: "အသံတူစကားလုံးတွဲများ" },[span_37](start_span)[span_37](end_span)
+            { unit: "Poem1", eng: "ends", my: "အဆုံးသတ်သည်" }
     ];
 
-    // Sequential Questions List
-    const fillQuestions = [
-      { sentence: "We must __________ our natural environment.", ans: "protect", hint: "ကာကွယ်သည်" },
-      { sentence: "A knife cuts easily because of smaller __________.", ans: "surface area", hint: "မျက်နှာပြင်ဧရိယာ" },
-      { sentence: "Scientists do an __________ to find facts.", ans: "experiment", hint: "စမ်းသပ်မှု" },
-      { sentence: "Air __________ decreases at high altitudes.", ans: "pressure", hint: "ဖိအား" },
-      { sentence: "Trees absorb carbon dioxide from the __________.", ans: "atmosphere", hint: "လေထု" },
-      { sentence: "Water __________ turns liquid into gas.", ans: "evaporation", hint: "အငွေ့ပျံခြင်း" },
-      { sentence: "We should prevent __________ to save forests.", ans: "deforestation", hint: "သစ်တောပြုန်းတီးခြင်း" },
-      { sentence: "Plastic creates environmental __________.", ans: "pollution", hint: "ညစ်ညမ်းမှု" },
-      { sentence: "Education gives us useful __________.", ans: "knowledge", hint: "အသိပညာ" },
-      { sentence: "The __________ of the experiment was positive.", ans: "result", hint: "ရလဒ်" }
-    ];
-          let blankIndex = 0;
-    let fixIndex = 0;
+    let filteredData = [...vocabData];
+    let currentIndex = 0;
     let userXP = parseInt(localStorage.getItem('userXP') || '0');
 
-    // Timer Logic
-    let timerSeconds = 1500;
-    let timerInterval = null;
+    document.getElementById('xp').innerText = userXP;
+    document.getElementById('rank-xp').innerText = userXP;
 
-    function renderVocabList() {
-      const container = document.getElementById('vocab-container');
-      container.innerHTML = '';
-      vocabList.forEach(v => {
-        container.innerHTML += `
-          <div class="vocab-row">
-            <strong style="color: var(--accent);">${v.eng}</strong>
-            <span>${v.my}</span>
-          </div>
-        `;
+    function renderVocab() {
+      const box = document.getElementById('vocab-list-box');
+      box.innerHTML = '';
+      filteredData.forEach(v => {
+        box.innerHTML += `<div class="vocab-row"><strong style="color:var(--accent);">${v.eng}</strong><span>${v.my}</span></div>`;
       });
+    }
+
+    function changeUnit() {
+      const selectedUnit = document.getElementById('unit-select').value;
+      if (selectedUnit === 'all') {
+        filteredData = [...vocabData];
+      } else {
+        filteredData = vocabData.filter(v => v.unit === selectedUnit);
+      }
+      currentIndex = 0;
+      renderVocab();
+      loadQuestion();
     }
 
     function filterVocab() {
-      const q = document.getElementById('search-vocab').value.toLowerCase();
+      const keyword = document.getElementById('search').value.toLowerCase();
       const rows = document.querySelectorAll('.vocab-row');
-      rows.forEach(row => {
-        const text = row.innerText.toLowerCase();
-        row.style.display = text.includes(q) ? 'flex' : 'none';
+      rows.forEach(r => {
+        r.style.display = r.innerText.toLowerCase().includes(keyword) ? 'flex' : 'none';
       });
     }
 
-    function updateUI() {
-      document.getElementById('xp').innerText = userXP;
-      document.getElementById('rank-xp').innerText = userXP;
-      document.getElementById('level-title').innerText = `Level ${Math.floor(userXP / 50) + 1} Student`;
-
-      // Fill in the Blanks
-      const bQ = fillQuestions[blankIndex];
-      document.getElementById('blank-counter').innerText = `Question ${blankIndex + 1} of ${fillQuestions.length}`;
-      document.getElementById('blank-q').innerText = bQ.sentence;
-      document.getElementById('blank-ans').value = '';
-      document.getElementById('blank-feedback').innerText = '';
-
-      // Fix Mode
-      const fixQ = vocabList[fixIndex];
-      document.getElementById('fix-wrong-word').innerText = fixQ.wrongEng;
-      document.getElementById('fix-hint').innerText = `အဓိပ္ပာယ်: ${fixQ.my}`;
-      document.getElementById('fix-ans').value = '';
-      document.getElementById('fix-feedback').innerText = '';
+    function loadQuestion() {
+      if (filteredData.length === 0) {
+        document.getElementById('q-word').innerText = "ဒီ သင်ခန်းစာ မှာ စာလုံးမရှိသေးပါ";
+        return;
+      }
+      const current = filteredData[currentIndex];
+      document.getElementById('counter').innerText = `Word ${currentIndex + 1} of ${filteredData.length}`;
+      document.getElementById('q-word').innerText = `"${current.my}"`;
+      document.getElementById('ans-eng').value = '';
+      document.getElementById('ans-my').value = '';
+      document.getElementById('feedback').innerText = '';
     }
 
-    function checkBlankAnswer() {
-      const input = document.getElementById('blank-ans').value.trim().toLowerCase();
-      const bQ = fillQuestions[blankIndex];
-      const fb = document.getElementById('blank-feedback');
+    function checkAnswer() {
+      if (filteredData.length === 0) return;
+      const uEng = document.getElementById('ans-eng').value.trim().toLowerCase();
+      const uMy = document.getElementById('ans-my').value.trim();
+      const current = filteredData[currentIndex];
+      const fb = document.getElementById('feedback');
 
-      if (input === bQ.ans.toLowerCase()) {
-        fb.className = 'feedback correct';
-        fb.innerText = '✅ မှန်ကန်ပါသည်! +10 XP ရရှိသည်!';
+      if (uEng === current.eng.toLowerCase() && uMy.includes(current.my)) {
+        fb.className = "feedback correct";
+        fb.innerText = "✅ မှန်ကန်ပါသည်! +10 XP ရရှိသည်!";
         userXP += 10;
         localStorage.setItem('userXP', userXP);
+        document.getElementById('xp').innerText = userXP;
+        document.getElementById('rank-xp').innerText = userXP;
+
         setTimeout(() => {
-          blankIndex = (blankIndex + 1) % fillQuestions.length;
-          updateUI();
+          currentIndex = (currentIndex + 1) % filteredData.length;
+          loadQuestion();
         }, 1200);
       } else {
-        fb.className = 'feedback wrong';
-        fb.innerText = `❌ မှားယွင်းပါသည်! အမှန်မှာ: ${bQ.ans}`;
+        fb.className = "feedback wrong";
+        fb.innerText = `❌ မှားနေပါသည်! အမှန်မှာ: ${current.eng} (${current.my})`;
       }
     }
 
-    function checkFixAnswer() {
-      const input = document.getElementById('fix-ans').value.trim().toLowerCase();
-      const fixQ = vocabList[fixIndex];
-      const fb = document.getElementById('fix-feedback');
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      if(tabId === 'vocab') document.querySelectorAll('.tab-btn')[0].classList.add('active');
+      if(tabId === 'practice') document.querySelectorAll('.tab-btn')[1].classList.add('active');
+      if(tabId === 'rank') document.querySelectorAll('.tab-btn')[2].classList.add('active');
 
-      if (input === fixQ.eng.toLowerCase()) {
-        fb.className = 'feedback correct';
-        fb.innerText = '✅ စာလုံးပေါင်း တိကျစွာ ပြင်နိုင်ခဲ့သည်! +10 XP ရရှိသည်!';
-        userXP += 10;
-        localStorage.setItem('userXP', userXP);
-        setTimeout(() => {
-          fixIndex = (fixIndex + 1) % vocabList.length;
-          updateUI();
-        }, 1200);
-      } else {
-        fb.className = 'feedback wrong';
-        fb.innerText = `❌ မှားနေသေးသည်! အမှန်မှာ: ${fixQ.eng}`;
-      }
+      document.getElementById(tabId).classList.add('active');
     }
 
-    function toggleTimer() {
-      const btn = document.getElementById('timer-btn');
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        btn.innerText = 'Resume Study Session';
-      } else {
-        btn.innerText = 'Pause Timer';
-        timerInterval = setInterval(() => {
-          timerSeconds--;
-          let m = Math.floor(timerSeconds / 60);
-          let s = timerSeconds % 60;
-          document.getElementById('timer-display').innerText = `${m < 10 ? '0':''}${m}:${s < 10 ? '0':''}${s}`;
-
-          if (timerSeconds <= 0) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            userXP += 20;
-            localStorage.setItem('userXP', userXP);
-            alert('🎉 25 မိနစ် စာကျက်ချိန် ပြည့်သွားပါပြီ! Bonus +20 XP ရရှိပါသည်!');
-            updateUI();
-          }
-        }, 1000);
-      }
-    }
-
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-      const tabs = ['vocab', 'blanks', 'fix', 'pomo', 'ranks'];
-      const index = tabs.indexOf(tabName);
-      if (index !== -1) {
-        document.querySelectorAll('.tab-btn')[index].classList.add('active');
-        document.getElementById(`${tabName}-tab`).classList.add('active');
-      }
-    }
-
-    renderVocabList();
-    updateUI();
+    renderVocab();
+    loadQuestion();
   </script>
 </body>
 </html>
+
+    
