@@ -97,10 +97,9 @@
   <div id="practice" class="tab-content">
     <div class="card">
       <div style="font-size: 0.85rem; color: var(--accent);" id="counter">Word 1</div>
-      <div class="question" id="q-word">Loading...</div>
+      <div class="question" id="q-word" style="white-space: pre-line;">Loading...</div>
       
-      <input type="text" id="ans-eng" class="input-box" placeholder="1. အင်္ဂလိပ်စာလုံးပေါင်း" autocomplete="off">
-      <input type="text" id="ans-my" class="input-box" placeholder="2. မြန်မာအဓိပ္ပာယ်" autocomplete="off">
+      <input type="text" id="ans-single" class="input-box" placeholder="အဖြေရိုက်ထည့်ရန်..." autocomplete="off">
       
       <button class="btn" onclick="checkAnswer()">Submit Answer</button>
       <div id="feedback" class="feedback"></div>
@@ -122,8 +121,9 @@
     const tg = window.Telegram?.WebApp;
     if (tg) tg.expand();
 
-    // ဓာတ်ပုံများအားလုံးမှ စုစည်းထားသော Data အပြည့်အစုံ
-    const vocabData = [ // Unit 1 - Lesson 1 (Page 10 - 11)
+    // စာအုပ်ပါ ဝေါဟာရ အချက်အလက် အားလုံး (Unit 1 မှ Poem 1 အထိ)
+    const vocabData = [
+      // Unit 1 - Lesson 1 (Page 10 - 11)
       { unit: "U1L1", eng: "habits", my: "အလေ့အကျင့်များ" },
       { unit: "U1L1", eng: "choke", my: "အသက်ရှူကျပ်သည်" },
       { unit: "U1L1", eng: "digestion", my: "အစားကိုကြေစေခြင်း" },
@@ -325,7 +325,7 @@
       { unit: "U1L3", eng: "Take this medicine", my: "ဒီဆေးကိုသောက်" },
       { unit: "U1L3", eng: "Olympic Games", my: "အိုလံပစ်အားကစားပြိုင်ပွဲများ" },
       { unit: "U1L3", eng: "go to the cinema", my: "ရုပ်ရှင်သွားကြည့်သည်" },
-        { unit: "U1L3", eng: "in the correct order", my: "အစီအစဉ်မှန်အောင်" },
+      { unit: "U1L3", eng: "in the correct order", my: "အစီအစဉ်မှန်အောင်" },
 
       // Unit 1 - Lesson 4 (Page 20 - 22)
       { unit: "U1L4", eng: "civil engineer", my: "မြို့ပြအင်ဂျင်နီယာ" },
@@ -343,7 +343,7 @@
       { unit: "U1L4", eng: "protective", my: "အကာအကွယ်ပေးနိုင်သော" },
       { unit: "U1L4", eng: "clothing", my: "အဝတ်အစား" },
       { unit: "U1L4", eng: "inspect", my: "စစ်ဆေးသည်" },
-      { unit: "U1L4", eng: "puts on", my: "ဝတ်ဆင်သည်" },
+         { unit: "U1L4", eng: "puts on", my: "ဝတ်ဆင်သည်" },
       { unit: "U1L4", eng: "worksite", my: "လုပ်ငန်းခွင်" },
       { unit: "U1L4", eng: "safety", my: "ဘေးကင်းလုံခြုံမှု" },
       { unit: "U1L4", eng: "jacket", my: "အပေါ်အင်္ကျီဂျာကင်" },
@@ -554,7 +554,8 @@
       { unit: "U3", eng: "refusing", my: "ငြင်းပယ်ခြင်း" },
       { unit: "U3", eng: "menu", my: "စားသောက်ဖွယ်စာရင်း" },
       { unit: "U3", eng: "prepare", my: "အသင့်ပြင်ဆင်သည်" },
-    // Unit 4 (Page 45 - 48)
+
+      // Unit 4 (Page 45 - 48)
       { unit: "U4", eng: "play", my: "တီးမှုတ်သည်" },
       { unit: "U4", eng: "band", my: "တီးဝိုင်း" },
       { unit: "U4", eng: "discuss", my: "ဆွေးနွေးသည်" },
@@ -663,12 +664,13 @@
       { unit: "Poem1", eng: "looks", my: "တူသည်" },
       { unit: "Poem1", eng: "personality", my: "ပင်ကိုစရိုက်" },
       { unit: "Poem1", eng: "rhyming pairs", my: "အသံတူစကားလုံးတွဲများ" },
-      { unit: "Poem1", eng: "ends", my: "အဆုံးသတ်သည်" }
-    ];
+      { unit: "Poem1", eng: "ends", my: "အဆုံးသတ်သည်" }  ];
 
     let filteredData = [...vocabData];
     let currentIndex = 0;
     let userXP = parseInt(localStorage.getItem('userXP') || '0');
+    let currentQuestionType = 'my_to_eng'; 
+    let activeQuestionItem = null;
 
     document.getElementById('xp').innerText = userXP;
     document.getElementById('rank-xp').innerText = userXP;
@@ -706,22 +708,40 @@
         document.getElementById('q-word').innerText = "ဒီ သင်ခန်းစာ မှာ စာလုံးမရှိသေးပါ";
         return;
       }
-      const current = filteredData[currentIndex];
+      activeQuestionItem = filteredData[currentIndex];
+      currentQuestionType = Math.random() < 0.5 ? 'my_to_eng' : 'eng_to_my';
+
       document.getElementById('counter').innerText = `Word ${currentIndex + 1} of ${filteredData.length}`;
-      document.getElementById('q-word').innerText = `"${current.my}"`;
-      document.getElementById('ans-eng').value = '';
-      document.getElementById('ans-my').value = '';
+      
+      if (currentQuestionType === 'my_to_eng') {
+        document.getElementById('q-word').innerText = `မြန်မာလို: "${activeQuestionItem.my}"\n(အင်္ဂလိပ်လို ဖြေပါ)`;
+      } else {
+        document.getElementById('q-word').innerText = `English: "${activeQuestionItem.eng}"\n(မြန်မာလို ဖြေပါ)`;
+      }
+
+      document.getElementById('ans-single').value = '';
       document.getElementById('feedback').innerText = '';
     }
 
     function checkAnswer() {
-      if (filteredData.length === 0) return;
-      const uEng = document.getElementById('ans-eng').value.trim().toLowerCase();
-      const uMy = document.getElementById('ans-my').value.trim();
-      const current = filteredData[currentIndex];
+      if (!activeQuestionItem) return;
+      const userAns = document.getElementById('ans-single').value.trim().toLowerCase();
       const fb = document.getElementById('feedback');
 
-      if (uEng === current.eng.toLowerCase() && uMy.includes(current.my)) {
+      let isCorrect = false;
+
+      if (currentQuestionType === 'my_to_eng') {
+        if (userAns === activeQuestionItem.eng.toLowerCase()) {
+          isCorrect = true;
+        }
+      } else {
+        const correctMy = activeQuestionItem.my.toLowerCase();
+        if (userAns.length > 0 && correctMy.includes(userAns)) {
+          isCorrect = true;
+        }
+      }
+
+      if (isCorrect) {
         fb.className = "feedback correct";
         fb.innerText = "✅ မှန်ကန်ပါသည်! +10 XP ရရှိသည်!";
         userXP += 10;
@@ -735,7 +755,7 @@
         }, 1200);
       } else {
         fb.className = "feedback wrong";
-        fb.innerText = `❌ မှားနေပါသည်! အမှန်မှာ: ${current.eng} (${current.my})`;
+        fb.innerText = `❌ မှားနေပါသည်! အမှန်မှာ: Eng: ${activeQuestionItem.eng} | My: ${activeQuestionItem.my}`;
       }
     }
 
