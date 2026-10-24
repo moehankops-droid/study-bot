@@ -117,7 +117,7 @@
       margin-bottom: 15px;
     }
 
-    /* PROFILE HEADER (CARD SKETCH MATCH) */
+    /* PROFILE CARD */
     .profile-card {
       background: linear-gradient(135deg, #1c2331, #141720);
       border: 1px solid rgba(0, 210, 255, 0.2);
@@ -320,7 +320,7 @@
   <!-- APP BODY -->
   <div class="app-body">
     
-    <!-- TAB 1: HOME DASHBOARD (EXACT SKETCH LAYOUT) -->
+    <!-- TAB 1: HOME DASHBOARD -->
     <div id="home" class="tab-content active">
       
       <!-- PROFILE CARD BANNER -->
@@ -368,7 +368,7 @@
 
     </div>
 
-    <!-- TAB 2: ESSAY GUIDE (NO QUIZ / TUTORIAL ONLY) -->
+    <!-- TAB 2: ESSAY GUIDE -->
     <div id="essay-guide" class="tab-content">
       <div class="card">
         <h2 style="margin-top:0; color: var(--accent);">📝 Grade 8 Essay ရေးသားနည်း</h2>
@@ -432,13 +432,13 @@
       </div>
     </div>
 
-    <!-- TAB 4: 12 TENSES MODULE (EXPLANATION + 20 LEVELS) -->
+    <!-- TAB 4: 12 TENSES MODULE -->
     <div id="tense-module" class="tab-content">
       <div class="card">
         <button onclick="switchTab('home', document.querySelectorAll('.nav-item')[0])" style="background:none; border:none; color:var(--accent); font-size:13px; cursor:pointer; margin-bottom:10px;">⬅️ Home သို့ပြန်သွားရန်</button>
         <h2 style="margin:0; color:#fff;">📘 12 Tenses လေ့လာရန်</h2>
 
-                <!-- EXPLANATION ACCORDION (12 TENSES FULL) -->
+        <!-- EXPLANATION ACCORDION (12 TENSES FULL) -->
         <div style="margin-top: 15px;">
           <div class="guide-box">
             <div class="guide-title">1. Present Simple Tense</div>
@@ -500,9 +500,14 @@
             <div class="guide-desc"><strong>Formula:</strong> Subject + will + have + been + V-ing<br><strong>သုံးစွဲပုံ:</strong> အနာဂတ် အချိန်တစ်ခုအထိ ဆက်တိုက် လုပ်ဆောင်နေလိမ့်မည်ဟု ဖော်ပြရန်။</div>
           </div>
         </div>
-        
 
-    <!-- TAB 5: VERB FORM MODULE (EXPLANATION + 30 LEVELS) -->
+        <h3 style="color:#fff; margin-top:20px;">🎮 Select Level (1 - 20)</h3>
+        <p style="font-size:12px; color:var(--text-sub);">Level ၁ ခုတွင် မေးခွန်း ၁၀ ကြောင်း ပါဝင်ပါသည်။</p>
+        <div class="level-grid" id="tense-level-grid"></div>
+      </div>
+    </div>
+
+    <!-- TAB 5: VERB FORM MODULE -->
     <div id="verb-module" class="tab-content">
       <div class="card">
         <button onclick="switchTab('home', document.querySelectorAll('.nav-item')[0])" style="background:none; border:none; color:var(--accent); font-size:13px; cursor:pointer; margin-bottom:10px;">⬅️ Home သို့ပြန်သွားရန်</button>
@@ -527,170 +532,10 @@
 
   </div>
 
-  <!-- BOTTOM NAVIGATION BAR -->
-  <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('home', this)">
-      <div class="nav-icon">🏠</div>
-      <div>Home</div>
-    </div>
-    <div class="nav-item" onclick="switchTab('essay-guide', this)">
-      <div class="nav-icon">📝</div>
-      <div>Essay Guide</div>
-    </div>
-    <div class="nav-item" onclick="switchTab('challenge', this)">
-      <div class="nav-icon">⚔️</div>
-      <div>1 vs 1 Essay</div>
-    </div>
-  </div>
-
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-      const splash = document.getElementById('splash-screen');
-      splash.style.opacity = '0';
-      setTimeout(() => splash.style.display = 'none', 500);
-    }, 1200);
-
-    initLevels();
-  });
-
-  let userXP = parseInt(localStorage.getItem('userXP') || '0');
-  let userName = localStorage.getItem('userName') || 'Moe Han';
-  let wins = parseInt(localStorage.getItem('winCount') || '0');
-  let losses = parseInt(localStorage.getItem('loseCount') || '0');
-
-  document.getElementById('xp').innerText = userXP;
-  document.getElementById('user-name-display').innerText = userName;
-  document.getElementById('win-count').innerText = wins + 'W';
-  document.getElementById('lose-count').innerText = losses + 'L';
-  updateUserLevel();
-
-  function updateUserLevel() {
-    let lvl = Math.floor(userXP / 100) + 1;
-    document.getElementById('user-lvl-display').innerText = 'Lv. ' + lvl;
-  }
-
-  function editUserName() {
-    let newName = prompt("သင့် User Name အသစ် ရိုက်ထည့်ပါ:", userName);
-    if (newName) {
-      userName = newName;
-      localStorage.setItem('userName', userName);
-      document.getElementById('user-name-display').innerText = userName;
-    }
-  }
-
-  function switchTab(tabId, el) {
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-    if (el) el.classList.add('active');
-    document.getElementById(tabId).classList.add('active');
-  }
-
-  function openTenseModule() {
-    switchTab('tense-module', null);
-  }
-
-  function openVerbModule() {
-    switchTab('verb-module', null);
-  }
-
-  function initLevels() {
-    // Render Tense Levels (1-20)
-    const tGrid = document.getElementById('tense-level-grid');
-    tGrid.innerHTML = '';
-    for (let i = 1; i <= 20; i++) {
-      tGrid.innerHTML += `<div class="level-btn ${i===1?'active-lvl':''}" onclick="alert('Level ${i} မေးခွန်း ၁၀ ကြောင်း စတင်ပါမည်!')">Lvl ${i}</div>`;
-    }
-
-    // Render Verb Levels (1-30)
-    const vGrid = document.getElementById('verb-level-grid');
-    vGrid.innerHTML = '';
-    for (let i = 1; i <= 30; i++) {
-      vGrid.innerHTML += `<div class="level-btn ${i===1?'active-lvl':''}" onclick="alert('Level ${i} မေးခွန်း ၁၀ ကြောင်း စတင်ပါမည်!')">Lvl ${i}</div>`;
-    }
-  }
-
-  // 1 VS 1 ESSAY CHALLENGE LOGIC
-  let challengeTimer = null;
-  let timeLeft = 420;
-
-  function startEssayChallenge() {
-    const oppTopic = document.getElementById('opponent-given-topic').value.trim();
-    if (!oppTopic) {
-      alert("ပြိုင်ဘက်ပေးထားသည့် ခေါင်းစဉ်ကို ရိုက်ထည့်ပါ!");
-      return;
-    }
-
-    document.getElementById('display-topic').innerText = oppTopic;
-    document.getElementById('topic-setup-box').style.display = 'none';
-    document.getElementById('essay-writing-box').style.display = 'block';
-    document.getElementById('essay-input').value = '';
-
-    0;
-    updateTimerDisplay();
-
-    challengeTimer = setInterval(() => {
-      timeLeft--;
-      updateTimerDisplay();
-      if (timeLeft <= 0) {
-        clearInterval(challengeTimer);
-        alert("⏱️ အချိန်ပြည့်သွားပါပြီ!");
-        submitEssay();
-      }
-    }, 1000);
-  }
-
-  function updateTimerDisplay() {
-    const mins = Math.floor(timeLeft / 60);
-    const secs = timeLeft % 60;
-    document.getElementById('timer-display').innerText = `⏱️ ${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  }
-
-  function submitEssay() {
-    clearInterval(challengeTimer);
-    const text = document.getElementById('essay-input').value.trim();
-    if (!text) {
-      alert("ဘာမှ မရေးရသေးပါ!");
-      return;
-    }
-
-    const words = text.toLowerCase().match(/\b\w+\b/g) || [];
-    const wordCount = words.length;
-
-    const earnedXP = Math.floor(wordCount / 5) + 20;
-    userXP += earnedXP;
-    localStorage.setItem('userXP', userXP);
-    document.getElementById('xp').innerText = userXP;
-    updateUserLevel();
-
-    // 1vs1 Win Check (If word count >= 30 considered WIN)
-    if (wordCount >= 30) {
-      wins++;
-      localStorage.setItem('winCount', wins);
-      document.getElementById('win-count').innerText = wins + 'W';
-      document.getElementById('match-result-title').innerText = "🏆 WIN (အောင်နိုင်သည်!)";
-      document.getElementById('match-result-title').style.color = "var(--success)";
-    } else {
-      losses++;
-      localStorage.setItem('loseCount', losses);
-      document.getElementById('lose-count').innerText = losses + 'L';
-      document.getElementById('match-result-title').innerText = "❌ LOSE (ရှုံးနိမ့်သည်!)";
-      document.getElementById('match-result-title').style.color = "var(--danger)";
-    }
-
-    document.getElementById('res-word-count').innerText = `📝 စာလုံးရေ: ${wordCount} လုံး`;
-    document.getElementById('res-xp-earned').innerText = `🎉 ရရှိသော XP: +${earnedXP} XP`;
-
-    document.getElementById('essay-writing-box').style.display = 'none';
-    document.getElementById('essay-result-box').style.display = 'block';
-  }
-
-  function resetChallenge() {
-    document.getElementById('essay-result-box').style.display = 'none';
-    document.getElementById('topic-setup-box').style.display = 'block';
-    document.getElementById('opponent-given-topic').value = '';
-  }
-</script>
-</body>
-</html>
+  <!-- QUIZ MODAL POPUP -->
+  <div id="quiz-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 9999; padding: 20px; overflow-y: auto;">
+    <div class="card" style="max-width: 500px; margin: 30px auto; position: relative;">
+      <button onclick="closeQuiz()" style="position: absolute; right: 15px; top: 15px; background: var(--danger); border: none; color: #fff; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer;">✕ Close</button>
+      
+      <h3 id="quiz-title" style="color: var(--accent); margin-top: 0;">Level 1 Quiz</h3>
+      <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 15px;">မေးခွန်း <span id="quiz-progress">1/10</span>
