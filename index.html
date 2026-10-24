@@ -671,8 +671,7 @@ let currentIndex = parseInt(localStorage.getItem('currentIndex') || '0');
 let userXP = parseInt(localStorage.getItem('userXP') || '0');
 let streak = 0;
 
-let unlockCost = 50;   
-let unlockStep = 100;  
+let unlockedWords = JSON.parse(localStorage.getItem('unlockedWords') || '[]');
 
 let currentQuestionType = 'my_to_eng';
 let activeQuestionItem = null;
@@ -683,9 +682,38 @@ document.getElementById('rank-xp').innerText = userXP;
 function renderVocab() {
   const box = document.getElementById('vocab-list-box');
   box.innerHTML = '';
-  filteredData.forEach(v => {
-    box.innerHTML += `<div class="vocab-row"><strong style="color:var(--accent)">${v.eng}</strong>: ${v.my} <span style="font-size:12px; opacity:0.6;">(${v.unit})</span></div>`;
+  
+  filteredData.forEach((v) => {
+    const globalIndex = vocabData.findIndex(item => item.eng === v.eng && item.my === v.my);
+    const isUnlocked = unlockedWords.includes(globalIndex);
+
+    if (isUnlocked) {
+      box.innerHTML += `<div class="vocab-row"><strong style="color:var(--accent)">${v.eng}</strong>: ${v.my} <span style="font-size:12px; opacity:0.6;">(${v.unit})</span></div>`;
+    } else {
+      box.innerHTML += `<div class="vocab-row" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>🔒 Locked: ${v.my} <span style="font-size:12px; opacity:0.6;">(${v.unit})</span></span>
+        <button onclick="unlockVocab(${globalIndex})" style="background:#e67e22; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:12px;">ဖွင့်ရန် (50 XP)</button>
+      </div>`;
+    }
   });
+}
+
+function unlockVocab(globalIndex) {
+  const cost = 50;
+  if (userXP < cost) {
+    alert(`XP မလုံလောက်ပါ! ဤစကားလုံးကို ဖွင့်ရန် ${cost} XP လိုအပ်ပါသည်။`);
+    return;
+  }
+
+  userXP -= cost;
+  localStorage.setItem('userXP', userXP);
+  document.getElementById('xp').innerText = userXP;
+  document.getElementById('rank-xp').innerText = userXP;
+
+  unlockedWords.push(globalIndex);
+  localStorage.setItem('unlockedWords', JSON.stringify(unlockedWords));
+
+  renderVocab();
 }
 
 function changeUnit() {
@@ -726,54 +754,7 @@ function loadQuestion() {
   document.getElementById('ans-single').value = '';
   document.getElementById('feedback').innerText = '';
   
-  // မေးခွန်းအသစ်ရောက်လျှင် Lock ကို ပုံမှန်အတိုင်း ပြန်ပိတ်မည်
-  const secretDiv = document.getElementById('secret-word');
-  if (secretDiv) {
-    secretDiv.style.display = 'none';
-    secretDiv.innerText = '';
-  }
-  const unlockBtn = document.getElementById('unlock-btn');
-  if (unlockBtn) {
-    unlockBtn.disabled = false;
-    unlockBtn.style.opacity = '1';
-  }
-
   localStorage.setItem('currentIndex', currentIndex);
-}
-
-function unlockWord() {
-  if (!activeQuestionItem) return;
-  
-  if (userXP < unlockCost) {
-    alert(`XP မလုံလောက်ပါ! ဤ Lock ကိုဖြည်ရန် ${unlockCost} XP လိုအပ်ပါသည်။`);
-    return;
-  }
-
-  userXP -= unlockCost;
-  localStorage.setItem('userXP', userXP);
-  document.getElementById('xp').innerText = userXP;
-  document.getElementById('rank-xp').innerText = userXP;
-
-  const secretDiv = document.getElementById('secret-word');
-  if (secretDiv) {
-    secretDiv.style.display = 'block';
-    secretDiv.innerText = `💡 အမှန်မှာ: ${activeQuestionItem.eng}`;
-  }
-
-  // 50 -> 150 -> 300 ပုံစံဖြင့် တိုးသွားစေရန်
-  unlockCost += unlockStep;
-  unlockStep += 50; 
-  
-  const costTxt = document.getElementById('cost-txt');
-  if (costTxt) {
-    costTxt.innerText = unlockCost;
-  }
-  
-  const unlockBtn = document.getElementById('unlock-btn');
-  if (unlockBtn) {
-    unlockBtn.disabled = true;
-    unlockBtn.style.opacity = '0.5';
-  }
 }
 
 function checkAnswer() {
