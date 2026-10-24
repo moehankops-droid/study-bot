@@ -195,11 +195,6 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .level-btn.active-lvl {
-      border-color: var(--accent);
-      background: rgba(0, 210, 255, 0.1);
-      color: var(--accent);
-    }
 
     /* BUTTONS & INPUTS */
     input, textarea, select {
@@ -323,7 +318,7 @@
     <!-- TAB 1: HOME DASHBOARD -->
     <div id="home" class="tab-content active">
       
-      <!-- PROFILE CARD BANNER -->
+      <!-- PROFILE CARD -->
       <div class="profile-card">
         <div class="profile-info">
           <div>
@@ -343,7 +338,7 @@
         </div>
       </div>
 
-      <!-- VIP STORE CARD (Normal mode အနေနဲ့ စတင်မည်၊ 500 XP ဖြင့် 1 လစာဝယ်နိုင်မည်) -->
+      <!-- VIP STORE CARD (500 XP ဖြင့် 1 လစာဝယ်ရန်) -->
       <div class="card" style="border: 1px solid var(--warning); background: linear-gradient(135deg, #1f1a10, #181b20);">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div>
@@ -361,18 +356,23 @@
         <div id="vip-expiry-text" style="font-size: 11px; color: var(--text-sub); margin-top: 8px; text-align: center;"></div>
       </div>
 
-      <!-- VIP EXCLUSIVE CONTENT SECTION (VIP ဝယ်ပြီးမှ ပွင့်မည့် အပိုင်း) -->
+      <!-- VIP EXCLUSIVE CONTENT SECTION ("Follow Me" စာအုပ်ပါ အဆင့်မြင့် အက်ဆေး/သဒ္ဒါ လမ်းညွှန်များ) -->
       <div id="vip-content-section" class="card" style="display: none; border: 1px solid var(--success); background: rgba(46,213,115,0.05);">
-        <h3 style="margin-top: 0; color: var(--success);">✨ VIP အထူးသင်ခန်းစာများနှင့် အဆင့်မြင့်လေ့ကျင့်ခန်းများ</h3>
-        <p style="font-size: 12px; color: var(--text-sub);">"Follow Me" (Ph.D - USA) စာအုပ်မှ အဆင့်မြင့် အက်ဆေးပုံစံခွက်များနှင့် လျှို့ဝှက်သဒ္ဒါ အချက်အလက်များ (1 လစာ သက်တမ်းအတွင်း အပြည့်အစုံ ဖတ်ရှုနိုင်သည်)။</p>
-        <ul style="font-size: 13px; padding-left: 20px; color: var(--text-main); margin-bottom: 0;">
-          <li>🔥 Advanced Essay Templates & Letter Writing Guide</li>
-          <li>🎯 Unlimited Tense & Verb Hardcore Quizzes</li>
-          <li>🚀 Ad-Free & Priority Support Mode</li>
-        </ul>
+        <h3 style="margin-top: 0; color: var(--success);">✨ "Follow Me" (Ph.D - USA) အဆင့်မြင့် VIP အက်ဆေး & သဒ္ဒါလမ်းညွှန်</h3>
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 12px;">VIP အဖွဲ့ဝင်များအတွက် သီးသန့် ဖတ်ရှုနိုင်သော အဆင့်မြင့် စာအုပ်ပါ သင်ခန်းစာများနှင့် ဖွဲ့စည်းပုံများ -</p>
+        
+        <div class="guide-box" style="border-left-color: var(--success);">
+          <div class="guide-title" style="color: var(--success);">📖 1. Advanced Essay Templates (Letter & Article Writing)</div>
+          <div class="guide-desc">Grade 8 သင်ရိုးညွှန်းတမ်းကို ကျော်လွန်၍ နိုင်ငံတကာ အဆင့်မီ formal/informal letters များနှင့် Environment, Science Experiments များကို အလွယ်တကူ ရေးသားနိုင်မည့် Model Paragraph ဖွဲ့စည်းပုံများ။</div>
+        </div>
+
+        <div class="guide-box" style="border-left-color: var(--success);">
+          <div class="guide-title" style="color: var(--success);">🎯 2. Hardcore Tense & Voice Masterclass</div>
+          <div class="guide-desc">Active to Passive Voice ပြောင်းလဲရာတွင် အထူးသတိပြုရမည့် ခြွင်းချက် စည်းမျဉ်းများနှင့် Direct/Indirect Speech လျှို့ဝှက်ချက်များ။</div>
+        </div>
       </div>
 
-      <!-- NORMAL MAIN FEATURE CARDS GRID -->
+      <!-- MAIN FEATURE CARDS GRID -->
       <div class="home-grid" style="margin-top: 15px;">
         <div class="home-card" onclick="openTenseModule()">
           <div class="home-card-icon">📘</div>
@@ -428,7 +428,7 @@
     <div id="challenge" class="tab-content">
       <div class="card" style="text-align: center;">
         <h2 style="margin-top:0; color:#fff;">⚔️ 1 vs 1 Essay Challenge</h2>
-        <p style="color: var(--text-sub); font-size:13px; margin-bottom: 15px;">(၇ မိနစ် အချိန်အတွင်း အလွတ် ရေးသားပြိုင်ပွဲ)</p>
+        <p style="color: var(--text-sub); font-size:13px; margin-bottom: 15px;">(၇ မိနစ် အချိန်အတွင်း အလွတ် ရေးသားပြိုင်ပွဲ - အနည်းဆုံး စာလုံးရေ ၃၀ လိုအပ်သည်)</p>
 
         <div id="topic-setup-box">
           <input type="text" id="opponent-given-topic" placeholder="ပြိုင်ဘက်ပေးသည့် ခေါင်းစဉ် ရိုက်ထည့်ပါ..." style="margin-bottom: 15px;">
@@ -439,7 +439,7 @@
           <h3 style="color: var(--accent); margin-bottom:5px;">ခေါင်းစဉ်: <span id="display-topic"></span></h3>
           <div style="font-size: 26px; font-weight: 800; color: var(--danger); margin: 15px 0;" id="timer-display">⏱️ 07:00</div>
           
-          <textarea id="essay-input" rows="8" placeholder="ခေါင်းစဉ်အတိုင်း အလွတ် စတင်ရေးသားပါ..."></textarea>
+          <textarea id="essay-input" rows="8" placeholder="ခေါင်းစဉ်အတိုင်း အလွတ် စတင်ရေးသားပါ (အနည်းဆုံး စာလုံးရေ ၃၀ ကျော်)..."></textarea>
           
           <br><br>
           <button class="btn btn-success" onclick="submitEssay()">✅ စာစီစာကုံး တင်မည် (Submit)</button>
@@ -532,7 +532,6 @@
     let vipExpiryTime = parseInt(localStorage.getItem('vipExpiryTime')) || 0;
     let isVip = Date.now() < vipExpiryTime;
 
-    // အကယ်၍ သက်တမ်းကုန်သွားပါက VIP status ကို ဖြုတ်ချရန်
     if (!isVip && vipExpiryTime > 0) {
       localStorage.removeItem('vipExpiryTime');
     }
@@ -551,9 +550,9 @@
         if(splash) {
           splash.style.opacity = '0';
           setTimeout(() => splash.remove(), 500);
-        }
-      }, 800);
-    });
+                    }
+          }, 800);
+        });
 
     // Tab Switcher
     function switchTab(tabId, el) {
@@ -565,7 +564,7 @@
       if(el) el.classList.add('active');
     }
 
-        function openTenseModule() { switchTab('tense-module', null); }
+    function openTenseModule() { switchTab('tense-module', null); }
     function openVerbModule() { switchTab('verb-module', null); }
 
     // Edit Name
@@ -578,14 +577,13 @@
       }
     }
 
-    // VIP SYSTEM LOGIC (1 Month Expiry Check)
+    // VIP SYSTEM LOGIC (Strict 500 XP Requirement & 30-Day Expiry)
     function checkVipStatus() {
       let badge = document.getElementById('vip-status-badge');
       let btn = document.getElementById('buy-vip-btn');
       let vipSection = document.getElementById('vip-content-section');
       let expiryText = document.getElementById('vip-expiry-text');
 
-      // လက်ရှိအချိန်နှင့် သက်တမ်းကုန်မည့်အချိန်ကို နှိုင်းယှဉ်စစ်ဆေးခြင်း
       isVip = Date.now() < vipExpiryTime;
 
       if (isVip) {
@@ -602,7 +600,7 @@
           btn.style.opacity = '0.7';
         }
         if (vipSection) {
-          vipSection.style.display = 'block';
+          vipSection.style.display = 'block'; // Follow Me စာအုပ်ပါ အဆင့်မြင့်အက်ဆေးများ ပွင့်လာမည်
         }
         if (expiryText) {
           expiryText.innerText = `⏳ ကျန်ရှိသည့် သက်တမ်း: ခန့်မှန်းခြေ ရက်ပေါင်း ${remainingDays} ရက်`;
@@ -620,7 +618,7 @@
           btn.style.opacity = '1';
         }
         if (vipSection) {
-          vipSection.style.display = 'none';
+          vipSection.style.display = 'none'; // မဝယ်ရသေးပါက ပိတ်ထားမည်
         }
         if (expiryText) {
           expiryText.innerText = '';
@@ -631,15 +629,15 @@
     function buyVipMode() {
       const vipCost = 500;
       
+      // XP မလုံလောက်ပါက လုံးဝဝယ်မရအောင် တားဆီးခြင်း
       if (userXP < vipCost) {
-        alert(`❌ XP မလုံလောက်ပါ! VIP 1 လစာ ဝယ်ရန် ${vipCost} XP လိုအပ်ပါသည်။ (လက်ရှိ: ${userXP} XP)`);
+        alert(`❌ XP မလုံလောက်ပါ! VIP 1 လစာ ဝယ်ရန် ${vipCost} XP လိုအပ်ပါသည်။ (လက်ရှိ XP: ${userXP} XP)\n⭐ Quiz များနှင့် Essay Challenge များ ဖြေဆို၍ XP ထပ်မံစုဆောင်းပါ။`);
         return;
       }
 
       if (confirm(`⭐ 500 XP ဖြင့် 1 လစာ (30 ရက်) VIP Mode ကို ဝယ်ယူမှာ သေချာပါသလား?`)) {
         userXP -= vipCost;
         
-        // 1 လစာ (30 ရက်) သက်တမ်းကို Milliseconds ဖြင့် တွက်ချက်သိမ်းဆည်းခြင်း
         const thirtyDaysInMillis = 30 * 24 * 60 * 60 * 1000;
         vipExpiryTime = Date.now() + thirtyDaysInMillis;
         isVip = true;
@@ -651,7 +649,7 @@
         checkVipStatus();
         updateTelegramShareLink();
         
-        alert("🎉 ဂုဏ်ယူပါတယ်! 1 လစာ VIP Mode ကို အောင်မြင်စွာ ဝယ်ယူပြီးပါပြီ။");
+        alert("🎉 ဂုဏ်ယူပါတယ်! 1 လစာ VIP Mode ကို အောင်မြင်စွာ ဝယ်ယူပြီးပါပြီ။ 'Follow Me' စာအုပ်ပါ အဆင့်မြင့်အက်ဆေး လမ်းညွှန်ချက်များ ပွင့်သွားပါပြီ။");
       }
     }
 
@@ -683,7 +681,7 @@
       }
     }
 
-    // Challenge Timer & Logic Mock
+    // Challenge Timer & Logic
     let timerInterval;
     function startEssayChallenge() {
       let topic = document.getElementById('opponent-given-topic').value.trim();
@@ -712,19 +710,33 @@
     function submitEssay() {
       clearInterval(timerInterval);
       let text = document.getElementById('essay-input').value.trim();
-      let words = text ? text.split(/\s+/).length : 0;
-      let earnedXP = words > 20 ? 100 : 50;
+      let words = text ? text.split(/\s+/).filter(Boolean).length : 0;
       
+      // စာလုံးရေ အနည်းဆုံး ၃၀ မပြည့်ပါက ရှုံးနိမ့် (Lose) မည်
+      if (words < 30) {
+        alert(`❌ စာလုံးရေ အလွန်နည်းနေပါသည်! (လက်ရှိ: ${words} လုံး)\nGrade 8 အက်ဆေး Challenge အောင်မြင်ရန် အနည်းဆုံး စာလုံးရေ ၃၀ ကျော် ရေးသားရပါမည်။ ယခုအကြိမ် ရှုံးနိမ့် (Lose) ೆಂದು သတ်မှတ်ပါသည်။`);
+        
+        loseCount++;
+        localStorage.setItem('loseCount', loseCount);
+        document.getElementById('lose-count').innerText = loseCount + 'L';
+        
+        document.getElementById('essay-writing-box').style.display = 'none';
+        document.getElementById('topic-setup-box').style.display = 'block';
+        return;
+      }
+      
+      let earnedXP = words >= 80 ? 100 : 50;
       userXP += earnedXP;
       winCount++;
+      
       localStorage.setItem('userXP', userXP);
       localStorage.setItem('winCount', winCount);
       
       document.getElementById('xp').innerText = userXP;
       document.getElementById('win-count').innerText = winCount + 'W';
       
-      document.getElementById('res-word-count').innerText = `📝 စာလုံးရေ: ${words} လုံး`;
-      document.getElementById('res-vocab-count').innerText = `🌟 Grade 8 Vocab: ${Math.floor(words/15)} လုံး`;
+      document.getElementById('res-word-count').innerText = `📝 စာလုံးရေ: ${words} လုံး (အောင်မြင်သည်)`;
+      document.getElementById('res-vocab-count').innerText = `🌟 Grade 8 Vocab: ${Math.floor(words/12)} လုံး သုံးထားသည်`;
       document.getElementById('res-xp-earned').innerText = `🎉 ရရှိသော XP: +${earnedXP} XP`;
       
       document.getElementById('essay-writing-box').style.display = 'none';
@@ -748,3 +760,6 @@
   </script>
 </body>
 </html>
+
+
+    
