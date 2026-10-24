@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Grade 8 English Essay Bot</title>
+  <title>Grade 8 English Study Bot</title>
   <style>
     :root {
       --bg: #0d0f12;
@@ -34,7 +34,7 @@
       overflow: hidden;
     }
 
-    /* 1. SPLASH SCREEN ANIMATION */
+    /* SPLASH SCREEN */
     #splash-screen {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -113,7 +113,36 @@
       border: 1px solid rgba(255,255,255,0.05);
       box-shadow: 0 8px 24px rgba(0,0,0,0.4);
       margin-bottom: 15px;
+    }
+
+    /* HOME MENU GRID */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 15px;
+    }
+    .menu-card {
+      background: #121418;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 18px 12px;
       text-align: center;
+      cursor: pointer;
+      transition: 0.2s transform, 0.2s border-color;
+    }
+    .menu-card:active {
+      transform: scale(0.96);
+      border-color: var(--accent);
+    }
+    .menu-icon {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+    .menu-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
     }
 
     input, textarea {
@@ -140,7 +169,7 @@
       font-weight: bold;
       font-size: 15px;
       cursor: pointer;
-      transition: 0.2s transform, 0.2s box-shadow;
+      transition: 0.2s transform;
     }
     .btn:active {
       transform: scale(0.98);
@@ -156,7 +185,7 @@
       box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
     }
 
-    /* 2. BOTTOM NAVIGATION BAR */
+    /* BOTTOM NAVIGATION BAR */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -208,23 +237,50 @@
 
   <!-- SPLASH SCREEN -->
   <div id="splash-screen">
-    <div class="splash-logo">⚔️</div>
-    <h2 style="margin:0; color:#fff; letter-spacing:1px;">Grade 8 Essay Bot</h2>
-    <p style="color:var(--text-sub); font-size:13px; margin-top:5px;">Loading Mobile UI...</p>
+    <div class="splash-logo">🏠</div>
+    <h2 style="margin:0; color:#fff; letter-spacing:1px;">Grade 8 Study Bot</h2>
+    <p style="color:var(--text-sub); font-size:13px; margin-top:5px;">Loading Home Dashboard...</p>
   </div>
 
   <!-- APP HEADER -->
   <div class="app-header">
-    <div class="app-title">GRADE 8 ESSAY BOT</div>
+    <div class="app-title">GRADE 8 STUDY BOT</div>
     <div class="xp-badge">⭐ <span id="xp">0</span> XP</div>
   </div>
 
   <!-- APP BODY -->
   <div class="app-body">
     
-    <!-- TAB 1: 1 VS 1 ESSAY -->
-    <div id="challenge" class="tab-content active">
-      <div class="card">
+    <!-- TAB 1: HOME DASHBOARD -->
+    <div id="home" class="tab-content active">
+      <div class="card" style="background: linear-gradient(135deg, #1e2430, #181b20);">
+        <h2 style="margin: 0 0 5px 0; color: #fff;">မင်္ဂလာပါ 👋</h2>
+        <p style="color: var(--text-sub); font-size: 13px; margin: 0;">Grade 8 English Study Dashboard</p>
+      </div>
+
+      <h3 style="color: #fff; margin-bottom: 10px;">📌 Quick Launch</h3>
+      <div class="menu-grid">
+        <div class="menu-card" onclick="switchTab('challenge', document.querySelectorAll('.nav-item')[1])">
+          <div class="menu-icon">⚔️</div>
+          <div class="menu-title">1 vs 1 Essay</div>
+        </div>
+        <div class="menu-card" onclick="switchTab('leaderboard', document.querySelectorAll('.nav-item')[2])">
+          <div class="menu-icon">🏆</div>
+          <div class="menu-title">Leaderboard</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 15px;">
+        <h3 style="margin-top: 0; color: var(--accent);">💡 Daily English Tip</h3>
+        <p style="font-size: 14px; color: #ddd; line-height: 1.5; margin-bottom: 0;">
+          အက်ဆေးရေးတဲ့အခါ Grade 8 Vocab စာလုံးလှလှလေးတွေကို ထည့်သွင်းရေးသားရင် XP အမှတ် ပိုမို ရရှိမှာဖြစ်ပါတယ်!
+        </p>
+      </div>
+    </div>
+
+    <!-- TAB 2: 1 VS 1 ESSAY -->
+    <div id="challenge" class="tab-content">
+      <div class="card" style="text-align: center;">
         <h2 style="margin-top:0; color:#fff;">⚔️ 1 vs 1 Essay Challenge</h2>
         <p style="color: var(--text-sub); font-size:13px; margin-bottom: 20px;">(၇ မိနစ် အချိန်အတွင်း အလွတ် ရေးသားပြိုင်ပွဲ)</p>
 
@@ -256,10 +312,10 @@
       </div>
     </div>
 
-    <!-- TAB 2: LEADERBOARD -->
+    <!-- TAB 3: LEADERBOARD -->
     <div id="leaderboard" class="tab-content">
       <div class="card">
-        <h2 style="margin-top:0;">🏆 Leaderboard</h2>
+        <h2 style="margin-top:0; text-align: center;">🏆 Leaderboard</h2>
         <div id="leaderboard-list">
           <div class="leaderboard-row">
             <span>🥇 Player 1</span>
@@ -281,7 +337,11 @@
 
   <!-- BOTTOM NAVIGATION BAR -->
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('challenge', this)">
+    <div class="nav-item active" onclick="switchTab('home', this)">
+      <div class="nav-icon">🏠</div>
+      <div>Home</div>
+    </div>
+    <div class="nav-item" onclick="switchTab('challenge', this)">
       <div class="nav-icon">⚔️</div>
       <div>1 vs 1 Essay</div>
     </div>
@@ -292,13 +352,12 @@
   </div>
 
 <script>
-  // SPLASH SCREEN HIDE (2 SECONDS)
   window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
       splash.style.opacity = '0';
       setTimeout(() => splash.style.display = 'none', 500);
-    }, 1500);
+    }, 1200);
   });
 
   const vocabData = [
@@ -318,7 +377,7 @@
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-    el.classList.add('active');
+    if (el) el.classList.add('active');
     document.getElementById(tabId).classList.add('active');
   }
 
@@ -391,4 +450,5 @@
   }
 </script>
 </body>
-</html>
+  </html>
+  
