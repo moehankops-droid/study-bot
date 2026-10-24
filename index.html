@@ -671,8 +671,10 @@ let currentIndex = parseInt(localStorage.getItem('currentIndex') || '0');
 let userXP = parseInt(localStorage.getItem('userXP') || '0');
 let streak = 0;
 
-let unlockCost = 50;   
-let unlockStep = 100;  
+// Word Bank မျက်နှာပြင် Lock စနစ်အတွက် variables များ
+let isBankUnlocked = localStorage.getItem('isBankUnlocked') === 'true';
+let unlockCost = parseInt(localStorage.getItem('unlockCost') || '50');
+let unlockStep = parseInt(localStorage.getItem('unlockStep') || '100');
 
 let currentQuestionType = 'my_to_eng';
 let activeQuestionItem = null;
@@ -683,9 +685,51 @@ document.getElementById('rank-xp').innerText = userXP;
 function renderVocab() {
   const box = document.getElementById('vocab-list-box');
   box.innerHTML = '';
+
+  // မျက်နှာပြင်တစ်ခုလုံး Lock ကျနေပါက
+  if (!isBankUnlocked) {
+    box.innerHTML = `
+      <div style="text-align: center; padding: 50px 20px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-top: 10px;">
+        <div style="font-size: 60px; margin-bottom: 15px;">🔒</div>
+        <h3 style="margin-bottom: 10px; color: #fff;">Word Bank တစ်ခုလုံးကို Lock ချထားပါသည်</h3>
+        <p style="opacity: 0.8; margin-bottom: 25px; font-size: 14px;">စာလုံးများ အားလုံးကို ကြည့်ရှုရန် Lock ဖြည်ပါ။</p>
+        <button onclick="unlockWordBank()" style="background: #e67e22; color: white; border: none; padding: 14px 28px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+          🔓 Lock ဖြည်မည် (${unlockCost} XP)
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  // Lock ဖြည်ထားပါက စာလုံးများ အားလုံး ပြမည်
   filteredData.forEach(v => {
     box.innerHTML += `<div class="vocab-row"><strong style="color:var(--accent)">${v.eng}</strong>: ${v.my} <span style="font-size:12px; opacity:0.6;">(${v.unit})</span></div>`;
   });
+}
+
+function unlockWordBank() {
+  if (userXP < unlockCost) {
+    alert(`XP မလုံလောက်ပါ! Word Bank ကို ဖြည်ရန် ${unlockCost} XP လိုအပ်ပါသည်။`);
+    return;
+  }
+
+  // XP ဖြတ်မည်
+  userXP -= unlockCost;
+  localStorage.setItem('userXP', userXP);
+  document.getElementById('xp').innerText = userXP;
+  document.getElementById('rank-xp').innerText = userXP;
+
+  // Lock ဖြည်မည်
+  isBankUnlocked = true;
+  localStorage.setItem('isBankUnlocked', 'true');
+
+  // နောက်တစ်ကြိမ်အတွက် Cost ကို 50 -> 150 -> 300 သို့ တိုးမည်
+  unlockCost += unlockStep;
+  unlockStep += 50;
+  localStorage.setItem('unlockCost', unlockCost);
+  localStorage.setItem('unlockStep', unlockStep);
+
+  renderVocab();
 }
 
 function changeUnit() {
@@ -701,6 +745,7 @@ function changeUnit() {
 }
 
 function filterVocab() {
+  if (!isBankUnlocked) return;
   const keyword = document.getElementById('search').value.toLowerCase();
   const rows = document.querySelectorAll('.vocab-row');
   rows.forEach(r => {
@@ -726,54 +771,7 @@ function loadQuestion() {
   document.getElementById('ans-single').value = '';
   document.getElementById('feedback').innerText = '';
   
-  // မေးခွန်းအသစ်ရောက်လျှင် Lock ကို ပုံမှန်အတိုင်း ပြန်ပိတ်မည်
-  const secretDiv = document.getElementById('secret-word');
-  if (secretDiv) {
-    secretDiv.style.display = 'none';
-    secretDiv.innerText = '';
-  }
-  const unlockBtn = document.getElementById('unlock-btn');
-  if (unlockBtn) {
-    unlockBtn.disabled = false;
-    unlockBtn.style.opacity = '1';
-  }
-
   localStorage.setItem('currentIndex', currentIndex);
-}
-
-function unlockWord() {
-  if (!activeQuestionItem) return;
-  
-  if (userXP < unlockCost) {
-    alert(`XP မလုံလောက်ပါ! ဤ Lock ကိုဖြည်ရန် ${unlockCost} XP လိုအပ်ပါသည်။`);
-    return;
-  }
-
-  userXP -= unlockCost;
-  localStorage.setItem('userXP', userXP);
-  document.getElementById('xp').innerText = userXP;
-  document.getElementById('rank-xp').innerText = userXP;
-
-  const secretDiv = document.getElementById('secret-word');
-  if (secretDiv) {
-    secretDiv.style.display = 'block';
-    secretDiv.innerText = `💡 အမှန်မှာ: ${activeQuestionItem.eng}`;
-  }
-
-  // 50 -> 150 -> 300 ပုံစံဖြင့် တိုးသွားစေရန်
-  unlockCost += unlockStep;
-  unlockStep += 50; 
-  
-  const costTxt = document.getElementById('cost-txt');
-  if (costTxt) {
-    costTxt.innerText = unlockCost;
-  }
-  
-  const unlockBtn = document.getElementById('unlock-btn');
-  if (unlockBtn) {
-    unlockBtn.disabled = true;
-    unlockBtn.style.opacity = '0.5';
-  }
 }
 
 function checkAnswer() {
@@ -822,6 +820,13 @@ function switchTab(tabId) {
   if(tabId === 'vocab') document.querySelectorAll('.tab-btn')[0].classList.add('active');
   if(tabId === 'practice') document.querySelectorAll('.tab-btn')[1].classList.add('active');
   if(tabId === 'rank') document.querySelectorAll('.tab-btn')[2].classList.add('active');
+
+  // Word Bank မှ အခြားတက်ဘ်သို့ ပြောင်းသွားပါက Lock ပြန်ချမည်
+  if (tabId !== 'vocab') {
+    isBankUnlocked = false;
+    localStorage.setItem('isBankUnlocked', 'false');
+    renderVocab();
+  }
 
   document.getElementById(tabId).classList.add('active');
 }
