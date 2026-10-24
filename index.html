@@ -495,8 +495,8 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // Config: Telegram Group Link
-    const TELEGRAM_GROUP_LINK = "https://t.me/your_telegram_group_link";
+    // Config: Telegram Group Link (Updated)
+    const TELEGRAM_GROUP_LINK = "https://t.me/+6h86c4JXxJ1hZTA1";
 
     // Global State Variables
     let userXP = parseInt(localStorage.getItem('userXP')) || 150;
@@ -599,23 +599,17 @@
         return;
       }
 
-      document.getElementById('display-topic').innerText = topicInput;      // 1. Topic ထည့်သည့် UI ကို ပုန်းပြီး Essay ရေးသည့် UI ကို ဖော်ပြခြင်း
+            document.getElementById('display-topic').innerText = topicInput;
       document.getElementById('topic-setup-box').style.display = 'none';
       document.getElementById('essay-writing-box').style.display = 'block';
 
-      // 2. Timer စတင်ရန် ၇ မိနစ် (စက္ကန့် ၄၂၀) သတ်မှတ်ခြင်း
       timeLeft = 420;
       updateTimerDisplay();
       
-      // 3. Timer မစမီ ယခင် Timer အဟောင်းရှိပါက ရှင်းထုတ်ခြင်း
       if (challengeTimer) clearInterval(challengeTimer);
-
-      // 4. ၁ စက္ကန့်လျှင် တစ်ကြိမ် Timer လျှော့၍ ရေးချိန်ပြသခြင်း
       challengeTimer = setInterval(() => {
         timeLeft--;
         updateTimerDisplay();
-
-        // အချိန်ပြည့်သွားပါက အလိုအလျောက် Submit လုပ်ခြင်း
         if (timeLeft <= 0) {
           clearInterval(challengeTimer);
           alert("⏱️ အချိန်ပြည့်သွားပါပြီ! စာစီစာကုံး တင်ပေးပါမည်။");
