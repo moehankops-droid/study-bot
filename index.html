@@ -314,7 +314,7 @@
   <!-- APP HEADER -->
   <div class="app-header">
     <div class="app-title">GRADE 8 STUDY BOT</div>
-    <div class="xp-badge">⭐ <span id="xp">0</span> XP</div>
+    <div class="xp-badge">⭐ <span id="xp">150</span> XP</div>
   </div>
 
   <!-- APP BODY -->
@@ -343,8 +343,37 @@
         </div>
       </div>
 
-      <!-- MAIN FEATURE CARDS GRID -->
-      <div class="home-grid">
+      <!-- VIP STORE CARD (Normal mode အနေနဲ့ စတင်မည်၊ 500 XP ဖြင့် 1 လစာဝယ်နိုင်မည်) -->
+      <div class="card" style="border: 1px solid var(--warning); background: linear-gradient(135deg, #1f1a10, #181b20);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="margin: 0; color: var(--warning);">👑 VIP Student Mode (1 Month)</h3>
+            <p style="font-size: 12px; color: var(--text-sub); margin-top: 4px;">Ad-Free, Unlimited Access & Follow Me Book Guide</p>
+          </div>
+          <div id="vip-status-badge" style="font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.05); border: 1px solid var(--text-sub); padding: 5px 10px; border-radius: 8px; color: var(--text-sub);">
+            🔒 Normal Mode
+          </div>
+        </div>
+        
+        <button id="buy-vip-btn" class="btn btn-accent" onclick="buyVipMode()" style="margin-top: 12px; background: linear-gradient(135deg, #ffa502, #ff7f00);">
+          ⭐ 500 XP ဖြင့် 1 လစာ VIP ဝယ်မည်
+        </button>
+        <div id="vip-expiry-text" style="font-size: 11px; color: var(--text-sub); margin-top: 8px; text-align: center;"></div>
+      </div>
+
+      <!-- VIP EXCLUSIVE CONTENT SECTION (VIP ဝယ်ပြီးမှ ပွင့်မည့် အပိုင်း) -->
+      <div id="vip-content-section" class="card" style="display: none; border: 1px solid var(--success); background: rgba(46,213,115,0.05);">
+        <h3 style="margin-top: 0; color: var(--success);">✨ VIP အထူးသင်ခန်းစာများနှင့် အဆင့်မြင့်လေ့ကျင့်ခန်းများ</h3>
+        <p style="font-size: 12px; color: var(--text-sub);">"Follow Me" (Ph.D - USA) စာအုပ်မှ အဆင့်မြင့် အက်ဆေးပုံစံခွက်များနှင့် လျှို့ဝှက်သဒ္ဒါ အချက်အလက်များ (1 လစာ သက်တမ်းအတွင်း အပြည့်အစုံ ဖတ်ရှုနိုင်သည်)။</p>
+        <ul style="font-size: 13px; padding-left: 20px; color: var(--text-main); margin-bottom: 0;">
+          <li>🔥 Advanced Essay Templates & Letter Writing Guide</li>
+          <li>🎯 Unlimited Tense & Verb Hardcore Quizzes</li>
+          <li>🚀 Ad-Free & Priority Support Mode</li>
+        </ul>
+      </div>
+
+      <!-- NORMAL MAIN FEATURE CARDS GRID -->
+      <div class="home-grid" style="margin-top: 15px;">
         <div class="home-card" onclick="openTenseModule()">
           <div class="home-card-icon">📘</div>
           <div class="home-card-title">12 Tenses</div>
@@ -376,23 +405,17 @@
         
         <div class="guide-box">
           <div class="guide-title">1. Introduction (နိဒါန်း) ရေးသားခြင်း</div>
-          <div class="guide-desc">
-            အက်ဆေး၏ ပထမဆုံး စာကြောင်းတွင် ခေါင်းစဉ်နှင့် ပတ်သက်သည့် အထွေထွေ အဓိပ္ပာယ် သို့မဟုတ် အရေးပါပုံကို စတင်ဖော်ပြပါ။ (ဥပမာ - Environment အကြောင်းဆိုလျှင် သဘာဝပတ်ဝန်းကျင်၏ အရေးပါမှုကို စတင်ရေးပါ)။
-          </div>
+          <div class="guide-desc">ခေါင်းစဉ်နှင့် ပတ်သက်သည့် အထွေထွေ အဓိပ္ပာယ် သို့မဟုတ် အရေးပါပုံကို စတင်ဖော်ပြပါ။</div>
         </div>
 
         <div class="guide-box">
           <div class="guide-title">2. Body Paragraph (စာကိုယ်) တည်ဆောက်ခြင်း</div>
-          <div class="guide-desc">
-            အဓိက အကြောင်းအရာ 2 ချက် သို့မဟုတ် 3 ချက်ကို အသေးစိတ် ရေးသားပါ။ Grade 8 သင်ရိုးပါ Vocab စာလုံးများကို သုံးစွဲပေးခြင်းဖြင့် အမှတ်ပိုမို ရရှိနိုင်ပါသည်။
-          </div>
+          <div class="guide-desc">အဓိက အကြောင်းအရာ 2 ချက် သို့မဟုတ် 3 ချက်ကို အသေးစိတ် ရေးသားပါ။</div>
         </div>
 
         <div class="guide-box">
           <div class="guide-title">3. Conclusion (နိဂုံး) ချုပ်ခြင်း</div>
-          <div class="guide-desc">
-            မိမိ၏ သဘောထား၊ အကြံပြုချက် သို့မဟုတ် အနှစ်ချုပ် သတင်းစကားဖြင့် စာစီစာကုံးကို လှပစွာ အဆုံးသတ်ပါ။
-          </div>
+          <div class="guide-desc">မိမိ၏ သဘောထား၊ အကြံပြုချက် သို့မဟုတ် အနှစ်ချုပ် သတင်းစကားဖြင့် အဆုံးသတ်ပါ။</div>
         </div>
 
         <button class="btn btn-primary" onclick="switchTab('challenge', document.querySelectorAll('.nav-item')[2])">
@@ -429,85 +452,33 @@
           <p id="res-xp-earned" style="font-weight: bold; color: var(--accent);">🎉 ရရှိသော XP: +0 XP</p>
           
           <!-- TELEGRAM SHARE BUTTON -->
-          <a id="tg-share-btn" href="#" target="_blank" class="btn" style="display: block; background: #0088cc; color: white; text-align: center; text-decoration: none; margin-top: 10px; padding: 12px; border-radius: 10px; font-weight: bold;">
-            🚀 Telegram Group သို့ Share မည်
+          <a id="tg-share-btn" href="#" target="_blank" class="btn" style="display: block; background: #229ed9; color: white; text-align: center; text-decoration: none; margin-top: 10px; padding: 12px; border-radius: 10px; font-weight: bold;">
+            📤 Telegram Group သို့ Share မည်
           </a>
 
           <button class="btn btn-accent" onclick="resetChallenge()" style="margin-top: 10px;">🔄 အသစ်ပြန်ပြိုင်မည်</button>
         </div>
       </div>
     </div>
-        <!-- TAB 4: 12 TENSES MODULE -->
+
+    <!-- TAB 4: 12 TENSES MODULE -->
     <div id="tense-module" class="tab-content">
       <div class="card">
         <button onclick="switchTab('home', document.querySelectorAll('.nav-item')[0])" style="background:none; border:none; color:var(--accent); font-size:13px; cursor:pointer; margin-bottom:10px;">⬅️ Home သို့ပြန်သွားရန်</button>
         <h2 style="margin:0; color:#fff;">📘 12 Tenses လေ့လာရန်</h2>
 
-        <!-- EXPLANATION ACCORDION (12 TENSES FULL) -->
         <div style="margin-top: 15px;">
           <div class="guide-box">
             <div class="guide-title">1. Present Simple Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + V1 (s/es)<br><strong>သုံးစွဲပုံ:</strong> ပုံမှန်လုပ်လေ့ရှိသော အလေ့အကျင့်များနှင့် အမှန်တရားများကို ဖော်ပြရန်။</div>
+            <div class="guide-desc"><strong>Formula:</strong> Subject + V1 (s/es)</div>
           </div>
-
           <div class="guide-box">
             <div class="guide-title">2. Present Continuous Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + am/is/are + V-ing<br><strong>သုံးစွဲပုံ:</strong> လက်ရှိအချိန်၌ လုပ်ဆောင်နေဆဲ ကိစ္စများကို ဖော်ပြရန်။</div>
-          </div>
-
-          <div class="guide-box">
-            <div class="guide-title">3. Present Perfect Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + has/have + V3<br><strong>သုံးစွဲပုံ:</strong> ပြီးစီးသွားသော်လည်း လက်ရှိအထိ သက်ရောက်မှုရှိသော လုပ်ဆောင်ချက်များကို ဖော်ပြရန်။</div>
-          </div>
-
-          <div class="guide-box">
-            <div class="guide-title">4. Present Perfect Continuous Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + has/have + been + V-ing<br><strong>သုံးစွဲပုံ:</strong> အတိတ်မှစ၍ လက်ရှိအထိ ဆက်တိုက် လုပ်ဆောင်နေဆဲ ကိစ္စများကို ဖော်ပြရန်။</div>
-          </div>
-
-          <div class="guide-box">
-            <div class="guide-title">5. Past Simple Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + V2<br><strong>သုံးစွဲပုံ:</strong> အတိတ်က ပြီးစီးခဲ့သော လုပ်ဆောင်ချက်များကို ဖော်ပြရန်။</div>
-          </div>
-
-          <div class="guide-box">
-            <div class="guide-title">6. Past Continuous Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + was/were + V-ing<br><strong>သုံးစွဲပုံ:</strong> အတိတ်ကာလ အချိန်တစ်ခု၌ လုပ်ဆောင်နေဆဲ ကိစ္စများကို ဖော်ပြရန်။</div>
-          </div>
-
-          <div class="guide-box">
-            <div class="guide-title">7. Past Perfect Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + had + V3<br><strong>သုံးစွဲပုံ:</strong> အတိတ်က ကိစ္စနှစ်ခုအနက် ပထမဆုံး ပြီးစီးခဲ့သော ကိစ္စကို ဖော်ပြရန်။</div>
-          </div>
-
-          <div class="guide-box">
-            <div class="guide-title">8. Past Perfect Continuous Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + had + been + V-ing<br><strong>သုံးစွဲပုံ:</strong> အတိတ်က ကိစ္စတစ်ခုမတိုင်မီ အထိ ဆက်တိုက် လုပ်ဆောင်ခဲ့သော ကိစ္စကို ဖော်ပြရန်။</div>
-          </div>
-
-          <div class="guide-box">
-            <div class="guide-title">9. Future Simple Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + will/shall + V1<br><strong>သုံးစွဲပုံ:</strong> အနာဂတ်တွင် ပြုလုပ်မည့် ကိစ္စများကို ဖော်ပြရန်။</div>
-          </div>
-
-          <div class="guide-box">
-            <div class="guide-title">10. Future Continuous Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + will + be + V-ing<br><strong>သုံးစွဲပုံ:</strong> အနာဂတ် အချိန်တစ်ခု၌ လုပ်ဆောင်နေလိမ့်မည်ဟု ဖော်ပြရန်။</div>
-          </div>
-
-          <div class="guide-box">
-            <div class="guide-title">11. Future Perfect Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + will + have + V3<br><strong>သုံးစွဲပုံ:</strong> အနာဂတ် အချိန်တစ်ခုအရောက်တွင် ပြီးစီးသွားလိမ့်မည်ဟု ဖော်ပြရန်။</div>
-          </div>
-
-          <div class="guide-box">
-            <div class="guide-title">12. Future Perfect Continuous Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + will + have + been + V-ing<br><strong>သုံးစွဲပုံ:</strong> အနာဂတ် အချိန်တစ်ခုအထိ ဆက်တိုက် လုပ်ဆောင်နေလိမ့်မည်ဟု ဖော်ပြရန်။</div>
+            <div class="guide-desc"><strong>Formula:</strong> Subject + am/is/are + V-ing</div>
           </div>
         </div>
 
         <h3 style="color:#fff; margin-top:20px;">🎮 Select Level (1 - 20)</h3>
-        <p style="font-size:12px; color:var(--text-sub);">Level ၁ ခုတွင် မေးခွန်း ၁၀ ကြောင်း ပါဝင်ပါသည်။</p>
         <div class="level-grid" id="tense-level-grid"></div>
       </div>
     </div>
@@ -521,331 +492,259 @@
         <div style="margin-top: 15px;">
           <div class="guide-box">
             <div class="guide-title">Verb Forms ရှင်းပြချက်</div>
-            <div class="guide-desc">
-              • <strong>V1 (Base Form):</strong> Go, Eat, Play<br>
-              • <strong>V2 (Past Tense):</strong> Went, Ate, Played<br>
-              • <strong>V3 (Past Participle):</strong> Gone, Eaten, Played
-            </div>
+            <div class="guide-desc">V1, V2, V3 အသုံးပြုပုံများ</div>
           </div>
         </div>
 
         <h3 style="color:#fff; margin-top:20px;">🎮 Select Level (1 - 30)</h3>
-        <p style="font-size:12px; color:var(--text-sub);">Level ၁ ခုတွင် မေးခွန်း ၁၀ ကြောင်း ပါဝင်ပါသည်။</p>
         <div class="level-grid" id="verb-level-grid"></div>
       </div>
     </div>
 
   </div>
 
-  <!-- QUIZ MODAL POPUP -->
-  <div id="quiz-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 9999; padding: 20px; overflow-y: auto;">
-    <div class="card" style="max-width: 500px; margin: 30px auto; position: relative;">
-      <button onclick="closeQuiz()" style="position: absolute; right: 15px; top: 15px; background: var(--danger); border: none; color: #fff; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer;">✕ Close</button>
-      
-      <h3 id="quiz-title" style="color: var(--accent); margin-top: 0;">Level 1 Quiz</h3>
-      <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 15px;">မေးခွန်း <span id="quiz-progress">1/10</span></div>
-
-      <div id="quiz-question" style="font-size: 16px; font-weight: bold; margin-bottom: 20px; line-height: 1.5; background: var(--card-inner); padding: 15px; border-radius: 10px; border-left: 4px solid var(--accent);">
-        Loading Question...
-      </div>
-
-      <div id="quiz-options" style="display: flex; flex-direction: column; gap: 10px;"></div>
-
-      <div id="quiz-feedback" style="margin-top: 15px; font-weight: bold; text-align: center; display: none;"></div>
-
-      <button id="next-q-btn" class="btn btn-accent" onclick="nextQuestion()" style="margin-top: 15px; display: none;">နောက်တစ်ခု သွားမည် ➔</button>
-    </div>
-  </div>
-
   <!-- BOTTOM NAVIGATION BAR -->
   <div class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('home', this)">
       <div class="nav-icon">🏠</div>
-      <div>Home</div>
+      <span>Home</span>
     </div>
     <div class="nav-item" onclick="switchTab('essay-guide', this)">
-      <div class="nav-icon">📝</div>
-      <div>Essay Guide</div>
+      <div class="nav-icon">📖</div>
+      <span>Guide</span>
     </div>
     <div class="nav-item" onclick="switchTab('challenge', this)">
       <div class="nav-icon">⚔️</div>
-      <div>1 vs 1 Essay</div>
+      <span>Challenge</span>
     </div>
   </div>
 
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-      const splash = document.getElementById('splash-screen');
-      splash.style.opacity = '0';
-      setTimeout(() => splash.style.display = 'none', 500);
-    }, 1200);
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Global State Variables
+    let userXP = parseInt(localStorage.getItem('userXP')) || 150;
+    let userName = localStorage.getItem('userName') || 'Moe Han';
+    let userLevel = parseInt(localStorage.getItem('userLevel')) || 1;
+    let winCount = parseInt(localStorage.getItem('winCount')) || 0;
+    let loseCount = parseInt(localStorage.getItem('loseCount')) || 0;
+    
+    // 1 Month VIP Expiry Logic
+    let vipExpiryTime = parseInt(localStorage.getItem('vipExpiryTime')) || 0;
+    let isVip = Date.now() < vipExpiryTime;
 
-    initLevels();
-  });
-
-  let userXP = parseInt(localStorage.getItem('userXP') || '0');
-  let userName = localStorage.getItem('userName') || 'Moe Han';
-  let wins = parseInt(localStorage.getItem('winCount') || '0');
-  let losses = parseInt(localStorage.getItem('loseCount') || '0');
-
-  document.getElementById('xp').innerText = userXP;
-  document.getElementById('user-name-display').innerText = userName;
-  document.getElementById('win-count').innerText = wins + 'W';
-  document.getElementById('lose-count').innerText = losses + 'L';
-  updateUserLevel();
-
-  function updateUserLevel() {
-    let lvl = Math.floor(userXP / 100) + 1;
-    document.getElementById('user-lvl-display').innerText = 'Lv. ' + lvl;
-  }
-
-  function editUserName() {
-    let newName = prompt("သင့် User Name အသစ် ရိုက်ထည့်ပါ:", userName);
-    if (newName) {
-      userName = newName;
-      localStorage.setItem('userName', userName);
-      document.getElementById('user-name-display').innerText = userName;
-    }
-  }
-
-  function switchTab(tabId, el) {
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-    if (el) el.classList.add('active');
-    document.getElementById(tabId).classList.add('active');
-  }
-
-  function openTenseModule() {
-    switchTab('tense-module', null);
-  }
-
-  function openVerbModule() {
-    switchTab('verb-module', null);
-  }
-
-  // QUESTIONS DATA FOR TENSES & VERBS
-  const tenseQuestions = {
-    1: [
-      { q: "She ___ to school every day.", options: ["go", "goes", "went", "going"], a: 1 },
-      { q: "They ___ football on Sundays.", options: ["play", "plays", "played", "playing"], a: 0 },
-      { q: "The sun ___ in the east.", options: ["rise", "rises", "rose", "rising"], a: 1 },
-      { q: "Water ___ at 100°C.", options: ["boil", "boils", "boiled", "boiling"], a: 1 },
-      { q: "I ___ English every morning.", options: ["study", "studies", "studied", "studying"], a: 0 },
-      { q: "He ___ like junk food.", options: ["don't", "doesn't", "is not", "has not"], a: 1 },
-      { q: "My father ___ in a bank.", options: ["work", "works", "worked", "working"], a: 1 },
-      { q: "Cats ___ milk.", options: ["like", "likes", "liked", "liking"], a: 0 },
-      { q: "We ___ in Myanmar.", options: ["live", "lives", "lived", "living"], a: 0 },
-      { q: "She ___ not eat meat.", options: ["do", "does", "did", "is"], a: 1 }
-    ]
-  };
-
-  const verbQuestions = {
-    1: [
-      { q: "What is the V2 (Past) of 'Go'?", options: ["Gone", "Went", "Going", "Goes"], a: 1 },
-      { q: "What is the V3 (Past Participle) of 'Eat'?", options: ["Ate", "Eats", "Eaten", "Eating"], a: 2 },
-      { q: "What is the V2 of 'See'?", options: ["Saw", "Seen", "Sees", "Seeing"], a: 0 },
-      { q: "What is the V3 of 'Do'?", options: ["Did", "Done", "Does", "Doing"], a: 1 },
-      { q: "What is the V2 of 'Take'?", options: ["Taken", "Took", "Takes", "Taking"], a: 1 },
-      { q: "What is the V3 of 'Write'?", options: ["Wrote", "Written", "Writes", "Writing"], a: 1 },
-      { q: "What is the V2 of 'Buy'?", options: ["Bought", "Buyed", "Buys", "Buying"], a: 0 },
-      { q: "What is the V3 of 'Make'?", options: ["Maked", "Made", "Makes", "Making"], a: 1 },
-      { q: "What is the V2 of 'Run'?", options: ["Ran", "Runned", "Runs", "Running"], a: 0 },
-      { q: "What is the V3 of 'Speak'?", options: ["Spoke", "Spoken", "Speaks", "Speaking"], a: 1 }
-    ]
-  };
-
-  let currentCategory = '';
-  let currentLevel = 1;
-  let currentQIndex = 0;
-  let score = 0;
-
-  function initLevels() {
-    const tGrid = document.getElementById('tense-level-grid');
-    if (tGrid) {
-      tGrid.innerHTML = '';
-      for (let i = 1; i <= 20; i++) {
-        tGrid.innerHTML += `<div class="level-btn ${i===1?'active-lvl':''}" onclick="startQuiz('tense', ${i})">Lvl ${i}</div>`;
-      }
+    // အကယ်၍ သက်တမ်းကုန်သွားပါက VIP status ကို ဖြုတ်ချရန်
+    if (!isVip && vipExpiryTime > 0) {
+      localStorage.removeItem('vipExpiryTime');
     }
 
-    const vGrid = document.getElementById('verb-level-grid');
-    if (vGrid) {
-      vGrid.innerHTML = '';
-      for (let i = 1; i <= 30; i++) {
-        vGrid.innerHTML += `<div class="level-btn ${i===1?'active-lvl':''}" onclick="startQuiz('verb', ${i})">Lvl ${i}</div>`;
-      }
-    }
-  }
-
-  function startQuiz(cat, lvl) {
-    currentCategory = cat;
-    currentLevel = lvl;
-    currentQIndex = 0;
-    score = 0;
-
-    document.getElementById('quiz-title').innerText = `${cat === 'tense' ? '📘 Tense' : '🔤 Verb'} - Level ${lvl}`;
-    document.getElementById('quiz-modal').style.display = 'block';
-    loadQuestion();
-  }
-
-  function closeQuiz() {
-    document.getElementById('quiz-modal').style.display = 'none';
-  }
-
-  function loadQuestion() {
-    let qList = (currentCategory === 'tense' ? tenseQuestions[currentLevel] : verbQuestions[currentLevel]) || (currentCategory === 'tense' ? tenseQuestions[1] : verbQuestions[1]);
-
-    if (currentQIndex >= qList.length) {
-      alert(`🎉 Level ${currentLevel} ပြီးစီးပါပြီ!\nရရှိသောအမှတ်: ${score}/${qList.length}\nရရှိသော XP: +${score * 5} XP`);
-      userXP += (score * 5);
-      localStorage.setItem('userXP', userXP);
-      document.getElementById('xp').innerText = userXP;
-      updateUserLevel();
-      closeQuiz();
-      return;
-    }
-
-    let qObj = qList[currentQIndex];
-    document.getElementById('quiz-progress').innerText = `${currentQIndex + 1}/${qList.length}`;
-    document.getElementById('quiz-question').innerText = qObj.q;
-    document.getElementById('quiz-feedback').style.display = 'none';
-    document.getElementById('next-q-btn').style.display = 'none';
-
-    let optContainer = document.getElementById('quiz-options');
-    optContainer.innerHTML = '';
-
-    qObj.options.forEach((opt, idx) => {
-      let btn = document.createElement('button');
-      btn.className = 'btn';
-      btn.style.background = 'var(--card-inner)';
-      btn.style.border = '1px solid rgba(255,255,255,0.1)';
-      btn.style.color = '#fff';
-      btn.style.textAlign = 'left';
-      btn.innerText = `${idx + 1}. ${opt}`;
-      btn.onclick = () => checkAnswer(idx, qObj.a, btn);
-      optContainer.appendChild(btn);
-    });
-  }
-
-  function checkAnswer(selected, correct, btnEl) {
-    let allBtns = document.getElementById('quiz-options').children;
-    for (let b of allBtns) {
-      b.disabled = true;
-    }
-
-    let feedback = document.getElementById('quiz-feedback');
-    feedback.style.display = 'block';
-
-    if (selected === correct) {
-      btnEl.style.background = 'var(--success)';
-      feedback.innerText = '✅ မှန်ကန်ပါသည်။ (+5 XP)';
-      feedback.style.color = 'var(--success)';
-      score++;
-    } else {
-      btnEl.style.background = 'var(--danger)';
-      allBtns[correct].style.background = 'var(--success)';
-      feedback.innerText = '❌ မှားယွင်းပါသည်။';
-      feedback.style.color = 'var(--danger)';
-    }
-
-    document.getElementById('next-q-btn').style.display = 'block';
-  }
-
-  function nextQuestion() {
-    currentQIndex++;
-    loadQuestion();
-  }
-
-  // 1 VS 1 ESSAY CHALLENGE LOGIC
-  let challengeTimer = null;
-  let timeLeft = 420;
-
-  function startEssayChallenge() {
-    const oppTopic = document.getElementById('opponent-given-topic').value.trim();
-    if (!oppTopic) {
-      alert("ပြိုင်ဘက်ပေးထားသည့် ခေါင်းစဉ်ကို ရိုက်ထည့်ပါ!");
-      return;
-    }
-
-    document.getElementById('display-topic').innerText = oppTopic;
-    document.getElementById('topic-setup-box').style.display = 'none';
-    document.getElementById('essay-writing-box').style.display = 'block';
-    document.getElementById('essay-input').value = '';
-
-    timeLeft = 420;
-    updateTimerDisplay();
-
-    challengeTimer = setInterval(() => {
-      timeLeft--;
-      updateTimerDisplay();
-      if (timeLeft <= 0) {
-        clearInterval(challengeTimer);
-        alert("⏱️ အချိန်ပြည့်သွားပါပြီ!");
-        submitEssay();
-      }
-    }, 1000);
-  }
-
-  function updateTimerDisplay() {
-    const mins = Math.floor(timeLeft / 60);
-    const secs = timeLeft % 60;
-    document.getElementById('timer-display').innerText = `⏱️ ${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  }
-
-  function submitEssay() {
-    clearInterval(challengeTimer);
-    const text = document.getElementById('essay-input').value.trim();
-    if (!text) {
-      alert("ဘာမှ မရေးရသေးပါ!");
-      return;
-    }
-
-    const words = text.toLowerCase().match(/\b\w+\b/g) || [];
-    const wordCount = words.length;
-
-    const earnedXP = Math.floor(wordCount / 5) + 20;
-    userXP += earnedXP;
-    localStorage.setItem('userXP', userXP);
+    // Initial UI Binding
     document.getElementById('xp').innerText = userXP;
-    updateUserLevel();
+    document.getElementById('user-name-display').innerText = userName;
+    document.getElementById('user-lvl-display').innerText = 'Lv. ' + userLevel;
+    document.getElementById('win-count').innerText = winCount + 'W';
+    document.getElementById('lose-count').innerText = loseCount + 'L';
 
-    let resultTitle = "";
-    let resultColor = "";
-    if (wordCount >= 30) {
-      wins++;
-      localStorage.setItem('winCount', wins);
-      document.getElementById('win-count').innerText = wins + 'W';
-      resultTitle = "🏆 WIN (အောင်နိုင်သည်!)";
-      resultColor = "var(--success)";
-    } else {
-      losses++;
-      localStorage.setItem('loseCount', losses);
-      document.getElementById('lose-count').innerText = losses + 'L';
-      resultTitle = "❌ LOSE (ရှုံးနိမ့်သည်!)";
-      resultColor = "var(--danger)";
+    // Splash Screen Removal
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        let splash = document.getElementById('splash-screen');
+        if(splash) {
+          splash.style.opacity = '0';
+          setTimeout(() => splash.remove(), 500);
+        }
+      }, 800);
+    });
+
+    // Tab Switcher
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      
+      let target = document.getElementById(tabId);
+      if(target) target.classList.add('active');
+      if(el) el.classList.add('active');
     }
 
-    document.getElementById('match-result-title').innerText = resultTitle;
-    document.getElementById('match-result-title').style.color = resultColor;
-    document.getElementById('res-word-count').innerText = `📝 စာလုံးရေ: ${wordCount} လုံး`;
-    document.getElementById('res-xp-earned').innerText = `🎉 ရရှိသော XP: +${earnedXP} XP`;
+        function openTenseModule() { switchTab('tense-module', null); }
+    function openVerbModule() { switchTab('verb-module', null); }
 
-    // TELEGRAM SHARE LINK GENERATOR
-    const currentTopic = document.getElementById('display-topic').innerText;
-    const shareText = encodeURIComponent(`🔥 Grade 8 Essay Challenge Result!\n📌 ခေါင်းစဉ်: ${currentTopic}\n📝 စာလုံးရေ: ${wordCount} လုံး\n📊 ရလဒ်: ${resultTitle}\n⭐ ရရှိသော XP: +${earnedXP} XP\n\n--- Moe Han's Study Bot ဖြင့် ရေးသားသည် ---`);
-    document.getElementById('tg-share-btn').href = `https://t.me/share/url?url=&text=${shareText}`;
+    // Edit Name
+    function editUserName() {
+      let newName = prompt("အမည်သစ် ထည့်သွင်းပါ:", userName);
+      if(newName && newName.trim() !== "") {
+        userName = newName.trim();
+        localStorage.setItem('userName', userName);
+        document.getElementById('user-name-display').innerText = userName;
+      }
+    }
 
-    document.getElementById('essay-writing-box').style.display = 'none';
-    document.getElementById('essay-result-box').style.display = 'block';
-  }
+    // VIP SYSTEM LOGIC (1 Month Expiry Check)
+    function checkVipStatus() {
+      let badge = document.getElementById('vip-status-badge');
+      let btn = document.getElementById('buy-vip-btn');
+      let vipSection = document.getElementById('vip-content-section');
+      let expiryText = document.getElementById('vip-expiry-text');
 
-  function resetChallenge() {
-    document.getElementById('essay-result-box').style.display = 'none';
-    document.getElementById('topic-setup-box').style.display = 'block';
-    document.getElementById('opponent-given-topic').value = '';
-  }
-</script>
+      // လက်ရှိအချိန်နှင့် သက်တမ်းကုန်မည့်အချိန်ကို နှိုင်းယှဉ်စစ်ဆေးခြင်း
+      isVip = Date.now() < vipExpiryTime;
+
+      if (isVip) {
+        let remainingDays = Math.ceil((vipExpiryTime - Date.now()) / (1000 * 60 * 60 * 24));
+        if (badge) {
+          badge.innerText = '✨ VIP ACTIVE';
+          badge.style.background = 'rgba(46,213,115,0.1)';
+          badge.style.border = '1px solid var(--success)';
+          badge.style.color = 'var(--success)';
+        }
+        if (btn) {
+          btn.innerText = '✅ VIP သက်တမ်းရှိနေပါပြီ (1 Month)';
+          btn.disabled = true;
+          btn.style.opacity = '0.7';
+        }
+        if (vipSection) {
+          vipSection.style.display = 'block';
+        }
+        if (expiryText) {
+          expiryText.innerText = `⏳ ကျန်ရှိသည့် သက်တမ်း: ခန့်မှန်းခြေ ရက်ပေါင်း ${remainingDays} ရက်`;
+        }
+      } else {
+        if (badge) {
+          badge.innerText = '🔒 Normal Mode';
+          badge.style.background = 'rgba(255,255,255,0.05)';
+          badge.style.border = '1px solid var(--text-sub)';
+          badge.style.color = 'var(--text-sub)';
+        }
+        if (btn) {
+          btn.innerText = '⭐ 500 XP ဖြင့် 1 လစာ VIP ဝယ်မည်';
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        }
+        if (vipSection) {
+          vipSection.style.display = 'none';
+        }
+        if (expiryText) {
+          expiryText.innerText = '';
+        }
+      }
+    }
+
+    function buyVipMode() {
+      const vipCost = 500;
+      
+      if (userXP < vipCost) {
+        alert(`❌ XP မလုံလောက်ပါ! VIP 1 လစာ ဝယ်ရန် ${vipCost} XP လိုအပ်ပါသည်။ (လက်ရှိ: ${userXP} XP)`);
+        return;
+      }
+
+      if (confirm(`⭐ 500 XP ဖြင့် 1 လစာ (30 ရက်) VIP Mode ကို ဝယ်ယူမှာ သေချာပါသလား?`)) {
+        userXP -= vipCost;
+        
+        // 1 လစာ (30 ရက်) သက်တမ်းကို Milliseconds ဖြင့် တွက်ချက်သိမ်းဆည်းခြင်း
+        const thirtyDaysInMillis = 30 * 24 * 60 * 60 * 1000;
+        vipExpiryTime = Date.now() + thirtyDaysInMillis;
+        isVip = true;
+        
+        localStorage.setItem('userXP', userXP);
+        localStorage.setItem('vipExpiryTime', vipExpiryTime);
+        
+        document.getElementById('xp').innerText = userXP;
+        checkVipStatus();
+        updateTelegramShareLink();
+        
+        alert("🎉 ဂုဏ်ယူပါတယ်! 1 လစာ VIP Mode ကို အောင်မြင်စွာ ဝယ်ယူပြီးပါပြီ။");
+      }
+    }
+
+    // Telegram Share Link Builder
+    function updateTelegramShareLink() {
+      let statusText = isVip ? '👑 VIP Student (1 Mo)' : '📚 Normal Student';
+      const shareText = encodeURIComponent(`🔥 Grade 8 English Study Bot Result!\n👤 အမည်: ${userName}\n⭐ XP: ${userXP}\n🏆 Status: ${statusText}\n\n--- Moe Han's Study App ---`);
+      let tgBtn = document.getElementById('tg-share-btn');
+      if(tgBtn) {
+        tgBtn.href = `https://t.me/share/url?url=&text=${shareText}`;
+      }
+    }
+
+    // Build Level Grids
+    function buildLevelGrids() {
+      let tGrid = document.getElementById('tense-level-grid');
+      if(tGrid) {
+        tGrid.innerHTML = '';
+        for(let i=1; i<=20; i++) {
+          tGrid.innerHTML += `<div class="level-btn" onclick="alert('Tense Level ${i} ဝင်ရောက်မည်')">Lv.${i}</div>`;
+        }
+      }
+      let vGrid = document.getElementById('verb-level-grid');
+      if(vGrid) {
+        vGrid.innerHTML = '';
+        for(let i=1; i<=30; i++) {
+          vGrid.innerHTML += `<div class="level-btn" onclick="alert('Verb Level ${i} ဝင်ရောက်မည်')">Lv.${i}</div>`;
+        }
+      }
+    }
+
+    // Challenge Timer & Logic Mock
+    let timerInterval;
+    function startEssayChallenge() {
+      let topic = document.getElementById('opponent-given-topic').value.trim();
+      if(!topic) {
+        alert("ကျေးဇူးပြု၍ ခေါင်းစဉ်တစ်ခု ထည့်သွင်းပါ။");
+        return;
+      }
+      document.getElementById('display-topic').innerText = topic;
+      document.getElementById('topic-setup-box').style.display = 'none';
+      document.getElementById('essay-writing-box').style.display = 'block';
+      
+      let timeLeft = 420;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        document.getElementById('timer-display').innerText = `⏱️ ${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+        if(timeLeft <= 0) {
+          clearInterval(timerInterval);
+          submitEssay();
+        }
+        timeLeft--;
+      }, 1000);
+    }
+
+    function submitEssay() {
+      clearInterval(timerInterval);
+      let text = document.getElementById('essay-input').value.trim();
+      let words = text ? text.split(/\s+/).length : 0;
+      let earnedXP = words > 20 ? 100 : 50;
+      
+      userXP += earnedXP;
+      winCount++;
+      localStorage.setItem('userXP', userXP);
+      localStorage.setItem('winCount', winCount);
+      
+      document.getElementById('xp').innerText = userXP;
+      document.getElementById('win-count').innerText = winCount + 'W';
+      
+      document.getElementById('res-word-count').innerText = `📝 စာလုံးရေ: ${words} လုံး`;
+      document.getElementById('res-vocab-count').innerText = `🌟 Grade 8 Vocab: ${Math.floor(words/15)} လုံး`;
+      document.getElementById('res-xp-earned').innerText = `🎉 ရရှိသော XP: +${earnedXP} XP`;
+      
+      document.getElementById('essay-writing-box').style.display = 'none';
+      document.getElementById('essay-result-box').style.display = 'block';
+      updateTelegramShareLink();
+    }
+
+    function resetChallenge() {
+      document.getElementById('opponent-given-topic').value = '';
+      document.getElementById('essay-input').value = '';
+      document.getElementById('essay-result-box').style.display = 'none';
+      document.getElementById('topic-setup-box').style.display = 'block';
+    }
+
+    // On Load
+    window.addEventListener('DOMContentLoaded', () => {
+      checkVipStatus();
+      buildLevelGrids();
+      updateTelegramShareLink();
+    });
+  </script>
 </body>
 </html>
