@@ -195,6 +195,10 @@
       font-weight: bold;
       cursor: pointer;
     }
+    .level-btn:active {
+      background: var(--accent);
+      color: #000;
+    }
 
     /* BUTTONS & INPUTS */
     input, textarea, select {
@@ -384,7 +388,7 @@
           <div class="guide-desc">မိမိ၏ သဘောထား၊ အကြံပြုချက် သို့မဟုတ် အနှစ်ချုပ် သတင်းစကားဖြင့် အဆုံးသတ်ပါ။</div>
         </div>
 
-        <!-- TELEGRAM GROUP LINK FOR DETAILED ESSAY GUIDES -->
+        <!-- TELEGRAM GROUP LINK -->
         <button class="btn btn-accent" onclick="openTelegramGroup()" style="margin-bottom: 10px;">
           💬 Telegram Group တွင် အသေးစိတ် ရှင်းပြချက် ဖတ်ရန်
         </button>
@@ -427,28 +431,37 @@
       </div>
     </div>
 
-    <!-- TAB 4: 12 TENSES MODULE -->
+    <!-- TAB 4: 12 TENSES MODULE (TENSE 12 မျိုး သီးသန့် + PRACTICE LEVELS) -->
     <div id="tense-module" class="tab-content">
       <div class="card">
         <button onclick="switchTab('home', document.querySelectorAll('.nav-item')[0])" style="background:none; border:none; color:var(--accent); font-size:13px; cursor:pointer; margin-bottom:10px;">⬅️ Home သို့ပြန်သွားရန်</button>
         <h2 style="margin:0; color:#fff;">📘 12 Tenses လေ့လာရန်</h2>
 
-        <div style="margin-top: 15px;">
-          <div class="guide-box">
-            <div class="guide-title">1. Present Simple Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + V1 (s/es)</div>
-          </div>
-          <div class="guide-box">
-            <div class="guide-title">2. Present Continuous Tense</div>
-            <div class="guide-desc"><strong>Formula:</strong> Subject + am/is/are + V-ing</div>
-          </div>
+        <!-- TENSE 12 မျိုး အခြေခံ ရှင်းပြချက် မာတိကာ -->
+        <div style="margin-top: 15px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
+          <div class="guide-box"><div class="guide-title">1. Present Simple Tense</div><div class="guide-desc">Subject + V1 (s/es)</div></div>
+          <div class="guide-box"><div class="guide-title">2. Present Continuous Tense</div><div class="guide-desc">Subject + am/is/are + V-ing</div></div>
+          <div class="guide-box"><div class="guide-title">3. Present Perfect Tense</div><div class="guide-desc">Subject + have/has + V3</div></div>
+          <div class="guide-box"><div class="guide-title">4. Present Perfect Continuous Tense</div><div class="guide-desc">Subject + have/has + been + V-ing</div></div>
+          <div class="guide-box"><div class="guide-title">5. Past Simple Tense</div><div class="guide-desc">Subject + V2</div></div>
+          <div class="guide-box"><div class="guide-title">6. Past Continuous Tense</div><div class="guide-desc">Subject + was/were + V-ing</div></div>
+          <div class="guide-box"><div class="guide-title">7. Past Perfect Tense</div><div class="guide-desc">Subject + had + V3</div></div>
+          <div class="guide-box"><div class="guide-title">8. Past Perfect Continuous Tense</div><div class="guide-desc">Subject + had + been + V-ing</div></div>
+          <div class="guide-box"><div class="guide-title">9. Future Simple Tense</div><div class="guide-desc">Subject + will/shall + V1</div></div>
+          <div class="guide-box"><div class="guide-title">10. Future Continuous Tense</div><div class="guide-desc">Subject + will + be + V-ing</div></div>
+          <div class="guide-box"><div class="guide-title">11. Future Perfect Tense</div><div class="guide-desc">Subject + will + have + V3</div></div>
+          <div class="guide-box"><div class="guide-title">12. Future Perfect Continuous Tense</div><div class="guide-desc">Subject + will + have + been + V-ing</div></div>
         </div>
 
-        <button class="btn btn-accent" onclick="openTelegramGroup()" style="margin-top: 5px; margin-bottom: 15px;">
+        <button class="btn btn-accent" onclick="openTelegramGroup()" style="margin-top: 10px; margin-bottom: 15px;">
           📖 Tenses အသေးစိတ် ရှင်းပြချက်များကို Telegram တွင် ဖတ်ရန်
         </button>
 
-        <h3 style="color:#fff; margin-top:10px;">🎮 Select Level (1 - 20)</h3>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
+
+        <!-- သီးသန့် ခွဲထုတ်ထားသော TENSE PRACTICE LEVELS -->
+        <h3 style="color:#fff; margin-top:10px;">🎯 Tense Practice Levels (1 - 20)</h3>
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px;">တစ်ဆင့်ပြီးတစ်ဆင့် လေ့ကျင့်နိုင်သော Tense Quiz များ -</p>
         <div class="level-grid" id="tense-level-grid"></div>
       </div>
     </div>
@@ -462,7 +475,7 @@
         <div style="margin-top: 15px;">
           <div class="guide-box">
             <div class="guide-title">Verb Forms ရှင်းပြချက်</div>
-            <div class="guide-desc">V1, V2, V3 အသုံးပြုပုံ အခြေခံများ</div>
+            <div class="guide-desc">V1 (Present), V2 (Past), V3 (Past Participle) အသုံးပြုပုံများ</div>
           </div>
         </div>
 
@@ -495,8 +508,8 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // Config: Telegram Group Link (Updated)
-    const TELEGRAM_GROUP_LINK = "https://t.me/+6h86c4JXxJ1hZTA1";
+    // Config: Public Telegram Group Link
+    const TELEGRAM_GROUP_LINK = "https://t.me/studyenglishguide";
 
     // Global State Variables
     let userXP = parseInt(localStorage.getItem('userXP')) || 150;
@@ -538,7 +551,7 @@
       if (targetTab) {
         targetTab.classList.add('active');
       }
-      if (el) {
+            if (el) {
         el.classList.add('active');
       }
     }
@@ -569,14 +582,14 @@
       if (tenseGrid) {
         tenseGrid.innerHTML = '';
         for (let i = 1; i <= 20; i++) {
-          tenseGrid.innerHTML += `<div class="level-btn" onclick="alert('Tense Level ${i} စတင်ပါမည်')">Lvl ${i}</div>`;
+          tenseGrid.innerHTML += `<div class="level-btn" onclick="alert('Tense Level ${i} လေ့ကျင့်ခန်း စတင်ပါမည်')">Lvl ${i}</div>`;
         }
       }
 
       if (verbGrid) {
         verbGrid.innerHTML = '';
         for (let i = 1; i <= 30; i++) {
-          verbGrid.innerHTML += `<div class="level-btn" onclick="alert('Verb Level ${i} စတင်ပါမည်')">Lvl ${i}</div>`;
+          verbGrid.innerHTML += `<div class="level-btn" onclick="alert('Verb Level ${i} လေ့ကျင့်ခန်း စတင်ပါမည်')">Lvl ${i}</div>`;
         }
       }
     }
@@ -599,7 +612,7 @@
         return;
       }
 
-            document.getElementById('display-topic').innerText = topicInput;
+      document.getElementById('display-topic').innerText = topicInput;
       document.getElementById('topic-setup-box').style.display = 'none';
       document.getElementById('essay-writing-box').style.display = 'block';
 
@@ -650,7 +663,7 @@
 
       document.getElementById('res-word-count').innerText = `📝 စာလုံးရေ: ${words}`;
       document.getElementById('res-vocab-count').innerText = `🌟 Grade 8 Vocab: ${Math.floor(words / 5)} လုံး`;
-      document.getElementById('res-xp-earned').innerText = `🎉 ရရှိသော XP: +${earnedXP} XP`;
+      document.getElementById('res-xp-earned').innerText = `🎉 🎉 ရရှိသော XP: +${earnedXP} XP`;
     }
 
     function resetChallenge() {
