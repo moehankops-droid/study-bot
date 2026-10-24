@@ -671,7 +671,10 @@ let currentIndex = parseInt(localStorage.getItem('currentIndex') || '0');
 let userXP = parseInt(localStorage.getItem('userXP') || '0');
 let streak = 0;
 
-let unlockedWords = JSON.parse(localStorage.getItem('unlockedWords') || '[]');
+// Lock စနစ်အတွက် variables များ
+let isBankUnlocked = localStorage.getItem('isBankUnlocked') === 'true';
+let unlockCost = parseInt(localStorage.getItem('unlockCost') || '50');
+let unlockStep = parseInt(localStorage.getItem('unlockStep') || '100');
 
 let currentQuestionType = 'my_to_eng';
 let activeQuestionItem = null;
@@ -682,36 +685,49 @@ document.getElementById('rank-xp').innerText = userXP;
 function renderVocab() {
   const box = document.getElementById('vocab-list-box');
   box.innerHTML = '';
-  
-  filteredData.forEach((v) => {
-    const globalIndex = vocabData.findIndex(item => item.eng === v.eng && item.my === v.my);
-    const isUnlocked = unlockedWords.includes(globalIndex);
 
-    if (isUnlocked) {
-      box.innerHTML += `<div class="vocab-row"><strong style="color:var(--accent)">${v.eng}</strong>: ${v.my} <span style="font-size:12px; opacity:0.6;">(${v.unit})</span></div>`;
-    } else {
-      box.innerHTML += `<div class="vocab-row" style="display:flex; justify-content:space-between; align-items:center;">
-        <span>🔒 Locked: ${v.my} <span style="font-size:12px; opacity:0.6;">(${v.unit})</span></span>
-        <button onclick="unlockVocab(${globalIndex})" style="background:#e67e22; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:12px;">ဖွင့်ရန် (50 XP)</button>
-      </div>`;
-    }
-  });
-}
-
-function unlockVocab(globalIndex) {
-  const cost = 50;
-  if (userXP < cost) {
-    alert(`XP မလုံလောက်ပါ! ဤစကားလုံးကို ဖွင့်ရန် ${cost} XP လိုအပ်ပါသည်။`);
+  // Lock ကျနေပါက
+  if (!isBankUnlocked) {
+    box.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px;">
+        <div style="font-size: 50px; margin-bottom: 15px;">🔒</div>
+        <h3 style="margin-bottom: 10px;">Word Bank ကို Lock ချထားပါသည်</h3>
+        <p style="opacity: 0.8; margin-bottom: 20px; font-size: 14px;">စာလုံးများ အားလုံးကို ကြည့်ရှုရန် Lock ဖြည်ပါ။</p>
+        <button onclick="unlockWordBank()" style="background: #e67e22; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;">
+          🔓 Lock ဖြည်မည် (${unlockCost} XP)
+        </button>
+      </div>
+    `;
     return;
   }
 
-  userXP -= cost;
+  // Lock ဖြည်ထားပါက စာလုံးများ အားလုံး ပြမည်
+  filteredData.forEach(v => {
+    box.innerHTML += `<div class="vocab-row"><strong style="color:var(--accent)">${v.eng}</strong>: ${v.my} <span style="font-size:12px; opacity:0.6;">(${v.unit})</span></div>`;
+  });
+}
+
+function unlockWordBank() {
+  if (userXP < unlockCost) {
+    alert(`XP မလုံလောက်ပါ! Word Bank ကို ဖြည်ရန် ${unlockCost} XP လိုအပ်ပါသည်။`);
+    return;
+  }
+
+  // XP ဖြတ်မည်
+  userXP -= unlockCost;
   localStorage.setItem('userXP', userXP);
   document.getElementById('xp').innerText = userXP;
   document.getElementById('rank-xp').innerText = userXP;
 
-  unlockedWords.push(globalIndex);
-  localStorage.setItem('unlockedWords', JSON.stringify(unlockedWords));
+  // Lock ဖြည်လိုက်ပြီဖြစ်ကြောင်း မှတ်မည်
+  isBankUnlocked = true;
+  localStorage.setItem('isBankUnlocked', 'true');
+
+  // နောက်တစ်ကြိမ်အတွက် Cost ကို 50 -> 150 -> 300 တိုးမည်
+  unlockCost += unlockStep;
+  unlockStep += 50;
+  localStorage.setItem('unlockCost', unlockCost);
+  localStorage.setItem('unlockStep', unlockStep);
 
   renderVocab();
 }
@@ -729,6 +745,7 @@ function changeUnit() {
 }
 
 function filterVocab() {
+  if (!isBankUnlocked) return;
   const keyword = document.getElementById('search').value.toLowerCase();
   const rows = document.querySelectorAll('.vocab-row');
   rows.forEach(r => {
