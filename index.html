@@ -367,7 +367,375 @@
       </div>
 
     </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Grade 8 English Study Bot</title>
+  <style>
+    :root {
+      --bg: #0d0f12;
+      --card: #181b20;
+      --card-inner: #101216;
+      --accent: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.3);
+      --danger: #ff4757;
+      --success: #2ed573;
+      --warning: #ffa502;
+      --text: #ffffff;
+      --text-sub: #a0a5b5;
+    }
 
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* SPLASH SCREEN */
+    #splash-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #090a0f;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .splash-logo {
+      font-size: 60px;
+      margin-bottom: 15px;
+      animation: pulse 1.5s infinite alternate;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 5px var(--accent)); }
+      100% { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--accent)); }
+    }
+
+    /* TOP APP BAR */
+    .app-header {
+      background: var(--card);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    .app-title {
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .xp-badge {
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid var(--accent);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    /* MAIN CONTENT CONTAINER */
+    .app-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      padding-bottom: 85px;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARD DESIGN */
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      margin-bottom: 15px;
+    }
+
+    /* PROFILE CARD */
+    .profile-card {
+      background: linear-gradient(135deg, #1c2331, #141720);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .profile-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .user-name-text {
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .win-loss-badge {
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* HOME MENU GRID */
+    .home-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .home-card {
+      background: var(--card-inner);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 20px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s transform, 0.2s border-color;
+    }
+    .home-card:active {
+      transform: scale(0.96);
+      border-color: var(--accent);
+    }
+    .home-card-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    .home-card-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .home-card-sub {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    /* LEVEL GRID */
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .level-btn {
+      background: var(--card-inner);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 15px 5px;
+      text-align: center;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .level-btn.active-lvl {
+      border-color: var(--accent);
+      background: rgba(0, 210, 255, 0.1);
+      color: var(--accent);
+    }
+
+    /* BUTTONS & INPUTS */
+    input, textarea, select {
+      width: 100%;
+      background: var(--card-inner);
+      border: 1px solid #2a2e39;
+      color: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: 0.3s;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s transform;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #ff4757, #ff6b81);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+    }
+    .btn-success {
+      background: linear-gradient(135deg, #2ed573, #26af5f);
+      color: white;
+      box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
+    }
+    .btn-accent {
+      background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+      color: white;
+      box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+    }
+
+    /* BOTTOM NAVIGATION BAR */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 65px;
+      background: #121418;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-sub);
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .nav-icon {
+      font-size: 20px;
+      margin-bottom: 3px;
+      transition: 0.3s;
+    }
+    .nav-item.active {
+      color: var(--accent);
+    }
+    .nav-item.active .nav-icon {
+      transform: translateY(-2px);
+      filter: drop-shadow(0 0 8px var(--accent));
+    }
+
+    .guide-box {
+      background: var(--card-inner);
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--accent);
+    }
+    .guide-title {
+      font-weight: bold;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .guide-desc {
+      font-size: 13px;
+      color: #ccc;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SPLASH SCREEN -->
+  <div id="splash-screen">
+    <div class="splash-logo">📚</div>
+    <h2 style="margin:0; color:#fff; letter-spacing:1px;">Grade 8 Study Bot</h2>
+    <p style="color:var(--text-sub); font-size:13px; margin-top:5px;">Loading Mobile App...</p>
+  </div>
+
+  <!-- APP HEADER -->
+  <div class="app-header">
+    <div class="app-title">GRADE 8 STUDY BOT</div>
+    <div class="xp-badge">⭐ <span id="xp">0</span> XP</div>
+  </div>
+
+  <!-- APP BODY -->
+  <div class="app-body">
+    
+    <!-- TAB 1: HOME DASHBOARD -->
+    <div id="home" class="tab-content active">
+      
+      <!-- PROFILE CARD BANNER -->
+      <div class="profile-card">
+        <div class="profile-info">
+          <div>
+            <div style="font-size: 11px; color: var(--text-sub);">USER NAME</div>
+            <div class="user-name-text" id="user-name-display">Moe Han</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: var(--text-sub); text-align: right;">LEVEL</div>
+            <div style="font-size: 18px; font-weight: bold; color: var(--warning);" id="user-lvl-display">Lv. 1</div>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+          <div class="win-loss-badge">
+            ⚔️ 1vs1 Stats: <span style="color: var(--success);" id="win-count">0W</span> / <span style="color: var(--danger);" id="lose-count">0L</span>
+          </div>
+          <button onclick="editUserName()" style="background: none; border: none; color: var(--accent); font-size: 12px; cursor: pointer; text-decoration: underline;">✏️ Edit Name</button>
+        </div>
+      </div>
+
+      <!-- MAIN FEATURE CARDS GRID -->
+      <div class="home-grid">
+        <div class="home-card" onclick="openTenseModule()">
+          <div class="home-card-icon">📘</div>
+          <div class="home-card-title">12 Tenses</div>
+          <div class="home-card-sub">ရှင်းပြချက် + 20 Levels</div>
+        </div>
+
+        <div class="home-card" onclick="openVerbModule()">
+          <div class="home-card-icon">🔤</div>
+          <div class="home-card-title">Verb Form</div>
+          <div class="home-card-sub">ရှင်းပြချက် + 30 Levels</div>
+        </div>
+      </div>
+
+      <div class="home-grid" style="margin-top: 12px;">
+        <div class="home-card" onclick="switchTab('essay-guide', document.querySelectorAll('.nav-item')[1])" style="grid-column: span 2;">
+          <div class="home-card-icon">📝</div>
+          <div class="home-card-title">Essay ရေးနည်း Guide</div>
+          <div class="home-card-sub">Grade 8 အက်ဆေး အဆင့်ဆင့် ရေးသားနည်း လမ်းညွှန်</div>
+        </div>
+      </div>
+
+    </div>
     <!-- TAB 2: ESSAY GUIDE -->
     <div id="essay-guide" class="tab-content">
       <div class="card">
@@ -427,6 +795,12 @@
           <p id="res-word-count">📝 စာလုံးရေ: 0</p>
           <p id="res-vocab-count">🌟 Grade 8 Vocab: 0 လုံး</p>
           <p id="res-xp-earned" style="font-weight: bold; color: var(--accent);">🎉 ရရှိသော XP: +0 XP</p>
+          
+          <!-- TELEGRAM SHARE BUTTON -->
+          <a id="tg-share-btn" href="#" target="_blank" class="btn" style="display: block; background: #0088cc; color: white; text-align: center; text-decoration: none; margin-top: 10px; padding: 12px; border-radius: 10px; font-weight: bold;">
+            🚀 Telegram Group သို့ Share မည်
+          </a>
+
           <button class="btn btn-accent" onclick="resetChallenge()" style="margin-top: 10px;">🔄 အသစ်ပြန်ပြိုင်မည်</button>
         </div>
       </div>
@@ -506,7 +880,7 @@
         <div class="level-grid" id="tense-level-grid"></div>
       </div>
     </div>
-        <!-- TAB 5: VERB FORM MODULE -->
+    <!-- TAB 5: VERB FORM MODULE -->
     <div id="verb-module" class="tab-content">
       <div class="card">
         <button onclick="switchTab('home', document.querySelectorAll('.nav-item')[0])" style="background:none; border:none; color:var(--accent); font-size:13px; cursor:pointer; margin-bottom:10px;">⬅️ Home သို့ပြန်သွားရန်</button>
@@ -805,22 +1179,31 @@
     document.getElementById('xp').innerText = userXP;
     updateUserLevel();
 
+    let resultTitle = "";
+    let resultColor = "";
     if (wordCount >= 30) {
       wins++;
       localStorage.setItem('winCount', wins);
       document.getElementById('win-count').innerText = wins + 'W';
-      document.getElementById('match-result-title').innerText = "🏆 WIN (အောင်နိုင်သည်!)";
-      document.getElementById('match-result-title').style.color = "var(--success)";
+      resultTitle = "🏆 WIN (အောင်နိုင်သည်!)";
+      resultColor = "var(--success)";
     } else {
       losses++;
       localStorage.setItem('loseCount', losses);
       document.getElementById('lose-count').innerText = losses + 'L';
-      document.getElementById('match-result-title').innerText = "❌ LOSE (ရှုံးနိမ့်သည်!)";
-      document.getElementById('match-result-title').style.color = "var(--danger)";
+      resultTitle = "❌ LOSE (ရှုံးနိမ့်သည်!)";
+      resultColor = "var(--danger)";
     }
 
+    document.getElementById('match-result-title').innerText = resultTitle;
+    document.getElementById('match-result-title').style.color = resultColor;
     document.getElementById('res-word-count').innerText = `📝 စာလုံးရေ: ${wordCount} လုံး`;
     document.getElementById('res-xp-earned').innerText = `🎉 ရရှိသော XP: +${earnedXP} XP`;
+
+    // TELEGRAM SHARE LINK GENERATOR
+    const currentTopic = document.getElementById('display-topic').innerText;
+    const shareText = encodeURIComponent(`🔥 Grade 8 Essay Challenge Result!\n📌 ခေါင်းစဉ်: ${currentTopic}\n📝 စာလုံးရေ: ${wordCount} လုံး\n📊 ရလဒ်: ${resultTitle}\n⭐ ရရှိသော XP: +${earnedXP} XP\n\n--- Moe Han's Study Bot ဖြင့် ရေးသားသည် ---`);
+    document.getElementById('tg-share-btn').href = `https://t.me/share/url?url=&text=${shareText}`;
 
     document.getElementById('essay-writing-box').style.display = 'none';
     document.getElementById('essay-result-box').style.display = 'block';
@@ -834,3 +1217,7 @@
 </script>
 </body>
 </html>
+
+
+
+
