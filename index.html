@@ -2,876 +2,393 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grade 8 English Study Bot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Grade 8 English Essay Bot</title>
   <style>
     :root {
-      --bg: #121212;
-      --card: #1e1e1e;
-      --accent: #3498db;
+      --bg: #0d0f12;
+      --card: #181b20;
+      --accent: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.3);
+      --danger: #ff4757;
+      --success: #2ed573;
       --text: #ffffff;
+      --text-sub: #a0a5b5;
     }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       margin: 0;
-      padding: 15px;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
-    .top-bar {
+
+    /* 1. SPLASH SCREEN ANIMATION */
+    #splash-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #090a0f;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .splash-logo {
+      font-size: 60px;
+      margin-bottom: 15px;
+      animation: pulse 1.5s infinite alternate;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 5px var(--accent)); }
+      100% { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--accent)); }
+    }
+
+    /* TOP APP BAR */
+    .app-header {
+      background: var(--card);
+      padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--card);
-      padding: 12px 20px;
-      border-radius: 10px;
-      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 15px;
+    .app-title {
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+      background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      background: #2a2a2a;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
+    .xp-badge {
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid var(--accent);
+      padding: 6px 14px;
+      border-radius: 20px;
       font-size: 13px;
+      font-weight: bold;
+      color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
     }
-    .tab-btn.active {
-      background: var(--accent);
+
+    /* MAIN CONTENT CONTAINER */
+    .app-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      padding-bottom: 90px;
     }
+
     .tab-content {
       display: none;
+      animation: fadeIn 0.3s ease-in-out;
     }
     .tab-content.active {
       display: block;
     }
-    .vocab-row {
-      background: #252525;
-      padding: 10px 15px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARD DESIGN */
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: #101216;
+      border: 1px solid #2a2e39;
+      color: #fff;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      transition: 0.3s;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s transform, 0.2s box-shadow;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #ff4757, #ff6b81);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+    }
+    .btn-success {
+      background: linear-gradient(135deg, #2ed573, #26af5f);
+      color: white;
+      box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
+    }
+
+    /* 2. BOTTOM NAVIGATION BAR */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 70px;
+      background: #121418;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-sub);
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .nav-icon {
+      font-size: 22px;
+      margin-bottom: 4px;
+      transition: 0.3s;
+    }
+    .nav-item.active {
+      color: var(--accent);
+    }
+    .nav-item.active .nav-icon {
+      transform: translateY(-3px);
+      filter: drop-shadow(0 0 8px var(--accent));
+    }
+
+    .leaderboard-row {
+      background: #101216;
+      padding: 12px 16px;
+      border-radius: 10px;
       margin-bottom: 8px;
-      border-radius: 6px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,0.03);
     }
-    input, select, textarea {
-      background: #2a2a2a;
-      color: #fff;
-      border: 1px solid #444;
-      padding: 10px;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    .feedback.correct { color: #2ecc71; font-weight: bold; margin-top: 10px; }
-    .feedback.wrong { color: #e74c3c; font-weight: bold; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-  <div class="top-bar">
-    <h3>Grade 8 English Bot</h3>
-    <div>⭐ XP: <span id="xp">0</span></div>
+  <!-- SPLASH SCREEN -->
+  <div id="splash-screen">
+    <div class="splash-logo">⚔️</div>
+    <h2 style="margin:0; color:#fff; letter-spacing:1px;">Grade 8 Essay Bot</h2>
+    <p style="color:var(--text-sub); font-size:13px; margin-top:5px;">Loading Mobile UI...</p>
   </div>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('vocab')">📖 Word Bank</button>
-    <button class="tab-btn" onclick="switchTab('practice')">✍️ Practice</button>
-    <button class="tab-btn" onclick="switchTab('challenge')">⚔️ 1 vs 1 Essay</button>
+  <!-- APP HEADER -->
+  <div class="app-header">
+    <div class="app-title">GRADE 8 ESSAY BOT</div>
+    <div class="xp-badge">⭐ <span id="xp">0</span> XP</div>
   </div>
 
-  <!-- 1. WORD BANK TAB -->
-  <div id="vocab" class="tab-content active">
-    <div style="margin-bottom: 10px; display: flex; gap: 10px;">
-      <select id="unit-select" onchange="changeUnit()" style="flex: 1;">
-        <option value="all">Unit အားလုံး</option>
-        <option value="U1L1">Unit 1 - Lesson 1</option>
-        <option value="U1L2">Unit 1 - Lesson 2</option>
-        <option value="U4">Unit 4</option>
-        <option value="Poem1">Poem 1</option>
-      </select>
-      <input type="text" id="search" placeholder="ရှာရန်..." onkeyup="filterVocab()" style="flex: 1;">
+  <!-- APP BODY -->
+  <div class="app-body">
+    
+    <!-- TAB 1: 1 VS 1 ESSAY -->
+    <div id="challenge" class="tab-content active">
+      <div class="card">
+        <h2 style="margin-top:0; color:#fff;">⚔️ 1 vs 1 Essay Challenge</h2>
+        <p style="color: var(--text-sub); font-size:13px; margin-bottom: 20px;">(၇ မိနစ် အချိန်အတွင်း အလွတ် ရေးသားပြိုင်ပွဲ)</p>
+
+        <!-- STEP 1: TOPIC INPUT -->
+        <div id="topic-setup-box">
+          <input type="text" id="opponent-given-topic" placeholder="ပြိုင်ဘက်က ပေးသည့် ခေါင်းစဉ်ရိုက်ထည့်ပါ..." style="margin-bottom: 15px;">
+          <button class="btn btn-primary" onclick="startEssayChallenge()">🚀 ပြိုင်ပွဲ စတင်မည် (7 Mins)</button>
+        </div>
+
+        <!-- STEP 2: ESSAY WRITING -->
+        <div id="essay-writing-box" style="display: none;">
+          <h3 style="color: var(--accent); margin-bottom:5px;">ခေါင်းစဉ်: <span id="display-topic"></span></h3>
+          <div style="font-size: 26px; font-weight: 800; color: var(--danger); margin: 15px 0;" id="timer-display">⏱️ 07:00</div>
+          
+          <textarea id="essay-input" rows="8" placeholder="ခေါင်းစဉ်အတိုင်း အလွတ် စတင်ရေးသားပါ..."></textarea>
+          
+          <br><br>
+          <button class="btn btn-success" onclick="submitEssay()">✅ စာစီစာကုံး တင်မည် (Submit)</button>
+        </div>
+
+        <!-- STEP 3: RESULT -->
+        <div id="essay-result-box" style="display: none; text-align: left; background: #101216; padding: 15px; border-radius: 10px; margin-top: 15px;">
+          <h3 style="text-align: center; color: var(--success); margin-top:0;">📊 ရလဒ် စစ်ဆေးပြီးစီးမှု</h3>
+          <p id="res-word-count">📝 စာလုံးရေ (Word Count): 0</p>
+          <p id="res-vocab-count">🌟 ပါဝင်သော Grade 8 Vocab: 0 လုံး</p>
+          <p id="res-xp-earned" style="font-weight: bold; color: var(--accent);">🎉 ရရှိသော XP: +0 XP</p>
+          <button class="btn btn-primary" onclick="resetChallenge()" style="margin-top: 10px;">🔄 အသစ်ပြန်ပြိုင်မည်</button>
+        </div>
+      </div>
     </div>
-    <div id="vocab-list-box"></div>
+
+    <!-- TAB 2: LEADERBOARD -->
+    <div id="leaderboard" class="tab-content">
+      <div class="card">
+        <h2 style="margin-top:0;">🏆 Leaderboard</h2>
+        <div id="leaderboard-list">
+          <div class="leaderboard-row">
+            <span>🥇 Player 1</span>
+            <strong style="color: #f1c40f;">1200 XP</strong>
+          </div>
+          <div class="leaderboard-row">
+            <span>🥈 Player 2</span>
+            <strong style="color: #bdc3c7;">850 XP</strong>
+          </div>
+          <div class="leaderboard-row">
+            <span>🥉 Player 3 (You)</span>
+            <strong style="color: var(--accent);"><span id="rank-xp">0</span> XP</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- 2. PRACTICE TAB -->
-  <div id="practice" class="tab-content">
-    <div style="background: var(--card); padding: 20px; border-radius: 12px; text-align: center;">
-      <div id="counter" style="opacity: 0.7; margin-bottom: 10px;">Word 1</div>
-      <h2 id="q-word" style="margin-bottom: 20px;"></h2>
-      <input type="text" id="ans-single" placeholder="အင်္ဂလိပ်လို စာလုံးရိုက်ပါ..." style="width: 80%; margin-bottom: 15px;">
-      <br>
-      <button onclick="checkAnswer()" style="background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">
-        စစ်ဆေးမည်
-      </button>
-      <div id="feedback" class="feedback"></div>
+  <!-- BOTTOM NAVIGATION BAR -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('challenge', this)">
+      <div class="nav-icon">⚔️</div>
+      <div>1 vs 1 Essay</div>
+    </div>
+    <div class="nav-item" onclick="switchTab('leaderboard', this)">
+      <div class="nav-icon">🏆</div>
+      <div>Leaderboard</div>
     </div>
   </div>
 
-  <!-- 3. 1 vs 1 ESSAY CHALLENGE TAB -->
-  <div id="challenge" class="tab-content">
-    <div style="background: var(--card); padding: 20px; border-radius: 12px; text-align: center;">
-      <h2>⚔️ 1 vs 1 Essay Challenge (7 Mins)</h2>
-      
-      <!-- Step 1: Topic ပေးသည့် အပိုင်း -->
-      <div id="topic-setup-box">
-        <p style="opacity: 0.8; font-size: 14px;">တစ်ယောက်နှင့်တစ်ယောက် ခေါင်းစဉ် အပြန်အလှန် ပေးကြပါ</p>
-        <input type="text" id="opponent-given-topic" placeholder="ပြိုင်ဘက်က မင်းကို ပေးသည့် ခေါင်းစဉ်ရိုက်ပါ..." style="width: 85%; margin-bottom: 15px;">
-        <br>
-        <button onclick="startEssayChallenge()" style="background: #e74c3c; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-          🚀 ပြိုင်ပွဲ စတင်မည် (7 Mins)
-        </button>
-      </div>
-
-      <!-- Step 2: အလွတ် ရေးသားရမည့် အပိုင်း -->
-      <div id="essay-writing-box" style="display: none; margin-top: 20px;">
-        <h3 style="color: #f1c40f;">သင့်ခေါင်းစဉ်: <span id="display-topic"></span></h3>
-        <div style="font-size: 24px; font-weight: bold; color: #e74c3c; margin: 15px 0;" id="timer-display">⏱️ 07:00</div>
-        
-        <textarea id="essay-input" rows="8" placeholder="ခေါင်းစဉ်အတိုင်း အလွတ် စတင်ရေးသားပါ..." style="width: 90%; font-size: 15px;"></textarea>
-        
-        <br><br>
-        <button onclick="submitEssay()" style="background: #2ecc71; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-          ✅ စာစီစာကုံး တင်မည် (Submit)
-        </button>
-      </div>
-
-      <!-- Step 3: အမှတ် ရလဒ်ပြမည့် အပိုင်း -->
-      <div id="essay-result-box" style="display: none; margin-top: 20px; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
-        <h3 style="text-align: center; color: #2ecc71;">📊 စစ်ဆေးပြီးစီးမှု ရလဒ်</h3>
-        <p id="res-word-count">📝 စာလုံးရေ (Word Count): 0</p>
-        <p id="res-vocab-count">🌟 ပါဝင်သော Grade 8 Vocab: 0 လုံး</p>
-        <p id="res-xp-earned" style="font-weight: bold; color: #f1c40f;">🎉 ရရှိသော XP: +0 XP</p>
-        <button onclick="resetChallenge()" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 10px;">
-          🔄 အသစ်ပြန်ပြိုင်မည်
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    const tg = window.Telegram?.WebApp;
-    if (tg) tg.expand();
-
-    // စာအုပ်ပါ ဝေါဟာရ အချက်အလက် အားလုံး (Unit 1 မှ Poem 1 အထိ)
-    const vocabData = [
-      // Unit 1 - Lesson 1 (Page 10 - 11)
-      { unit: "U1L1", eng: "habits", my: "အလေ့အကျင့်များ" },
-      { unit: "U1L1", eng: "choke", my: "အသက်ရှူကျပ်သည်" },
-      { unit: "U1L1", eng: "digestion", my: "အစားကိုကြေစေခြင်း" },
-      { unit: "U1L1", eng: "unable", my: "မတတ်နိုင်သော" },
-      { unit: "U1L1", eng: "breathe", my: "အသက်ရှူသည်" },
-      { unit: "U1L1", eng: "something", my: "တစ်ခုခု" },
-      { unit: "U1L1", eng: "blocking", my: "ပိတ်ဆို့နေခြင်း" },
-      { unit: "U1L1", eng: "throat", my: "လည်ပင်း" },
-      { unit: "U1L1", eng: "process", my: "ဖြစ်စဉ်လုပ်ငန်းစဉ်" },
-      { unit: "U1L1", eng: "changed", my: "ပြောင်းလဲသည်" },
-      { unit: "U1L1", eng: "substances", my: "အရာဝတ္ထုများ" },
-      { unit: "U1L1", eng: "junk food", my: "အာဟာရဓာတ်မပါသောအဓိကအစားအစာများ" },
-      { unit: "U1L1", eng: "unhealthy", my: "နာမကျန်းဖြစ်စေသော" },
-      { unit: "U1L1", eng: "quick", my: "လျှင်မြန်သော" },
-      { unit: "U1L1", eng: "mindfully", my: "သတိရှိစွာ" },
-      { unit: "U1L1", eng: "consciously", my: "အသိရှိစွာ" },
-      { unit: "U1L1", eng: "aware of", my: "သတိပြုမိသည်" },
-      { unit: "U1L1", eng: "action", my: "လှုပ်ရှားမှု" },
-      { unit: "U1L1", eng: "mindlessly", my: "အဓိပ္ပါယ်မဲ့စွာ" },
-      { unit: "U1L1", eng: "mineral water", my: "သဘာဝရေ တွင်းထွက်ရေ" },
-      { unit: "U1L1", eng: "containing", my: "ပါဝင်သော" },
-      { unit: "U1L1", eng: "dissolved", my: "အရည်ပျော်စေသည်" },
-      { unit: "U1L1", eng: "minerals", my: "သတ္တုဓာတ်များ" },
-      { unit: "U1L1", eng: "obesity", my: "အလွန်ဝခြင်း" },
-      { unit: "U1L1", eng: "condition", my: "အခြေအနေ" },
-      { unit: "U1L1", eng: "healthy", my: "ကျန်းမာသော" },
-      { unit: "U1L1", eng: "sugar", my: "သကြား" },
-      { unit: "U1L1", eng: "sugary", my: "သကြားဓာတ်ပါဝင်သော" },
-      { unit: "U1L1", eng: "described", my: "ဖော်ပြသည်" },
-      { unit: "U1L1", eng: "variety", my: "မျိုးစုံ" },
-      { unit: "U1L1", eng: "mentioned", my: "ဖော်ပြသည်" },
-      { unit: "U1L1", eng: "takes", my: "ကြာသည်" },
-      { unit: "U1L1", eng: "finish", my: "ပြီးစီးသည်" },
-      { unit: "U1L1", eng: "taking sugary drinks", my: "သကြားဓာတ်ပါသောအချိုရည်များသောက်ခြင်း" },
-      { unit: "U1L1", eng: "having a meal", my: "အစားအသောက်စားခြင်း" },
-      { unit: "U1L1", eng: "variety of vegetables", my: "ဟင်းသီးဟင်းရွက်မျိုးစုံ" },
-      { unit: "U1L1", eng: "how much", my: "ဘယ်လောက်များများ" },
-      { unit: "U1L1", eng: "at a time", my: "တစ်ကြိမ်မှာ" },
-      { unit: "U1L1", eng: "how long she takes", my: "သူမ ဘယ်လောက်ကြာသလဲ" },
-      { unit: "U1L1", eng: "at weekends", my: "စနေ တနင်္ဂနွေနေ့တွေမှာ" },
-      { unit: "U1L1", eng: "between meals", my: "နံနက်စာနဲ့ညစာကြားမှာ" },
-      { unit: "U1L1", eng: "at the dining table", my: "ထမင်းစား စားပွဲမှာ" },
-      { unit: "U1L1", eng: "litres of water", my: "ရေလီတာများ" },
-      { unit: "U1L1", eng: "burgers and chip", my: "ဘာဂါနှင့်အာလူးကြော်များ" },
-      { unit: "U1L1", eng: "often eat", my: "စားလေ့ရှိသည်" },
-      { unit: "U1L1", eng: "less than 10 minutes", my: "၁၀ မိနစ်မပြည့်ခင်" },
-      { unit: "U1L1", eng: "in the living room", my: "ဧည့်ခန်းထဲမှာ" },
-
-      // Unit 1 - Lesson 2 (Page 12 - 16)
-      { unit: "U1L2", eng: "learning", my: "သင်ယူခြင်း" },
-      { unit: "U1L2", eng: "starts", my: "စတင်သည်" },
-      { unit: "U1L2", eng: "routines", my: "လုပ်ရိုးလုပ်စဉ်အလုပ်များ" },
-      { unit: "U1L2", eng: "benefits", my: "အကျိုးကျေးဇူးများ" },
-      { unit: "U1L2", eng: "activities", my: "လုပ်ငန်းဆောင်တာများ" },
-      { unit: "U1L2", eng: "together", my: "အတူတကွ" },
-      { unit: "U1L2", eng: "beneficial", my: "အကျိုးရှိသော" },
-      { unit: "U1L2", eng: "welcome", my: "ကြိုဆိုသည်" },
-      { unit: "U1L2", eng: "blog", my: "အကြောင်းအရာတစ်ခုကိုအွန်လိုင်းပေါ်တွင်တင်ထားခြင်း" },
-      { unit: "U1L2", eng: "share", my: "ဝေမျှသည်" },
-      { unit: "U1L2", eng: "experiences", my: "အတွေ့အကြုံများ" },
-      { unit: "U1L2", eng: "mum", my: "မေမေ" },
-      { unit: "U1L2", eng: "links", my: "အဆက်အသွယ်များ" },
-      { unit: "U1L2", eng: "posts", my: "သိသင့်သိထိုက်သည်များကိုအွန်လိုင်းပေါ်တွင်တင်ထားခြင်း" },
-      { unit: "U1L2", eng: "believe", my: "ယုံကြည်သည်" },
-      { unit: "U1L2", eng: "developing", my: "ဖွံ့ဖြိုးဆဲဖြစ်သော" },
-      { unit: "U1L2", eng: "whole", my: "တစ်ခုလုံးဖြစ်သော" },
-      { unit: "U1L2", eng: "sense", my: "သိစိတ်အသိ" },
-      { unit: "U1L2", eng: "responsibility", my: "တာဝန်သိမှု" },
-      { unit: "U1L2", eng: "unity", my: "ညီညွတ်မှု" },
-      { unit: "U1L2", eng: "skills", my: "ကျွမ်းကျင်မှုများ" },
-      { unit: "U1L2", eng: "remind", my: "သတိပေးသည်" },
-      { unit: "U1L2", eng: "become", my: "ဖြစ်လာသည်" },
-      { unit: "U1L2", eng: "importance", my: "အရေးပါမှု" },
-      { unit: "U1L2", eng: "balanced", my: "မျှတသော" },
-      { unit: "U1L2", eng: "manners", my: "အမူအကျင့်များ" },
-      { unit: "U1L2", eng: "diet", my: "အာဟာရ" },
-      { unit: "U1L2", eng: "occasionally", my: "တစ်ခါတစ်ရံ" },
-      { unit: "U1L2", eng: "spend", my: "ကုန်စေသည်" },
-      { unit: "U1L2", eng: "household chores", my: "အိမ်မှုကိစ္စများ" },
-      { unit: "U1L2", eng: "sweeping", my: "တံမြက်စည်းလှည်းခြင်း" },
-      { unit: "U1L2", eng: "floor", my: "ကြမ်းပြင်" },
-      { unit: "U1L2", eng: "dishes", my: "ပန်းကန်ခွက်ယောက်များ" },
-      { unit: "U1L2", eng: "responsible", my: "တာဝန်သိသော" },
-      { unit: "U1L2", eng: "cooperative", my: "ပူးပေါင်းလုပ်ကိုင်တတ်သော" },
-      { unit: "U1L2", eng: "engage", my: "လုပ်ကိုင်နေကြသည်" },
-      { unit: "U1L2", eng: "outdoor activities", my: "အိမ်အပြင်တွင် လုပ်ရသောအလုပ်များ" },
-      { unit: "U1L2", eng: "jogging", my: "ခပ်ဖြည်းဖြည်းပြေးခြင်း" },
-      { unit: "U1L2", eng: "park", my: "ပန်းခြံ" },
-      { unit: "U1L2", eng: "indoor activities", my: "အိမ်တွင်းတွင် လုပ်ရသောအလုပ်များ" },
-      { unit: "U1L2", eng: "especially", my: "အထူးသဖြင့်" },
-      { unit: "U1L2", eng: "rains", my: "မိုးရွာသည်" },
-      { unit: "U1L2", eng: "physical exercise", my: "ကိုယ်လက်လေ့ကျင့်ခန်းများ" },
-      { unit: "U1L2", eng: "realise", my: "သဘောပေါက်လာသည်" },
-      { unit: "U1L2", eng: "value", my: "တန်ဖိုး" },
-      { unit: "U1L2", eng: "settled", my: "အသားကျနေပြီဖြစ်သော" },
-      { unit: "U1L2", eng: "regular", my: "ပုံမှန်ဖြစ်သော" },
-      { unit: "U1L2", eng: "difficult", my: "ခက်ခဲသော" },
-      { unit: "U1L2", eng: "highlighted", my: "အရေးကြီးသော" },
-      { unit: "U1L2", eng: "similar", my: "အလားတူဖြစ်သော" },
-      { unit: "U1L2", eng: "located", my: "တည်ရှိသော" },
-      { unit: "U1L2", eng: "duty", my: "တာဝန်" },
-      { unit: "U1L2", eng: "particular", my: "သီးသန့်ဖြစ်သော" },
-      { unit: "U1L2", eng: "advantages", my: "အကျိုးကျေးဇူးများ" },
-      { unit: "U1L2", eng: "helpful", my: "ကူညီတတ်သော" },
-      { unit: "U1L2", eng: "take part", my: "ပါဝင်သည်" },
-      { unit: "U1L2", eng: "behaviour", my: "အပြုအမူ" },
-      { unit: "U1L2", eng: "considered", my: "ယူဆသည်" },
-      { unit: "U1L2", eng: "appropriate", my: "သင့်လျော်သော" },
-      { unit: "U1L2", eng: "while", my: "စဉ်တွင်" },
-      { unit: "U1L2", eng: "trying", my: "ကြိုးစားနေသော" },
-      { unit: "U1L2", eng: "games", my: "ကစားပွဲများ" },
-      { unit: "U1L2", eng: "actively", my: "တက်ကြွစွာ" },
-      { unit: "U1L2", eng: "created", my: "ဖန်တီးထားသော" },
-      { unit: "U1L2", eng: "knowledge", my: "အသိပညာ" },
-      { unit: "U1L2", eng: "gain", my: "ရရှိသည်" },
-      { unit: "U1L2", eng: "readers", my: "စာဖတ်သူများ" },
-      { unit: "U1L2", eng: "mealtime", my: "ထမင်းစားချိန်များ" },
-      { unit: "U1L2", eng: "a sense of responsibility", my: "တာဝန်သိစိတ်" },
-      { unit: "U1L2", eng: "as a whole family", my: "မိသားစုတစ်ခုလုံးအနေနဲ့" },
-      { unit: "U1L2", eng: "table manners", my: "ထမင်းစားနေစဉ် လိုက်နာရသောအမူအကျင့်များ" },
-      { unit: "U1L2", eng: "doing the dishes", my: "ပန်းကန်ခွက်ယောက်များ ဆေးကြောခြင်း" },
-      { unit: "U1L2", eng: "as a result", my: "ရလဒ်အနေနဲ့" },
-      { unit: "U1L2", eng: "regular routines", my: "ပုံမှန်လုပ်နေကျ အလုပ်များ" },
-      { unit: "U1L2", eng: "why don't you try them out", my: "သင်လည်း စမ်းလုပ်ကြည့်ပါလား" },
-      { unit: "U1L2", eng: "preparing meals", my: "နံနက်စာ ညစာများအတွက် ပြင်ဆင်ချက်ပြုတ်ခြင်း" },
-      { unit: "U1L2", eng: "take part in something", my: "တစ်ခုခုတွင် ပါဝင်ခြင်း" },
-      { unit: "U1L2", eng: "family gathering", my: "မိသားစု စုံစုံညီညီတွေ့ဆုံခြင်း" },
-      { unit: "U1L2", eng: "No matter where and who", my: "ဘယ်နေရာ ဘယ်သူဆိုတာ အရေးမကြီးပါဘူး" },
-      { unit: "U1L2", eng: "going out", my: "အပြင်ထွက်ခြင်း" },
-      { unit: "U1L2", eng: "team sports", my: "အသင်းလိုက်လုပ်ရသော အားကစား လုပ်ငန်းများ" },
-      { unit: "U1L2", eng: "extra-curricular activities", my: "ပညာရေးဖွံ့ဖြိုးမှုလုပ်ငန်းများ" },
-      { unit: "U1L2", eng: "great fun", my: "အလွန်ပျော်စရာကောင်းတယ်" },
-
-      // Unit 1 - Lesson 3 (Page 17 - 20)
-      { unit: "U1L3", eng: "busy", my: "အလုပ်ရှုပ်နေသော" },
-      { unit: "U1L3", eng: "adverbs", my: "ကြိယာဝိသေသနများ" },
-      { unit: "U1L3", eng: "indefinite", my: "မတိကျသော" },
-      { unit: "U1L3", eng: "frequency", my: "ကြိမ်နှုန်း" },
-      { unit: "U1L3", eng: "definite", my: "တိကျသော" },
-      { unit: "U1L3", eng: "challenge", my: "စိန်ခေါ်မှု" },
-      { unit: "U1L3", eng: "single", my: "တစ်ယောက်တည်းဖြစ်နေသော" },
-      { unit: "U1L3", eng: "office work", my: "ရုံးအလုပ်" },
-      { unit: "U1L3", eng: "busiest time", my: "အလုပ်အများဆုံးအချိန်" },
-      { unit: "U1L3", eng: "gets up", my: "အိပ်ရာထသည်" },
-      { unit: "U1L3", eng: "skips", my: "လွတ်သွားသည်" },
-      { unit: "U1L3", eng: "boils", my: "ပြုတ်သည်" },
-      { unit: "U1L3", eng: "bread", my: "ပေါင်မုန့်" },
-      { unit: "U1L3", eng: "butter", my: "ထောပတ်" },
-      { unit: "U1L3", eng: "frequently", my: "မကြာခဏ" },
-      { unit: "U1L3", eng: "packs", my: "ထုတ်ပေးသည်" },
-      { unit: "U1L3", eng: "lunch boxes", my: "နေ့လယ်စာထမင်းဘူးများ" },
-      { unit: "U1L3", eng: "thin", my: "ပါးသော" },
-      { unit: "U1L3", eng: "slice", my: "အချပ်" },
-      { unit: "U1L3", eng: "ketchup", my: "အချဉ်ရည်" },
-      { unit: "U1L3", eng: "fries", my: "ကြော်သည်" },
-      { unit: "U1L3", eng: "works out", my: "လေ့ကျင့်ခန်းများလုပ်သည်" },
-      { unit: "U1L3", eng: "electric bike", my: "လျှပ်စစ်စက်ဘီး" },
-      { unit: "U1L3", eng: "heads", my: "ဦးတည်သည်/ထွက်ခွာသည်" },
-      { unit: "U1L3", eng: "always", my: "အမြဲတမ်း" },
-      { unit: "U1L3", eng: "never", my: "ဘယ်တော့မှ(မလုပ်)" },
-      { unit: "U1L3", eng: "usually", my: "များသောအားဖြင့်" },
-      { unit: "U1L3", eng: "generally", my: "များသောအားဖြင့်" },
-      { unit: "U1L3", eng: "normally", my: "ပုံမှန်အားဖြင့်" },
-      { unit: "U1L3", eng: "occasionally", my: "တစ်ခါတစ်ရံ" },
-      { unit: "U1L3", eng: "often", my: "မကြာခဏ" },
-      { unit: "U1L3", eng: "seldom", my: "လုပ်ခဲစွာ" },
-      { unit: "U1L3", eng: "rarely", my: "ရှားရှားပါးပါး" },
-      { unit: "U1L3", eng: "hardly", my: "လုပ်ခဲစွာ" },
-      { unit: "U1L3", eng: "alternative", my: "နှစ်ခုအနက် တစ်ခုကို ရွေးချယ်ရန်ဖြစ်သော" },
-      { unit: "U1L3", eng: "expressions", my: "စကားအသုံးအနှုန်းများ" },
-      { unit: "U1L3", eng: "placed", my: "ထားသည်" },
-      { unit: "U1L3", eng: "main verbs", my: "အဓိကကြိယာများ" },
-      { unit: "U1L3", eng: "auxiliary verbs", my: "အကူကြိယာများ" },
-      { unit: "U1L3", eng: "punctual", my: "အချိန်တိကျသော" },
-      { unit: "U1L3", eng: "eat out", my: "အပြင်ထွက်စားသည်" },
-      { unit: "U1L3", eng: "occasions", my: "အရေးကိစ္စများ" },
-      { unit: "U1L3", eng: "classical music", my: "ဂန္ထဝင်တေးဂီတ" },
-      { unit: "U1L3", eng: "once", my: "တစ်ကြိမ်" },
-      { unit: "U1L3", eng: "twice", my: "နှစ်ကြိမ်" },
-      { unit: "U1L3", eng: "three times", my: "သုံးကြိမ်" },
-      { unit: "U1L3", eng: "daily", my: "နေ့စဉ်ဖြစ်သော" },
-      { unit: "U1L3", eng: "weekly", my: "အပတ်စဉ်ဖြစ်သော" },
-      { unit: "U1L3", eng: "monthly", my: "လစဉ်ဖြစ်သော" },
-      { unit: "U1L3", eng: "yearly", my: "နှစ်စဉ်ဖြစ်သော" },
-      { unit: "U1L3", eng: "dentist", my: "သွားဆရာဝန်" },
-      { unit: "U1L3", eng: "seasonal", my: "ရာသီအလိုက်ဖြစ်သော" },
-      { unit: "U1L3", eng: "cabbages", my: "ဂေါ်ဖီထုပ်များ" },
-      { unit: "U1L3", eng: "cauliflowers", my: "ပန်းဂေါ်ဖီများ" },
-      { unit: "U1L3", eng: "festival", my: "ပွဲတော်" },
-      { unit: "U1L3", eng: "desert", my: "သဲကန္တာရ" },
-      { unit: "U1L3", eng: "cinema", my: "ရုပ်ရှင်ရုံ" },
-      { unit: "U1L3", eng: "yoga", my: "ယောဂကျင့်စဉ်" },
-      { unit: "U1L3", eng: "bring me up", my: "ပြုစုစောင့်ရှောက်ခဲ့သည်" },
-      { unit: "U1L3", eng: "skips his breakfast", my: "မနက်စာထမင်းလွတ်သွားသည်" },
-      { unit: "U1L3", eng: "takes a quick shower", my: "ရေအမြန်ချိုးသည်" },
-      { unit: "U1L3", eng: "a quarter past eight", my: "၈ နာရီ ၁၅ မိနစ်" },
-      { unit: "U1L3", eng: "at the beginning", my: "အစတွင်" },
-      { unit: "U1L3", eng: "at the end of", my: "အဆုံးတွင်" },
-      { unit: "U1L3", eng: "Take this medicine", my: "ဒီဆေးကိုသောက်" },
-      { unit: "U1L3", eng: "Olympic Games", my: "အိုလံပစ်အားကစားပြိုင်ပွဲများ" },
-      { unit: "U1L3", eng: "go to the cinema", my: "ရုပ်ရှင်သွားကြည့်သည်" },
-      { unit: "U1L3", eng: "in the correct order", my: "အစီအစဉ်မှန်အောင်" },
-
-      // Unit 1 - Lesson 4 (Page 20 - 22)
-      { unit: "U1L4", eng: "civil engineer", my: "မြို့ပြအင်ဂျင်နီယာ" },
-      { unit: "U1L4", eng: "construction site", my: "ဆောက်လုပ်ရေးလုပ်ငန်းခွင်" },
-      { unit: "U1L4", eng: "weekdays", my: "တနင်္လာမှသောကြာနေ့အထိ နေ့ရက်များ" },
-      { unit: "U1L4", eng: "meeting", my: "အစည်းအဝေး" },
-      { unit: "U1L4", eng: "office staff", my: "ရုံးအဖွဲ့" },
-      { unit: "U1L4", eng: "plan", my: "အစီအစဉ်" },
-      { unit: "U1L4", eng: "checks", my: "စစ်ဆေးသည်" },
-      { unit: "U1L4", eng: "assigns", my: "တာဝန်ပေးသည်" },
-      { unit: "U1L4", eng: "resume", my: "ပြန်စသည်" },
-      { unit: "U1L4", eng: "explains", my: "ရှင်းပြသည်" },
-      { unit: "U1L4", eng: "gets home", my: "အိမ်ပြန်ရောက်သည်" },
-      { unit: "U1L4", eng: "sure", my: "သေချာသော" },
-      { unit: "U1L4", eng: "protective", my: "အကာအကွယ်ပေးနိုင်သော" },
-      { unit: "U1L4", eng: "clothing", my: "အဝတ်အစား" },
-      { unit: "U1L4", eng: "inspect", my: "စစ်ဆေးသည်" },
-         { unit: "U1L4", eng: "puts on", my: "ဝတ်ဆင်သည်" },
-      { unit: "U1L4", eng: "worksite", my: "လုပ်ငန်းခွင်" },
-      { unit: "U1L4", eng: "safety", my: "ဘေးကင်းလုံခြုံမှု" },
-      { unit: "U1L4", eng: "jacket", my: "အပေါ်အင်္ကျီဂျာကင်" },
-      { unit: "U1L4", eng: "hard hat", my: "ဦးထုပ်အမာ" },
-      { unit: "U1L4", eng: "boots", my: "ဘုတ်ဖိနပ်" },
-      { unit: "U1L4", eng: "headmaster", my: "ကျောင်းအုပ်ဆရာကြီး" },
-      { unit: "U1L4", eng: "based", my: "အခြေခံသော" },
-      { unit: "U1L4", eng: "information", my: "သတင်းအချက်အလက်" },
-      { unit: "U1L4", eng: "spelling errors", my: "စာလုံးပေါင်းအမှားများ" },
-      { unit: "U1L4", eng: "a break for lunch", my: "နေ့လယ်စာစားရန် အလုပ်ရပ်နားချိန်" },
-      { unit: "U1L4", eng: "has a shower", my: "ရေချိုးသည်" },
-      { unit: "U1L4", eng: "enjoys dinner", my: "ညစာကို မြိန်မြိန်ရှက်ရှက်စားသည်" },
-      { unit: "U1L4", eng: "goes to bed", my: "အိပ်ရာဝင်သည်" },
-      { unit: "U1L4", eng: "always aware of safety", my: "ဘေးကင်းလုံခြုံမှုကို အမြဲသတိထားသည်" },
-      { unit: "U1L4", eng: "hands over", my: "လွှဲပြောင်းပေးသည်" },
-      { unit: "U1L4", eng: "assists in", my: "အကူအညီပေးသည်" },
-      { unit: "U1L4", eng: "gives treatment", my: "ကုသပေးသည်" },
-      { unit: "U1L4", eng: "take over", my: "လွှဲယူသည်" },
-
-      // Unit 2 - Lesson 1 (Page 23 - 25)
-      { unit: "U2L1", eng: "places", my: "နေရာများ" },
-      { unit: "U2L1", eng: "things", my: "အရာဝတ္ထုပစ္စည်းများ" },
-      { unit: "U2L1", eng: "classrooms", my: "စာသင်ခန်းများ" },
-      { unit: "U2L1", eng: "principal", my: "ကျောင်းအုပ်ကြီး" },
-      { unit: "U2L1", eng: "playground", my: "ကစားကွင်း" },
-      { unit: "U2L1", eng: "staff room", my: "ဆရာ/မများ နားနေခန်း" },
-      { unit: "U2L1", eng: "timetable", my: "အချိန်ဇယား" },
-      { unit: "U2L1", eng: "gatekeeper", my: "ဂိတ်စောင့်" },
-      { unit: "U2L1", eng: "vice-principal", my: "ဒု-ကျောင်းအုပ်" },
-      { unit: "U2L1", eng: "library", my: "စာကြည့်တိုက်" },
-      { unit: "U2L1", eng: "librarian", my: "စာကြည့်တိုက်မှူး" },
-      { unit: "U2L1", eng: "dustbin", my: "အမှိုက်ပုံး" },
-      { unit: "U2L1", eng: "assembly hall", my: "စုဝေးခန်းမ" },
-      { unit: "U2L1", eng: "backpacks", my: "ကျောပိုးအိတ်များ" },
-      { unit: "U2L1", eng: "toilet", my: "အိမ်သာ" },
-      { unit: "U2L1", eng: "canteen", my: "ကျောင်းစားသောက်ဆိုင်" },
-      { unit: "U2L1", eng: "clerk", my: "စာရေး" },
-      { unit: "U2L1", eng: "laboratory", my: "ဓာတ်ခွဲခန်း" },
-      { unit: "U2L1", eng: "cleaner", my: "သန့်ရှင်းရေးဝန်ထမ်း" },
-      { unit: "U2L1", eng: "imagine", my: "စဉ်းစားတွေးတောသည်" },
-      { unit: "U2L1", eng: "school rules", my: "ကျောင်းစည်းကမ်းများ" },
-      { unit: "U2L1", eng: "start", my: "စတင်သည်" },
-      { unit: "U2L1", eng: "is over", my: "ပြီးဆုံးသည်" },
-      { unit: "U2L1", eng: "next to", my: "ကပ်လျက်ဖြစ်သော" },
-      { unit: "U2L1", eng: "journals", my: "ဂျာနယ်များ" },
-      { unit: "U2L1", eng: "attend", my: "တက်ရောက်သည်" },
-      { unit: "U2L1", eng: "regularly", my: "အချိန်မှန်မှန်" },
-      { unit: "U2L1", eng: "late", my: "နောက်ကျသော" },
-      { unit: "U2L1", eng: "bring", my: "ယူလာသည်" },
-      { unit: "U2L1", eng: "large", my: "များပြားသော" },
-      { unit: "U2L1", eng: "sums", my: "ပမာဏ" },
-      { unit: "U2L1", eng: "valuable", my: "အဖိုးတန်သော" },
-
-      // Unit 2 - Lesson 2 (Page 26 - 28)
-      { unit: "U2L2", eng: "types", my: "အမျိုးအစားများ" },
-      { unit: "U2L2", eng: "schooldays", my: "ကျောင်းတက်ရက်များ" },
-      { unit: "U2L2", eng: "unhappy", my: "စိတ်မချမ်းသာသော" },
-      { unit: "U2L2", eng: "carefree", my: "အပူအပင်ကင်းသော" },
-      { unit: "U2L2", eng: "memorable", my: "အမှတ်တရဖြစ်သော" },
-      { unit: "U2L2", eng: "boring", my: "ငြီးငွေ့ဖွယ်ကောင်းသော" },
-      { unit: "U2L2", eng: "play", my: "ပါဝင်သည်" },
-      { unit: "U2L2", eng: "lives", my: "ဘဝများ" },
-      { unit: "U2L2", eng: "reach", my: "ရောက်ရှိသည်" },
-      { unit: "U2L2", eng: "send", my: "ပို့သည်/စေလွှတ်သည်" },
-      { unit: "U2L2", eng: "government", my: "အစိုးရ" },
-      { unit: "U2L2", eng: "private school", my: "ကိုယ်ပိုင်ကျောင်း" },
-      { unit: "U2L2", eng: "monastic school", my: "ဘုန်းတော်ကြီးသင်ကျောင်း" },
-      { unit: "U2L2", eng: "learn", my: "သင်ယူသည်" },
-      { unit: "U2L2", eng: "shape", my: "ပုံသဏ္ဌာန်" },
-      { unit: "U2L2", eng: "primary school", my: "မူလတန်းကျောင်း" },
-      { unit: "U2L2", eng: "mixed", my: "(ကျား/မ) ရောထားသော" },
-      { unit: "U2L2", eng: "street", my: "လမ်း" },
-      { unit: "U2L2", eng: "rather", my: "အတော်" },
-      { unit: "U2L2", eng: "strict", my: "စည်းကမ်းတင်းကျပ်သော" },
-      { unit: "U2L2", eng: "develop", my: "ဖွံ့ဖြိုးတိုးတက်စေသည်" },
-      { unit: "U2L2", eng: "fundamental", my: "အခြေခံကျသော" },
-      { unit: "U2L2", eng: "mathematics", my: "သင်္ချာ" },
-      { unit: "U2L2", eng: "formed", my: "ဖွဲ့စည်းဖြစ်ပေါ်စေသည်" },
-      { unit: "U2L2", eng: "solid", my: "ခိုင်မာတောင့်တင်းသော" },
-      { unit: "U2L2", eng: "foundation", my: "အခြေခံအုတ်မြစ်" },
-      { unit: "U2L2", eng: "favourite", my: "အကြိုက်ဆုံးဖြစ်သော" },
-      { unit: "U2L2", eng: "great", my: "အလွန်တော်သော" },
-      { unit: "U2L2", eng: "strengths", my: "အားသာချက်များ" },
-      { unit: "U2L2", eng: "weaknesses", my: "အားနည်းချက်များ" },
-      { unit: "U2L2", eng: "encouraged", my: "အားပေးသည်" },
-      { unit: "U2L2", eng: "won", my: "(ဆု)ရသည်" },
-      { unit: "U2L2", eng: "prize", my: "ဆု" },
-      { unit: "U2L2", eng: "essay competition", my: "စာစီစာကုံးပြိုင်ပွဲ" },
-      { unit: "U2L2", eng: "joy", my: "ပျော်ရွှင်မှု" },
-      { unit: "U2L2", eng: "inspiring", my: "အားတက်အောင် လှုံ့ဆော်ပေးတတ်သော" },
-      { unit: "U2L2", eng: "secondary education", my: "အလယ်တန်းပညာရေး" },
-      { unit: "U2L2", eng: "all-girls school", my: "မိန်းကလေးကျောင်း" },
-      { unit: "U2L2", eng: "compound", my: "ခြံဝင်း" },
-      { unit: "U2L2", eng: "dedicated", my: "စိတ်အားထက်သန်စွာ မြှုပ်နှံထားသော" },
-      { unit: "U2L2", eng: "excellent", my: "အလွန်ကောင်းသော" },
-      { unit: "U2L2", eng: "concept", my: "အယူအဆသဘောထား" },
-      { unit: "U2L2", eng: "simple", my: "လွယ်ကူရှင်းလင်းသော" },
-      { unit: "U2L2", eng: "example", my: "ဥပမာ" },
-      { unit: "U2L2", eng: "explained", my: "ရှင်းပြခဲ့သည်" },
-      { unit: "U2L2", eng: "step by step", my: "တစ်ဆင့်ပြီးတစ်ဆင့်" },
-      { unit: "U2L2", eng: "feedback", my: "အကြံပြု အကဲဖြတ်ပေးသည်" },
-      { unit: "U2L2", eng: "stern", my: "ခက်ထန်သော" },
-      { unit: "U2L2", eng: "truly", my: "အမှန်တကယ်" },
-      { unit: "U2L2", eng: "national museum", my: "အမျိုးသားပြတိုက်" },
-      { unit: "U2L2", eng: "people's park", my: "ပြည်သူ့ဥယျာဉ်" },
-      { unit: "U2L2", eng: "physically", my: "ရုပ်ပိုင်းဆိုင်ရာ" },
-      { unit: "U2L2", eng: "mentally", my: "စိတ်ပိုင်းဆိုင်ရာ" },
-      { unit: "U2L2", eng: "emotionally", my: "စိတ်လှုပ်ရှားစွာ" },
-
-      // Unit 3 (Page 39 - 44)
-      { unit: "U3", eng: "helps", my: "ကူညီသည်" },
-      { unit: "U3", eng: "reduce", my: "လျှော့ချပေးသည်" },
-      { unit: "U3", eng: "stress", my: "စိတ်ဖိစီးမှု" },
-      { unit: "U3", eng: "boost", my: "တိုးမြှင့်ပေးသည်" },
-      { unit: "U3", eng: "creativity", my: "ဖန်တီးနိုင်စွမ်း" },
-      { unit: "U3", eng: "hope", my: "မျှော်လင့်သည်" },
-      { unit: "U3", eng: "sooner or later", my: "အစောနဲ့အမြန်" },
-      { unit: "U3", eng: "different", my: "ကွဲပြားခြားနားသော" },
-      { unit: "U3", eng: "items", my: "ပစ္စည်းများ" },
-      { unit: "U3", eng: "clothing", my: "အဝတ်အစား" },
-      { unit: "U3", eng: "shawls", my: "တာဘတ်/ခြုံစောင်များ" },
-      { unit: "U3", eng: "socks", my: "ခြေအိတ်များ" },
-      { unit: "U3", eng: "sweaters", my: "ဆွယ်တာများ" },
-      { unit: "U3", eng: "music notes", my: "ဂီတကောက်တမာများ" },
-      { unit: "U3", eng: "songs", my: "သီချင်းများ" },
-      { unit: "U3", eng: "birthday present", my: "မွေးနေ့လက်ဆောင်" },
-      { unit: "U3", eng: "strings", my: "ကြိုးများ" },
-      { unit: "U3", eng: "bow", my: "တိုးတံ" },
-      { unit: "U3", eng: "orchestra", my: "သံစုံတီးဝိုင်း" },
-      { unit: "U3", eng: "melody", my: "တေးသွား" },
-      { unit: "U3", eng: "improve", my: "တိုးတက်စေသည်" },
-      { unit: "U3", eng: "memory", my: "မှတ်ဉာဏ်" },
-      { unit: "U3", eng: "social", my: "လူမှုရေးနှင့်ဆိုင်သော" },
-      { unit: "U3", eng: "professional", my: "ကျွမ်းကျင်ပိုင်နိုင်သော" },
-      { unit: "U3", eng: "violinist", my: "တယောသမား" },
-      { unit: "U3", eng: "grow up", my: "အရွယ်ရောက်သည်" },
-      { unit: "U3", eng: "weekend", my: "စနေတနင်္ဂနွေ" },
-      { unit: "U3", eng: "martial art", my: "သိုင်းပညာ" },
-      { unit: "U3", eng: "moves", my: "လှုပ်ရှားမှုများ" },
-      { unit: "U3", eng: "punches", my: "လက်သီးထိုးချက်များ" },
-      { unit: "U3", eng: "kicks", my: "ခြေကန်ချက်များ" },
-      { unit: "U3", eng: "reasons", my: "အကြောင်းရင်းများ" },
-      { unit: "U3", eng: "self-defence", my: "ကိုယ်ကိုကိုယ်ကာကွယ်ရေး" },
-      { unit: "U3", eng: "health", my: "ကျန်းမာရေး" },
-      { unit: "U3", eng: "leisure", my: "အားလပ်ချိန်" },
-      { unit: "U3", eng: "outfits", my: "ဝတ်စုံများ" },
-      { unit: "U3", eng: "belt", my: "ခါးပတ်" },
-      { unit: "U3", eng: "medals", my: "ဆုတံဆိပ်များ" },
-      { unit: "U3", eng: "prizes", my: "ဆုများ" },
-      { unit: "U3", eng: "muscles", my: "ကြွက်သားများ" },
-      { unit: "U3", eng: "build up", my: "တည်ဆောက်ပေးသည်" },
-      { unit: "U3", eng: "stamina", my: "သက်လုံကောင်းမှု" },
-      { unit: "U3", eng: "champion", my: "ချန်ပီယံ" },
-      { unit: "U3", eng: "scout", my: "ကင်းထောက်" },
-      { unit: "U3", eng: "several", my: "အတော်များသော" },
-      { unit: "U3", eng: "practical", my: "လက်တွေ့ပြုလုပ်ရသော" },
-      { unit: "U3", eng: "basic knots", my: "အခြေခံကြိုးထုံးနည်းများ" },
-      { unit: "U3", eng: "scout uniform", my: "ကင်းထောက်ယူနီဖောင်း" },
-      { unit: "U3", eng: "khaki shirt", my: "ကာကီရောင်ရှပ်အင်္ကျီ" },
-      { unit: "U3", eng: "neckerchief", my: "လည်စည်းပဝါ" },
-      { unit: "U3", eng: "blue pants", my: "ဘောင်းဘီအပြာ" },
-      { unit: "U3", eng: "go camping", my: "စခန်းချရန်ထွက်ခြင်း" },
-      { unit: "U3", eng: "sleeping bags", my: "အိပ်ရာလိပ်များ" },
-      { unit: "U3", eng: "put up", my: "တည်ဆောက်သည်" },
-      { unit: "U3", eng: "tents", my: "တဲများ" },
-      { unit: "U3", eng: "campsite", my: "စခန်းချမည့်နေရာ" },
-      { unit: "U3", eng: "confident", my: "ယုံကြည်မှုရှိသော" },
-      { unit: "U3", eng: "responsible", my: "တာဝန်သိသော" },
-      { unit: "U3", eng: "friendship", my: "ခင်မင်ရင်းနှီးမှု" },
-      { unit: "U3", eng: "season", my: "ရာသီ" },
-      { unit: "U3", eng: "at the foot of the mountain", my: "တောင်ခြေမှာ" },
-      { unit: "U3", eng: "golfer", my: "ဂေါ့ဖ်ရိုက်သမား" },
-      { unit: "U3", eng: "regarded", my: "သဘောထားသည်" },
-      { unit: "U3", eng: "contains", my: "ပါဝင်သည်" },
-      { unit: "U3", eng: "calcium", my: "ထုံးဓာတ်" },
-      { unit: "U3", eng: "wish", my: "ဆန္ဒရှိသည်" },
-      { unit: "U3", eng: "texts", my: "ရေးသားထားမှုများ" },
-      { unit: "U3", eng: "a piece of cheesecake", my: "ဒိန်ခဲမုန့်တစ်ခုတည်း" },
-      { unit: "U3", eng: "requests", my: "ပန်ကြားချက်များ" },
-      { unit: "U3", eng: "offers", my: "ကမ်းလှမ်းချက်များ" },
-      { unit: "U3", eng: "permission", my: "ခွင့်ပြုချက်" },
-      { unit: "U3", eng: "responses", my: "တုံ့ပြန်ပြောဆိုမှုများ" },
-      { unit: "U3", eng: "address", my: "နေရပ်လိပ်စာ" },
-      { unit: "U3", eng: "rice", my: "ထမင်း" },
-      { unit: "U3", eng: "bubble tea", my: "အမြှုပ်လက်ဖက်ရည်" },
-      { unit: "U3", eng: "decide", my: "ဆုံးဖြတ်သည်" },
-      { unit: "U3", eng: "function", my: "လုပ်ဆောင်ချက်" },
-      { unit: "U3", eng: "manager", my: "မန်နေဂျာ" },
-      { unit: "U3", eng: "papers", my: "စာရွက်များ" },
-      { unit: "U3", eng: "return", my: "ပြန်ပေးသည်" },
-      { unit: "U3", eng: "tomatoes", my: "ခရမ်းချဉ်သီးများ" },
-      { unit: "U3", eng: "washing machine", my: "အဝတ်လျှော်စက်" },
-      { unit: "U3", eng: "dessert", my: "အချိုပွဲ" },
-      { unit: "U3", eng: "fridge", my: "ရေခဲသေတ္တာ" },
-      { unit: "U3", eng: "ringing", my: "အသံမြည်နေသော" },
-      { unit: "U3", eng: "cousin", my: "ဝမ်းကွဲအစ်ကို/မောင်/အစ်မ" },
-      { unit: "U3", eng: "pass", my: "လွှဲပေးသည်" },
-      { unit: "U3", eng: "salt", my: "ဆား" },
-      { unit: "U3", eng: "visitor", my: "ဧည့်သည်" },
-      { unit: "U3", eng: "turn on", my: "(ခလုတ်)ဖွင့်သည်" },
-      { unit: "U3", eng: "fan", my: "ပန်ကာ" },
-      { unit: "U3", eng: "feeling well", my: "နေကောင်းသော" },
-      { unit: "U3", eng: "leave", my: "ထွက်ခွာသည်" },
-      { unit: "U3", eng: "try on", my: "စမ်းဝတ်ကြည့်သည်" },
-      { unit: "U3", eng: "blouse", my: "ဘလောက်အင်္ကျီ" },
-      { unit: "U3", eng: "going shopping", my: "ဈေးဝယ်ထွက်ခြင်း" },
-      { unit: "U3", eng: "cheeseburger", my: "ဒိန်ခဲဘာဂါ" },
-      { unit: "U3", eng: "refusing", my: "ငြင်းပယ်ခြင်း" },
-      { unit: "U3", eng: "menu", my: "စားသောက်ဖွယ်စာရင်း" },
-      { unit: "U3", eng: "prepare", my: "အသင့်ပြင်ဆင်သည်" },
-
-      // Unit 4 (Page 45 - 48)
-      { unit: "U4", eng: "play", my: "တီးမှုတ်သည်" },
-      { unit: "U4", eng: "band", my: "တီးဝိုင်း" },
-      { unit: "U4", eng: "discuss", my: "ဆွေးနွေးသည်" },
-      { unit: "U4", eng: "groups", my: "အုပ်စုများ" },
-      { unit: "U4", eng: "musical instruments", my: "တူရိယာများ" },
-      { unit: "U4", eng: "wind instruments", my: "လေမှုတ်တူရိယာများ" },
-      { unit: "U4", eng: "percussion instruments", my: "တီးခတ်တူရိယာများ" },
-      { unit: "U4", eng: "produce", my: "ထုတ်လုပ်သည်" },
-      { unit: "U4", eng: "blow", my: "လေမှုတ်သွင်းသည်" },
-      { unit: "U4", eng: "wood", my: "သစ်သား" },
-      { unit: "U4", eng: "brass", my: "ကြေး(တူရိယာ)" },
-      { unit: "U4", eng: "flute", my: "ပလွေ" },
-      { unit: "U4", eng: "clarinet", my: "ကလာရီနက်" },
-      { unit: "U4", eng: "trumpet", my: "ခရာ" },
-      { unit: "U4", eng: "trombone", my: "သံစုံခရာ" },
-      { unit: "U4", eng: "saxophone", my: "ကြေးလေမှုတ်တူရိယာ" },
-      { unit: "U4", eng: "sounds", my: "အသံများ" },
-      { unit: "U4", eng: "struck", my: "ရိုက်သည်၊ ခတ်သည်" },
-      { unit: "U4", eng: "beaten", my: "ရိုက်ခတ်သည်" },
-      { unit: "U4", eng: "drumsticks", my: "ဒရမ်တီးတုတ်ချောင်းများ" },
-      { unit: "U4", eng: "bass drum", my: "ဘယ်သံထွက်ဒရမ်" },
-      { unit: "U4", eng: "side drum", my: "ဘယ်သံထွက်ဒရမ်" },
-      { unit: "U4", eng: "cymbals", my: "လင်းကွင်း" },
-      { unit: "U4", eng: "triangle", my: "ကြိမ်ပုံတူရိယာ" },
-      { unit: "U4", eng: "metal bar", my: "သတ္တုဘားတန်းလေး" },
-      { unit: "U4", eng: "shake", my: "လှုပ်ခတ်သည်" },
-      { unit: "U4", eng: "tambourine", my: "ချိုတဗုံ" },
-      { unit: "U4", eng: "major mace", my: "အဓိကဖြစ်သောကျောင်း" },
-      { unit: "U4", eng: "conductor", my: "တီးမှူး" },
-      { unit: "U4", eng: "events", my: "ပွဲစဉ်များ" },
-      { unit: "U4", eng: "soft drinks", my: "အချိုရည်များ" },
-      { unit: "U4", eng: "tidiness", my: "သန့်ရှင်းသပ်ရပ်မှု" },
-      { unit: "U4", eng: "scientific", my: "သိပ္ပံနည်းကျသော" },
-      { unit: "U4", eng: "experiments", my: "လက်တွေ့စမ်းသပ်မှုများ" },
-      { unit: "U4", eng: "closed", my: "ပိတ်ထားသော" },
-      { unit: "U4", eng: "patient", my: "သည်းခံစိတ်ရှိသော" },
-      { unit: "U4", eng: "understanding", my: "နားလည်မှုရှိသော" },
-      { unit: "U4", eng: "friendly", my: "ဖော်ရွေသော" },
-      { unit: "U4", eng: "nephew", my: "တူ" },
-      { unit: "U4", eng: "pigeons", my: "ခိုများ" },
-      { unit: "U4", eng: "vegetarian", my: "သတ်သတ်လွတ်စားသူ" },
-      { unit: "U4", eng: "meat", my: "အသား" },
-      { unit: "U4", eng: "normally", my: "ပုံမှန်အားဖြင့်" },
-      { unit: "U4", eng: "stingy", my: "ကပ်စေးနှဲသော" },
-      { unit: "U4", eng: "grandpa", my: "အဘိုး" },
-      { unit: "U4", eng: "except", my: "မှတပါး" },
-      { unit: "U4", eng: "independent", my: "ကိုယ်အားကိုယ်ကိုးတတ်သော" },
-      { unit: "U4", eng: "located", my: "တည်ရှိသည်" },
-      { unit: "U4", eng: "manners", my: "အမူအရာများ" },
-      { unit: "U4", eng: "respect", my: "ရိုသေလေးစားမှု" },
-      { unit: "U4", eng: "protect", my: "ကာကွယ်သည်" },
-      { unit: "U4", eng: "scored", my: "ဂိုးသွင်းသည်" },
-      { unit: "U4", eng: "firm", my: "ခိုင်မြဲသော" },
-      { unit: "U4", eng: "determination", my: "သန္ဓိဋ္ဌာန်(ဆုံးဖြတ်ချက်)" },
-      { unit: "U4", eng: "identity card", my: "စိစစ်ရေးကတ်" },
-      { unit: "U4", eng: "Red Cross", my: "ကြက်ခြေနီအသင်း" },
-      { unit: "U4", eng: "switch off", my: "(လွှတ်)ပိတ်သည်" },
-      { unit: "U4", eng: "map", my: "မြေပုံ" },
-      { unit: "U4", eng: "Opening Ceremony", my: "ဖွင့်ပွဲအခမ်းအနား" },
-      { unit: "U4", eng: "urgently need", my: "အရေးတကြီးလိုအပ်နေသည်" },
-      { unit: "U4", eng: "Township Football Tournament", my: "မြို့နယ်ဘောလုံးပြိုင်ပွဲ" },
-      { unit: "U4", eng: "puts on weight", my: "ကိုယ်အလေးချိန်တက်လာသည်" },
-      { unit: "U4", eng: "woollen covers", my: "သိုးမွေးစောင်များ" },
-      { unit: "U4", eng: "plays the flute", my: "ပလွေမှုတ်သည်" },
-      { unit: "U4", eng: "pocket money", my: "မုန့်ဖိုး" },
-      { unit: "U4", eng: "except in an emergency", my: "အရေးပေါ်ကိစ္စမှတပါး" },
-      { unit: "U4", eng: "language skills competitions", my: "ဘာသာစကားကျွမ်းကျင်မှုပြိုင်ပွဲ" },
-      { unit: "U4", eng: "winning goal", my: "အနိုင်ဂိုး" },
-      { unit: "U4", eng: "turn the volume down", my: "အသံတိုးလိုက်သည်" },
-
-      // Poem 1 (Page 49 - 50)
-      { unit: "Poem1", eng: "vowels", my: "သရများ (a, e, i, o, u)" },
-      { unit: "Poem1", eng: "little", my: "သေးငယ်သော" },
-      { unit: "Poem1", eng: "airy", my: "လေနှင့်တူသော" },
-      { unit: "Poem1", eng: "creatures", my: "သတ္တဝါများ" },
-      { unit: "Poem1", eng: "different", my: "ကွဲပြားခြားနားသော" },
-      { unit: "Poem1", eng: "voice", my: "အသံ" },
-      { unit: "Poem1", eng: "features", my: "အင်္ဂါရပ်များ" },
-      { unit: "Poem1", eng: "glass", my: "မှန်ခွက်" },
-      { unit: "Poem1", eng: "find", my: "ရှာတွေ့သည်" },
-      { unit: "Poem1", eng: "set", my: "မပြောင်းလဲဘဲရှိနေသော" },
-      { unit: "Poem1", eng: "jet", my: "ဂျက်လေယာဉ်" },
-      { unit: "Poem1", eng: "see", my: "မြင်သည်" },
-      { unit: "Poem1", eng: "tin", my: "သံဗူး" },
-      { unit: "Poem1", eng: "the fourth", my: "စတုတ္ထမြောက်အရာ" },
-      { unit: "Poem1", eng: "box", my: "သေတ္တာ" },
-      { unit: "Poem1", eng: "within", my: "အတွင်းမှာ" },
-      { unit: "Poem1", eng: "the fifth", my: "ပဉ္စမမြောက်အရာ" },
-      { unit: "Poem1", eng: "pursue", my: "လိုက်ဖမ်းသည်" },
-      { unit: "Poem1", eng: "never", my: "ဘယ်တော့မှမလုပ်" },
-      { unit: "Poem1", eng: "fly", my: "ပျံသန်းသည်" },
-      { unit: "Poem1", eng: "T'other (The other)", my: "အခြားတစ်ဖက်" },
-      { unit: "Poem1", eng: "may see", my: "မြင်နိုင်သည်" },
-      { unit: "Poem1", eng: "letter", my: "စာစာလုံး" },
-      { unit: "Poem1", eng: "alphabet", my: "အက္ခရာ" },
-      { unit: "Poem1", eng: "faster", my: "ပို၍မြန်သော" },
-      { unit: "Poem1", eng: "propellers", my: "ပန်ကာလက်များ" },
-      { unit: "Poem1", eng: "last line", my: "နောက်ဆုံးစာကြောင်း" },
-      { unit: "Poem1", eng: "refer to", my: "ရည်ညွှန်းသည်" },
-      { unit: "Poem1", eng: "loud", my: "ကျယ်လောင်သော" },
-      { unit: "Poem1", eng: "clear", my: "ရှင်းလင်းသော" },
-      { unit: "Poem1", eng: "lost", my: "ပျောက်ဆုံးသည်" },
-      { unit: "Poem1", eng: "anywhere", my: "ဘယ်နေရာမဆို" },
-      { unit: "Poem1", eng: "although", my: "သော်လည်း" },
-      { unit: "Poem1", eng: "twins", my: "အမြွှာများ" },
-      { unit: "Poem1", eng: "looks", my: "တူသည်" },
-      { unit: "Poem1", eng: "personality", my: "ပင်ကိုစရိုက်" },
-      { unit: "Poem1", eng: "rhyming pairs", my: "အသံတူစကားလုံးတွဲများ" },
-      { unit: "Poem1", eng: "ends", my: "အဆုံးသတ်သည်" }  ];
-
-        let filteredData = [...vocabData];
-let currentIndex = parseInt(localStorage.getItem('currentIndex') || '0');
-let userXP = parseInt(localStorage.getItem('userXP') || '0');
-let streak = 0;
-
-// Word Bank မျက်နှာပြင် Lock စနစ်အတွက် variables များ
-let isBankUnlocked = localStorage.getItem('isBankUnlocked') === 'true';
-let unlockCost = parseInt(localStorage.getItem('unlockCost') || '50');
-let unlockStep = parseInt(localStorage.getItem('unlockStep') || '100');
-
-let currentQuestionType = 'my_to_eng';
-let activeQuestionItem = null;
-
-document.getElementById('xp').innerText = userXP;
-document.getElementById('rank-xp').innerText = userXP;
-
-function renderVocab() {
-  const box = document.getElementById('vocab-list-box');
-  box.innerHTML = '';
-
-  // မျက်နှာပြင်တစ်ခုလုံး Lock ကျနေပါက
-  if (!isBankUnlocked) {
-    box.innerHTML = `
-      <div style="text-align: center; padding: 50px 20px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-top: 10px;">
-        <div style="font-size: 60px; margin-bottom: 15px;">🔒</div>
-        <h3 style="margin-bottom: 10px; color: #fff;">Word Bank တစ်ခုလုံးကို Lock ချထားပါသည်</h3>
-        <p style="opacity: 0.8; margin-bottom: 25px; font-size: 14px;">စာလုံးများ အားလုံးကို ကြည့်ရှုရန် Lock ဖြည်ပါ။</p>
-        <button onclick="unlockWordBank()" style="background: #e67e22; color: white; border: none; padding: 14px 28px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-          🔓 Lock ဖြည်မည် (${unlockCost} XP)
-        </button>
-      </div>
-    `;
-    return;
-  }
-
-  // Lock ဖြည်ထားပါက စာလုံးများ အားလုံး ပြမည်
-  filteredData.forEach(v => {
-    box.innerHTML += `<div class="vocab-row"><strong style="color:var(--accent)">${v.eng}</strong>: ${v.my} <span style="font-size:12px; opacity:0.6;">(${v.unit})</span></div>`;
+<script>
+  // SPLASH SCREEN HIDE (2 SECONDS)
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      const splash = document.getElementById('splash-screen');
+      splash.style.opacity = '0';
+      setTimeout(() => splash.style.display = 'none', 500);
+    }, 1500);
   });
-}
 
-function unlockWordBank() {
-  if (userXP < unlockCost) {
-    alert(`XP မလုံလောက်ပါ! Word Bank ကို ဖြည်ရန် ${unlockCost} XP လိုအပ်ပါသည်။`);
-    return;
-  }
+  const vocabData = [
+    "habits", "choke", "digestion", "unable", "something", "throat", "process", "changed", "substances", 
+    "junk food", "unhealthy", "quick", "learning", "starts", "routines", "benefits", "activities", 
+    "together", "metal bar", "shaker", "tambourine", "scientific", "experiments", "vowels", "creatures", "different"
+  ];
 
-  // XP ဖြတ်မည်
-  userXP -= unlockCost;
-  localStorage.setItem('userXP', userXP);
+  let userXP = parseInt(localStorage.getItem('userXP') || '0');
+  let challengeTimer = null;
+  let timeLeft = 420;
+
   document.getElementById('xp').innerText = userXP;
   document.getElementById('rank-xp').innerText = userXP;
 
-  // Lock ဖြည်မည်
-  isBankUnlocked = true;
-  localStorage.setItem('isBankUnlocked', 'true');
+  function switchTab(tabId, el) {
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-  // နောက်တစ်ကြိမ်အတွက် Cost ကို 50 -> 150 -> 300 သို့ တိုးမည်
-  unlockCost += unlockStep;
-  unlockStep += 50;
-  localStorage.setItem('unlockCost', unlockCost);
-  localStorage.setItem('unlockStep', unlockStep);
-
-  renderVocab();
-}
-
-function changeUnit() {
-  const selectedUnit = document.getElementById('unit-select').value;
-  if (selectedUnit === 'all') {
-    filteredData = [...vocabData];
-  } else {
-    filteredData = vocabData.filter(v => v.unit === selectedUnit);
-  }
-  currentIndex = 0;
-  renderVocab();
-  loadQuestion();
-}
-
-function filterVocab() {
-  if (!isBankUnlocked) return;
-  const keyword = document.getElementById('search').value.toLowerCase();
-  const rows = document.querySelectorAll('.vocab-row');
-  rows.forEach(r => {
-    r.style.display = r.innerText.toLowerCase().includes(keyword) ? 'flex' : 'none';
-  });
-}
-
-function loadQuestion() {
-  if (filteredData.length === 0) {
-    document.getElementById('q-word').innerText = "ဒီ သင်ခန်းစာ မှာ စာလုံးမရှိသေးပါ";
-    return;
-  }
-  
-  if (currentIndex >= filteredData.length) {
-    currentIndex = 0;
+    el.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
   }
 
-  activeQuestionItem = filteredData[currentIndex];
+  function startEssayChallenge() {
+    const oppTopic = document.getElementById('opponent-given-topic').value.trim();
+    if (!oppTopic) {
+      alert("ပြိုင်ဘက်ပေးထားသည့် ခေါင်းစဉ်ကို ရိုက်ထည့်ပါ!");
+      return;
+    }
 
-  document.getElementById('counter').innerText = `Word ${currentIndex + 1} of ${filteredData.length}`;
-  document.getElementById('q-word').innerText = `မြန်မာလို: "${activeQuestionItem.my}"\n(အင်္ဂလိပ်လို ဖြေပါ)`;
+    document.getElementById('display-topic').innerText = oppTopic;
+    document.getElementById('topic-setup-box').style.display = 'none';
+    document.getElementById('essay-writing-box').style.display = 'block';
+    document.getElementById('essay-input').value = '';
 
-  document.getElementById('ans-single').value = '';
-  document.getElementById('feedback').innerText = '';
-  
-  localStorage.setItem('currentIndex', currentIndex);
-}
+    timeLeft = 420;
+    updateTimerDisplay();
 
-function checkAnswer() {
-  if (!activeQuestionItem) return;
-  const userAns = document.getElementById('ans-single').value.trim().toLowerCase();
-  const fb = document.getElementById('feedback');
-
-  let isCorrect = false;
-
-  if (userAns === activeQuestionItem.eng.toLowerCase()) {
-    isCorrect = true;
+    challengeTimer = setInterval(() => {
+      timeLeft--;
+      updateTimerDisplay();
+      if (timeLeft <= 0) {
+        clearInterval(challengeTimer);
+        alert("⏱️ အချိန်ပြည့်သွားပါပြီ!");
+        submitEssay();
+      }
+    }, 1000);
   }
 
-  if (isCorrect) {
-    streak++; 
-    let earnedXP = streak * 10; 
-    
-    fb.className = "feedback correct";
-    fb.innerText = `✅ မှန်ကန်ပါသည်! (Streak x${streak}) +${earnedXP} XP ရရှိသည်!`;
-    
+  function updateTimerDisplay() {
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    document.getElementById('timer-display').innerText = `⏱️ ${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  }
+
+  function submitEssay() {
+    clearInterval(challengeTimer);
+    const text = document.getElementById('essay-input').value.trim();
+    if (!text) {
+      alert("ဘာမှ မရေးရသေးပါ!");
+      return;
+    }
+
+    const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+    const wordCount = words.length;
+
+    let vocabFoundCount = 0;
+    words.forEach(w => {
+      if (vocabData.includes(w)) vocabFoundCount++;
+    });
+
+    const earnedXP = Math.floor(wordCount / 5) + (vocabFoundCount * 5);
     userXP += earnedXP;
     localStorage.setItem('userXP', userXP);
     document.getElementById('xp').innerText = userXP;
     document.getElementById('rank-xp').innerText = userXP;
 
-    setTimeout(() => {
-      currentIndex = (currentIndex + 1) % filteredData.length;
-      loadQuestion();
-    }, 1200);
-  } else {
-    streak = 0; 
-    fb.className = "feedback wrong";
-    fb.innerText = `❌ မှားနေပါသည်! Streak ပြန်ကျသွားပါပြီ။ အမှန်မှာ: ${activeQuestionItem.eng}`;
-    
-    userXP = Math.max(0, userXP - 10);
-    localStorage.setItem('userXP', userXP);
-    document.getElementById('xp').innerText = userXP;
-    document.getElementById('rank-xp').innerText = userXP;
-  }
-}
+    document.getElementById('res-word-count').innerText = `📝 စာလုံးရေ (Word Count): ${wordCount} လုံး`;
+    document.getElementById('res-vocab-count').innerText = `🌟 ပါဝင်သော Grade 8 Vocab: ${vocabFoundCount} လုံး`;
+    document.getElementById('res-xp-earned').innerText = `🎉 ရရှိသော XP: +${earnedXP} XP`;
 
-function switchTab(tabId) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-  if(tabId === 'vocab') document.querySelectorAll('.tab-btn')[0].classList.add('active');
-  if(tabId === 'practice') document.querySelectorAll('.tab-btn')[1].classList.add('active');
-  if(tabId === 'rank') document.querySelectorAll('.tab-btn')[2].classList.add('active');
-
-  // Word Bank မှ အခြားတက်ဘ်သို့ ပြောင်းသွားပါက Lock ပြန်ချမည်
-  if (tabId !== 'vocab') {
-    isBankUnlocked = false;
-    localStorage.setItem('isBankUnlocked', 'false');
-    renderVocab();
+    document.getElementById('essay-writing-box').style.display = 'none';
+    document.getElementById('essay-result-box').style.display = 'block';
   }
 
-  document.getElementById(tabId).classList.add('active');
-}
-
-renderVocab();
-loadQuestion();
+  function resetChallenge() {
+    document.getElementById('essay-result-box').style.display = 'none';
+    document.getElementById('topic-setup-box').style.display = 'block';
+    document.getElementById('opponent-given-topic').value = '';
+  }
 </script>
 </body>
 </html>
