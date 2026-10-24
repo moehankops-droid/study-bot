@@ -667,124 +667,118 @@
       { unit: "Poem1", eng: "ends", my: "အဆုံးသတ်သည်" }  ];
 
         let filteredData = [...vocabData];
-    let currentIndex = parseInt(localStorage.getItem('currentIndex') || '0');
-    let userXP = parseInt(localStorage.getItem('userXP') || '0');
-let streak = 0; // ဒီနေရာလေးမှာ ထည့်လိုက်ပါ
+let currentIndex = parseInt(localStorage.getItem('currentIndex') || '0');
+let userXP = parseInt(localStorage.getItem('userXP') || '0');
+let streak = 0;
+
+let currentQuestionType = 'my_to_eng';
+let activeQuestionItem = null;
+
+document.getElementById('xp').innerText = userXP;
+document.getElementById('rank-xp').innerText = userXP;
+
+function renderVocab() {
+  const box = document.getElementById('vocab-list-box');
+  box.innerHTML = '';
+  filteredData.forEach(v => {
+    box.innerHTML += `<div class="vocab-row"><strong style="color:var(--accent)">${v.eng}</strong>: ${v.my} <span style="font-size:12px; opacity:0.6;">(${v.unit})</span></div>`;
+  });
+}
+
+function changeUnit() {
+  const selectedUnit = document.getElementById('unit-select').value;
+  if (selectedUnit === 'all') {
+    filteredData = [...vocabData];
+  } else {
+    filteredData = vocabData.filter(v => v.unit === selectedUnit);
+  }
+  currentIndex = 0;
+  renderVocab();
+  loadQuestion();
+}
+
+function filterVocab() {
+  const keyword = document.getElementById('search').value.toLowerCase();
+  const rows = document.querySelectorAll('.vocab-row');
+  rows.forEach(r => {
+    r.style.display = r.innerText.toLowerCase().includes(keyword) ? 'flex' : 'none';
+  });
+}
+
+function loadQuestion() {
+  if (filteredData.length === 0) {
+    document.getElementById('q-word').innerText = "ဒီ သင်ခန်းစာ မှာ စာလုံးမရှိသေးပါ";
+    return;
+  }
+  
+  if (currentIndex >= filteredData.length) {
+    currentIndex = 0;
+  }
+
+  activeQuestionItem = filteredData[currentIndex];
+
+  document.getElementById('counter').innerText = `Word ${currentIndex + 1} of ${filteredData.length}`;
+  
+  document.getElementById('q-word').innerText = `မြန်မာလို: "${activeQuestionItem.my}"\n(အင်္ဂလိပ်လို ဖြေပါ)`;
+
+  document.getElementById('ans-single').value = '';
+  document.getElementById('feedback').innerText = '';
+  
+  localStorage.setItem('currentIndex', currentIndex);
+}
+
+function checkAnswer() {
+  if (!activeQuestionItem) return;
+  const userAns = document.getElementById('ans-single').value.trim().toLowerCase();
+  const fb = document.getElementById('feedback');
+
+  let isCorrect = false;
+
+  if (userAns === activeQuestionItem.eng.toLowerCase()) {
+    isCorrect = true;
+  }
+
+  if (isCorrect) {
+    streak++; 
+    let earnedXP = streak * 10; 
     
-    let currentQuestionType = 'my_to_eng'; 
-    let activeQuestionItem = null;
-        
+    fb.className = "feedback correct";
+    fb.innerText = `✅ မှန်ကန်ပါသည်! (Streak x${streak}) +${earnedXP} XP ရရှိသည်!`;
+    
+    userXP += earnedXP;
+    localStorage.setItem('userXP', userXP);
     document.getElementById('xp').innerText = userXP;
     document.getElementById('rank-xp').innerText = userXP;
 
-    function renderVocab() {
-      const box = document.getElementById('vocab-list-box');
-      box.innerHTML = '';
-      filteredData.forEach(v => {
-        box.innerHTML += `<div class="vocab-row"><strong style="color:var(--accent);">${v.eng}</strong><span>${v.my}</span></div>`;
-      });
-    }
-
-    function changeUnit() {
-      const selectedUnit = document.getElementById('unit-select').value;
-      if (selectedUnit === 'all') {
-        filteredData = [...vocabData];
-      } else {
-        filteredData = vocabData.filter(v => v.unit === selectedUnit);
-      }
-      currentIndex = 0;
-      renderVocab();
+    setTimeout(() => {
+      currentIndex = (currentIndex + 1) % filteredData.length;
       loadQuestion();
-    }
-
-    function filterVocab() {
-      const keyword = document.getElementById('search').value.toLowerCase();
-      const rows = document.querySelectorAll('.vocab-row');
-      rows.forEach(r => {
-        r.style.display = r.innerText.toLowerCase().includes(keyword) ? 'flex' : 'none';
-      });
-    }
-
-            function loadQuestion() {
-      if (filteredData.length === 0) {
-        document.getElementById('q-word').innerText = "ဒီ သင်ခန်းစာ မှာ စာလုံးမရှိသေးပါ";
-        return;
-      }
-      
-      if (currentIndex >= filteredData.length) {
-        currentIndex = 0;
-      }
-
-      activeQuestionItem = filteredData[currentIndex];
-
-      document.getElementById('counter').innerText = `Word ${currentIndex + 1} of ${filteredData.length}`;
-      
-      // မြန်မာလိုပြပြီး အင်္ဂလိပ်လို ဖြေရသည့် ပုံစံ တခုတည်းကိုသာ ပြမည်
-      document.getElementById('q-word').innerText = `မြန်မာလို: "${activeQuestionItem.my}"\n(အင်္ဂလိပ်လို ဖြေပါ)`;
-
-      document.getElementById('ans-single').value = '';
-      document.getElementById('feedback').innerText = '';
-      
-      localStorage.setItem('currentIndex', currentIndex);
-    }
-
-            function checkAnswer() {
-      if (!activeQuestionItem) return;
-      const userAns = document.getElementById('ans-single').value.trim().toLowerCase();
-      const fb = document.getElementById('feedback');
-
-      let isCorrect = false;
-
-      if (userAns === activeQuestionItem.eng.toLowerCase()) {
-        isCorrect = true;
-      }
-
-      if (isCorrect) {
-        streak++; // မှန်ရင် streak တက်မည်
-        let earnedXP = streak * 10; // ၁ ခုမှန် ၁၀၊ ၂ ခုမှန် ၂၀ စသည်ဖြင့် တွက်မည်
-        
-        fb.className = "feedback correct";
-        fb.innerText = `✅ မှန်ကန်ပါသည်! (Streak x${streak}) +${earnedXP} XP ရရှိသည်!`;
-        
-        userXP += earnedXP;
-        localStorage.setItem('userXP', userXP);
-        document.getElementById('xp').innerText = userXP;
-        document.getElementById('rank-xp').innerText = userXP;
-
-        setTimeout(() => {
-          currentIndex = (currentIndex + 1) % filteredData.length;
-          loadQuestion();
-        }, 1200);
-      } else {
-        streak = 0; // မှားသွားရင် streak ပြန်စညွှန်းမည်
-        fb.className = "feedback wrong";
-        fb.innerText = `❌ မှားနေပါသည်! Streak ပြန်ကျသွားပါပြီ။ အမှန်မှာ: ${activeQuestionItem.eng}`;
-        
-        // မှားရင် ၁၀ မှတ် လျော့မည်
-        userXP = Math.max(0, userXP - 10);
-        localStorage.setItem('userXP', userXP);
-        document.getElementById('xp').innerText = userXP;
-        document.getElementById('rank-xp').innerText = userXP;
-      }
-            
+    }, 1200);
+  } else {
+    streak = 0; 
+    fb.className = "feedback wrong";
+    fb.innerText = `❌ မှားနေပါသည်! Streak ပြန်ကျသွားပါပြီ။ အမှန်မှာ: ${activeQuestionItem.eng}`;
     
-    
-      
-    
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      
-      if(tabId === 'vocab') document.querySelectorAll('.tab-btn')[0].classList.add('active');
-      if(tabId === 'practice') document.querySelectorAll('.tab-btn')[1].classList.add('active');
-      if(tabId === 'rank') document.querySelectorAll('.tab-btn')[2].classList.add('active');
+    userXP = Math.max(0, userXP - 10);
+    localStorage.setItem('userXP', userXP);
+    document.getElementById('xp').innerText = userXP;
+    document.getElementById('rank-xp').innerText = userXP;
+  }
+}
 
-      document.getElementById(tabId).classList.add('active');
-    }
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-    renderVocab();
-    loadQuestion();
-    
-  </script>
+  if(tabId === 'vocab') document.querySelectorAll('.tab-btn')[0].classList.add('active');
+  if(tabId === 'practice') document.querySelectorAll('.tab-btn')[1].classList.add('active');
+  if(tabId === 'rank') document.querySelectorAll('.tab-btn')[2].classList.add('active');
+
+  document.getElementById(tabId).classList.add('active');
+}
+
+renderVocab();
+loadQuestion();
+</script>
 </body>
 </html>
