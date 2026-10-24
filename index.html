@@ -671,6 +671,9 @@ let currentIndex = parseInt(localStorage.getItem('currentIndex') || '0');
 let userXP = parseInt(localStorage.getItem('userXP') || '0');
 let streak = 0;
 
+let unlockCost = 50;   
+let unlockStep = 100;  
+
 let currentQuestionType = 'my_to_eng';
 let activeQuestionItem = null;
 
@@ -718,13 +721,59 @@ function loadQuestion() {
   activeQuestionItem = filteredData[currentIndex];
 
   document.getElementById('counter').innerText = `Word ${currentIndex + 1} of ${filteredData.length}`;
-  
   document.getElementById('q-word').innerText = `မြန်မာလို: "${activeQuestionItem.my}"\n(အင်္ဂလိပ်လို ဖြေပါ)`;
 
   document.getElementById('ans-single').value = '';
   document.getElementById('feedback').innerText = '';
   
+  // မေးခွန်းအသစ်ရောက်လျှင် Lock ကို ပုံမှန်အတိုင်း ပြန်ပိတ်မည်
+  const secretDiv = document.getElementById('secret-word');
+  if (secretDiv) {
+    secretDiv.style.display = 'none';
+    secretDiv.innerText = '';
+  }
+  const unlockBtn = document.getElementById('unlock-btn');
+  if (unlockBtn) {
+    unlockBtn.disabled = false;
+    unlockBtn.style.opacity = '1';
+  }
+
   localStorage.setItem('currentIndex', currentIndex);
+}
+
+function unlockWord() {
+  if (!activeQuestionItem) return;
+  
+  if (userXP < unlockCost) {
+    alert(`XP မလုံလောက်ပါ! ဤ Lock ကိုဖြည်ရန် ${unlockCost} XP လိုအပ်ပါသည်။`);
+    return;
+  }
+
+  userXP -= unlockCost;
+  localStorage.setItem('userXP', userXP);
+  document.getElementById('xp').innerText = userXP;
+  document.getElementById('rank-xp').innerText = userXP;
+
+  const secretDiv = document.getElementById('secret-word');
+  if (secretDiv) {
+    secretDiv.style.display = 'block';
+    secretDiv.innerText = `💡 အမှန်မှာ: ${activeQuestionItem.eng}`;
+  }
+
+  // 50 -> 150 -> 300 ပုံစံဖြင့် တိုးသွားစေရန်
+  unlockCost += unlockStep;
+  unlockStep += 50; 
+  
+  const costTxt = document.getElementById('cost-txt');
+  if (costTxt) {
+    costTxt.innerText = unlockCost;
+  }
+  
+  const unlockBtn = document.getElementById('unlock-btn');
+  if (unlockBtn) {
+    unlockBtn.disabled = true;
+    unlockBtn.style.opacity = '0.5';
+  }
 }
 
 function checkAnswer() {
