@@ -557,13 +557,21 @@
     }
 
     // Open Telegram Group Link Function
+        // Open Telegram Group Link Function (အကြိမ်ကြိမ် နှိပ်လို့ရအောင် ပြင်ထားသည်)
     function openTelegramGroup() {
-      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
-        window.Telegram.WebApp.openTelegramLink(TELEGRAM_GROUP_LINK);
-      } else {
-        window.open(TELEGRAM_GROUP_LINK, '_blank');
+      const tgUrl = TELEGRAM_GROUP_LINK;
+
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
+          window.Telegram.WebApp.openTelegramLink(tgUrl);
+        } else {
+          window.open(tgUrl, '_blank');
+        }
+      } catch (e) {
+        window.open(tgUrl, '_blank');
       }
     }
+    
 
     // Module Switchers
     function openTenseModule() {
