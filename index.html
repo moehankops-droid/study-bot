@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Grade 8 English Study Bot</title>
+  <title>Grade 8 English Study Bot - Normal Version</title>
   <style>
     :root {
       --bg: #0d0f12;
@@ -338,40 +338,6 @@
         </div>
       </div>
 
-      <!-- VIP STORE CARD (500 XP ဖြင့် 1 လစာဝယ်ရန်) -->
-      <div class="card" style="border: 1px solid var(--warning); background: linear-gradient(135deg, #1f1a10, #181b20);">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <h3 style="margin: 0; color: var(--warning);">👑 VIP Student Mode (1 Month)</h3>
-            <p style="font-size: 12px; color: var(--text-sub); margin-top: 4px;">Ad-Free, Unlimited Access & Follow Me Book Guide</p>
-          </div>
-          <div id="vip-status-badge" style="font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.05); border: 1px solid var(--text-sub); padding: 5px 10px; border-radius: 8px; color: var(--text-sub);">
-            🔒 Normal Mode
-          </div>
-        </div>
-        
-        <button id="buy-vip-btn" class="btn btn-accent" onclick="buyVipMode()" style="margin-top: 12px; background: linear-gradient(135deg, #ffa502, #ff7f00);">
-          ⭐ 500 XP ဖြင့် 1 လစာ VIP ဝယ်မည်
-        </button>
-        <div id="vip-expiry-text" style="font-size: 11px; color: var(--text-sub); margin-top: 8px; text-align: center;"></div>
-      </div>
-
-      <!-- VIP EXCLUSIVE CONTENT SECTION ("Follow Me" စာအုပ်ပါ အဆင့်မြင့် အက်ဆေး/သဒ္ဒါ လမ်းညွှန်များ) -->
-      <div id="vip-content-section" class="card" style="display: none; border: 1px solid var(--success); background: rgba(46,213,115,0.05);">
-        <h3 style="margin-top: 0; color: var(--success);">✨ "Follow Me" (Ph.D - USA) အဆင့်မြင့် VIP အက်ဆေး & သဒ္ဒါလမ်းညွှန်</h3>
-        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 12px;">VIP အဖွဲ့ဝင်များအတွက် သီးသန့် ဖတ်ရှုနိုင်သော အဆင့်မြင့် စာအုပ်ပါ သင်ခန်းစာများနှင့် ဖွဲ့စည်းပုံများ -</p>
-        
-        <div class="guide-box" style="border-left-color: var(--success);">
-          <div class="guide-title" style="color: var(--success);">📖 1. Advanced Essay Templates (Letter & Article Writing)</div>
-          <div class="guide-desc">Grade 8 သင်ရိုးညွှန်းတမ်းကို ကျော်လွန်၍ နိုင်ငံတကာ အဆင့်မီ formal/informal letters များနှင့် Environment, Science Experiments များကို အလွယ်တကူ ရေးသားနိုင်မည့် Model Paragraph ဖွဲ့စည်းပုံများ။</div>
-        </div>
-
-        <div class="guide-box" style="border-left-color: var(--success);">
-          <div class="guide-title" style="color: var(--success);">🎯 2. Hardcore Tense & Voice Masterclass</div>
-          <div class="guide-desc">Active to Passive Voice ပြောင်းလဲရာတွင် အထူးသတိပြုရမည့် ခြွင်းချက် စည်းမျဉ်းများနှင့် Direct/Indirect Speech လျှို့ဝှက်ချက်များ။</div>
-        </div>
-      </div>
-
       <!-- MAIN FEATURE CARDS GRID -->
       <div class="home-grid" style="margin-top: 15px;">
         <div class="home-card" onclick="openTenseModule()">
@@ -418,6 +384,11 @@
           <div class="guide-desc">မိမိ၏ သဘောထား၊ အကြံပြုချက် သို့မဟုတ် အနှစ်ချုပ် သတင်းစကားဖြင့် အဆုံးသတ်ပါ။</div>
         </div>
 
+        <!-- TELEGRAM GROUP LINK FOR DETAILED ESSAY GUIDES -->
+        <button class="btn btn-accent" onclick="openTelegramGroup()" style="margin-bottom: 10px;">
+          💬 Telegram Group တွင် အသေးစိတ် ရှင်းပြချက် ဖတ်ရန်
+        </button>
+
         <button class="btn btn-primary" onclick="switchTab('challenge', document.querySelectorAll('.nav-item')[2])">
           ⚔️ 1 vs 1 Essay Challenge တွင် အလေ့ကျင့် ရေးမည်
         </button>
@@ -450,11 +421,6 @@
           <p id="res-word-count">📝 စာလုံးရေ: 0</p>
           <p id="res-vocab-count">🌟 Grade 8 Vocab: 0 လုံး</p>
           <p id="res-xp-earned" style="font-weight: bold; color: var(--accent);">🎉 ရရှိသော XP: +0 XP</p>
-          
-          <!-- TELEGRAM SHARE BUTTON -->
-          <a id="tg-share-btn" href="#" target="_blank" class="btn" style="display: block; background: #229ed9; color: white; text-align: center; text-decoration: none; margin-top: 10px; padding: 12px; border-radius: 10px; font-weight: bold;">
-            📤 Telegram Group သို့ Share မည်
-          </a>
 
           <button class="btn btn-accent" onclick="resetChallenge()" style="margin-top: 10px;">🔄 အသစ်ပြန်ပြိုင်မည်</button>
         </div>
@@ -478,7 +444,11 @@
           </div>
         </div>
 
-        <h3 style="color:#fff; margin-top:20px;">🎮 Select Level (1 - 20)</h3>
+        <button class="btn btn-accent" onclick="openTelegramGroup()" style="margin-top: 5px; margin-bottom: 15px;">
+          📖 Tenses အသေးစိတ် ရှင်းပြချက်များကို Telegram တွင် ဖတ်ရန်
+        </button>
+
+        <h3 style="color:#fff; margin-top:10px;">🎮 Select Level (1 - 20)</h3>
         <div class="level-grid" id="tense-level-grid"></div>
       </div>
     </div>
@@ -492,11 +462,15 @@
         <div style="margin-top: 15px;">
           <div class="guide-box">
             <div class="guide-title">Verb Forms ရှင်းပြချက်</div>
-            <div class="guide-desc">V1, V2, V3 အသုံးပြုပုံများ</div>
+            <div class="guide-desc">V1, V2, V3 အသုံးပြုပုံ အခြေခံများ</div>
           </div>
         </div>
 
-        <h3 style="color:#fff; margin-top:20px;">🎮 Select Level (1 - 30)</h3>
+        <button class="btn btn-accent" onclick="openTelegramGroup()" style="margin-top: 5px; margin-bottom: 15px;">
+          📖 Verb Forms အသေးစိတ် ရှင်းပြချက်များကို Telegram တွင် ဖတ်ရန်
+        </button>
+
+        <h3 style="color:#fff; margin-top:10px;">🎮 Select Level (1 - 30)</h3>
         <div class="level-grid" id="verb-level-grid"></div>
       </div>
     </div>
@@ -521,20 +495,19 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
+    // Config: Telegram Group Link
+    const TELEGRAM_GROUP_LINK = "https://t.me/your_telegram_group_link";
+
     // Global State Variables
     let userXP = parseInt(localStorage.getItem('userXP')) || 150;
     let userName = localStorage.getItem('userName') || 'Moe Han';
     let userLevel = parseInt(localStorage.getItem('userLevel')) || 1;
     let winCount = parseInt(localStorage.getItem('winCount')) || 0;
     let loseCount = parseInt(localStorage.getItem('loseCount')) || 0;
-    
-    // 1 Month VIP Expiry Logic
-    let vipExpiryTime = parseInt(localStorage.getItem('vipExpiryTime')) || 0;
-    let isVip = Date.now() < vipExpiryTime;
 
-    if (!isVip && vipExpiryTime > 0) {
-      localStorage.removeItem('vipExpiryTime');
-    }
+    // Timer variable
+    let challengeTimer = null;
+    let timeLeft = 420; // 7 minutes
 
     // Initial UI Binding
     document.getElementById('xp').innerText = userXP;
@@ -550,216 +523,148 @@
         if(splash) {
           splash.style.opacity = '0';
           setTimeout(() => splash.remove(), 500);
-                    }
-          }, 800);
-        });
+        }
+      }, 800);
 
-    // Tab Switcher
+      renderLevelGrids();
+    });
+
+    // Navigation Tab Switcher
     function switchTab(tabId, el) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
       
-      let target = document.getElementById(tabId);
-      if(target) target.classList.add('active');
-      if(el) el.classList.add('active');
+      const targetTab = document.getElementById(tabId);
+      if (targetTab) {
+        targetTab.classList.add('active');
+      }
+      if (el) {
+        el.classList.add('active');
+      }
     }
 
-    function openTenseModule() { switchTab('tense-module', null); }
-    function openVerbModule() { switchTab('verb-module', null); }
+    // Open Telegram Group Link Function
+    function openTelegramGroup() {
+      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
+        window.Telegram.WebApp.openTelegramLink(TELEGRAM_GROUP_LINK);
+      } else {
+        window.open(TELEGRAM_GROUP_LINK, '_blank');
+      }
+    }
 
-    // Edit Name
+    // Module Switchers
+    function openTenseModule() {
+      switchTab('tense-module', null);
+    }
+
+    function openVerbModule() {
+      switchTab('verb-module', null);
+    }
+
+    // Render Level Buttons
+    function renderLevelGrids() {
+      const tenseGrid = document.getElementById('tense-level-grid');
+      const verbGrid = document.getElementById('verb-level-grid');
+
+      if (tenseGrid) {
+        tenseGrid.innerHTML = '';
+        for (let i = 1; i <= 20; i++) {
+          tenseGrid.innerHTML += `<div class="level-btn" onclick="alert('Tense Level ${i} စတင်ပါမည်')">Lvl ${i}</div>`;
+        }
+      }
+
+      if (verbGrid) {
+        verbGrid.innerHTML = '';
+        for (let i = 1; i <= 30; i++) {
+          verbGrid.innerHTML += `<div class="level-btn" onclick="alert('Verb Level ${i} စတင်ပါမည်')">Lvl ${i}</div>`;
+        }
+      }
+    }
+
+    // Profile Edit Name
     function editUserName() {
-      let newName = prompt("အမည်သစ် ထည့်သွင်းပါ:", userName);
-      if(newName && newName.trim() !== "") {
+      let newName = prompt("သင့်နာမည်သစ် ရိုက်ထည့်ပါ:", userName);
+      if (newName && newName.trim() !== '') {
         userName = newName.trim();
         localStorage.setItem('userName', userName);
         document.getElementById('user-name-display').innerText = userName;
       }
     }
 
-    // VIP SYSTEM LOGIC (Strict 500 XP Requirement & 30-Day Expiry)
-    function checkVipStatus() {
-      let badge = document.getElementById('vip-status-badge');
-      let btn = document.getElementById('buy-vip-btn');
-      let vipSection = document.getElementById('vip-content-section');
-      let expiryText = document.getElementById('vip-expiry-text');
-
-      isVip = Date.now() < vipExpiryTime;
-
-      if (isVip) {
-        let remainingDays = Math.ceil((vipExpiryTime - Date.now()) / (1000 * 60 * 60 * 24));
-        if (badge) {
-          badge.innerText = '✨ VIP ACTIVE';
-          badge.style.background = 'rgba(46,213,115,0.1)';
-          badge.style.border = '1px solid var(--success)';
-          badge.style.color = 'var(--success)';
-        }
-        if (btn) {
-          btn.innerText = '✅ VIP သက်တမ်းရှိနေပါပြီ (1 Month)';
-          btn.disabled = true;
-          btn.style.opacity = '0.7';
-        }
-        if (vipSection) {
-          vipSection.style.display = 'block'; // Follow Me စာအုပ်ပါ အဆင့်မြင့်အက်ဆေးများ ပွင့်လာမည်
-        }
-        if (expiryText) {
-          expiryText.innerText = `⏳ ကျန်ရှိသည့် သက်တမ်း: ခန့်မှန်းခြေ ရက်ပေါင်း ${remainingDays} ရက်`;
-        }
-      } else {
-        if (badge) {
-          badge.innerText = '🔒 Normal Mode';
-          badge.style.background = 'rgba(255,255,255,0.05)';
-          badge.style.border = '1px solid var(--text-sub)';
-          badge.style.color = 'var(--text-sub)';
-        }
-        if (btn) {
-          btn.innerText = '⭐ 500 XP ဖြင့် 1 လစာ VIP ဝယ်မည်';
-          btn.disabled = false;
-          btn.style.opacity = '1';
-        }
-        if (vipSection) {
-          vipSection.style.display = 'none'; // မဝယ်ရသေးပါက ပိတ်ထားမည်
-        }
-        if (expiryText) {
-          expiryText.innerText = '';
-        }
-      }
-    }
-
-    function buyVipMode() {
-      const vipCost = 500;
-      
-      // XP မလုံလောက်ပါက လုံးဝဝယ်မရအောင် တားဆီးခြင်း
-      if (userXP < vipCost) {
-        alert(`❌ XP မလုံလောက်ပါ! VIP 1 လစာ ဝယ်ရန် ${vipCost} XP လိုအပ်ပါသည်။ (လက်ရှိ XP: ${userXP} XP)\n⭐ Quiz များနှင့် Essay Challenge များ ဖြေဆို၍ XP ထပ်မံစုဆောင်းပါ။`);
-        return;
-      }
-
-      if (confirm(`⭐ 500 XP ဖြင့် 1 လစာ (30 ရက်) VIP Mode ကို ဝယ်ယူမှာ သေချာပါသလား?`)) {
-        userXP -= vipCost;
-        
-        const thirtyDaysInMillis = 30 * 24 * 60 * 60 * 1000;
-        vipExpiryTime = Date.now() + thirtyDaysInMillis;
-        isVip = true;
-        
-        localStorage.setItem('userXP', userXP);
-        localStorage.setItem('vipExpiryTime', vipExpiryTime);
-        
-        document.getElementById('xp').innerText = userXP;
-        checkVipStatus();
-        updateTelegramShareLink();
-        
-        alert("🎉 ဂုဏ်ယူပါတယ်! 1 လစာ VIP Mode ကို အောင်မြင်စွာ ဝယ်ယူပြီးပါပြီ။ 'Follow Me' စာအုပ်ပါ အဆင့်မြင့်အက်ဆေး လမ်းညွှန်ချက်များ ပွင့်သွားပါပြီ။");
-      }
-    }
-
-    // Telegram Share Link Builder
-    function updateTelegramShareLink() {
-      let statusText = isVip ? '👑 VIP Student (1 Mo)' : '📚 Normal Student';
-      const shareText = encodeURIComponent(`🔥 Grade 8 English Study Bot Result!\n👤 အမည်: ${userName}\n⭐ XP: ${userXP}\n🏆 Status: ${statusText}\n\n--- Moe Han's Study App ---`);
-      let tgBtn = document.getElementById('tg-share-btn');
-      if(tgBtn) {
-        tgBtn.href = `https://t.me/share/url?url=&text=${shareText}`;
-      }
-    }
-
-    // Build Level Grids
-    function buildLevelGrids() {
-      let tGrid = document.getElementById('tense-level-grid');
-      if(tGrid) {
-        tGrid.innerHTML = '';
-        for(let i=1; i<=20; i++) {
-          tGrid.innerHTML += `<div class="level-btn" onclick="alert('Tense Level ${i} ဝင်ရောက်မည်')">Lv.${i}</div>`;
-        }
-      }
-      let vGrid = document.getElementById('verb-level-grid');
-      if(vGrid) {
-        vGrid.innerHTML = '';
-        for(let i=1; i<=30; i++) {
-          vGrid.innerHTML += `<div class="level-btn" onclick="alert('Verb Level ${i} ဝင်ရောက်မည်')">Lv.${i}</div>`;
-        }
-      }
-    }
-
-    // Challenge Timer & Logic
-    let timerInterval;
+    // Essay Challenge Functions
     function startEssayChallenge() {
-      let topic = document.getElementById('opponent-given-topic').value.trim();
-      if(!topic) {
-        alert("ကျေးဇူးပြု၍ ခေါင်းစဉ်တစ်ခု ထည့်သွင်းပါ။");
+      const topicInput = document.getElementById('opponent-given-topic').value;
+      if (!topicInput || topicInput.trim() === '') {
+        alert("ကျေးဇူးပြု၍ ပြိုင်ဘက်ပေးသည့် ခေါင်းစဉ် ရိုက်ထည့်ပါ!");
         return;
       }
-      document.getElementById('display-topic').innerText = topic;
+
+      document.getElementById('display-topic').innerText = topicInput;      // 1. Topic ထည့်သည့် UI ကို ပုန်းပြီး Essay ရေးသည့် UI ကို ဖော်ပြခြင်း
       document.getElementById('topic-setup-box').style.display = 'none';
       document.getElementById('essay-writing-box').style.display = 'block';
+
+      // 2. Timer စတင်ရန် ၇ မိနစ် (စက္ကန့် ၄၂၀) သတ်မှတ်ခြင်း
+      timeLeft = 420;
+      updateTimerDisplay();
       
-      let timeLeft = 420;
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        let m = Math.floor(timeLeft / 60);
-        let s = timeLeft % 60;
-        document.getElementById('timer-display').innerText = `⏱️ ${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-        if(timeLeft <= 0) {
-          clearInterval(timerInterval);
+      // 3. Timer မစမီ ယခင် Timer အဟောင်းရှိပါက ရှင်းထုတ်ခြင်း
+      if (challengeTimer) clearInterval(challengeTimer);
+
+      // 4. ၁ စက္ကန့်လျှင် တစ်ကြိမ် Timer လျှော့၍ ရေးချိန်ပြသခြင်း
+      challengeTimer = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+
+        // အချိန်ပြည့်သွားပါက အလိုအလျောက် Submit လုပ်ခြင်း
+        if (timeLeft <= 0) {
+          clearInterval(challengeTimer);
+          alert("⏱️ အချိန်ပြည့်သွားပါပြီ! စာစီစာကုံး တင်ပေးပါမည်။");
           submitEssay();
         }
-        timeLeft--;
       }, 1000);
     }
 
+    function updateTimerDisplay() {
+      let mins = Math.floor(timeLeft / 60);
+      let secs = timeLeft % 60;
+      document.getElementById('timer-display').innerText = `⏱️ ${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
     function submitEssay() {
-      clearInterval(timerInterval);
-      let text = document.getElementById('essay-input').value.trim();
-      let words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+      if (challengeTimer) clearInterval(challengeTimer);
       
-      // စာလုံးရေ အနည်းဆုံး ၃၀ မပြည့်ပါက ရှုံးနိမ့် (Lose) မည်
+      const essayText = document.getElementById('essay-input').value.trim();
+      const words = essayText ? essayText.split(/\s+/).length : 0;
+
       if (words < 30) {
-        alert(`❌ စာလုံးရေ အလွန်နည်းနေပါသည်! (လက်ရှိ: ${words} လုံး)\nGrade 8 အက်ဆေး Challenge အောင်မြင်ရန် အနည်းဆုံး စာလုံးရေ ၃၀ ကျော် ရေးသားရပါမည်။ ယခုအကြိမ် ရှုံးနိမ့် (Lose) ೆಂದು သတ်မှတ်ပါသည်။`);
-        
-        loseCount++;
-        localStorage.setItem('loseCount', loseCount);
-        document.getElementById('lose-count').innerText = loseCount + 'L';
-        
-        document.getElementById('essay-writing-box').style.display = 'none';
-        document.getElementById('topic-setup-box').style.display = 'block';
+        alert("စာလုံးရေ အနည်းဆုံး ၃၀ ပြည့်အောင် ရေးသားပေးပါ!");
         return;
       }
-      
-      let earnedXP = words >= 80 ? 100 : 50;
-      userXP += earnedXP;
-      winCount++;
-      
-      localStorage.setItem('userXP', userXP);
-      localStorage.setItem('winCount', winCount);
-      
-      document.getElementById('xp').innerText = userXP;
-      document.getElementById('win-count').innerText = winCount + 'W';
-      
-      document.getElementById('res-word-count').innerText = `📝 စာလုံးရေ: ${words} လုံး (အောင်မြင်သည်)`;
-      document.getElementById('res-vocab-count').innerText = `🌟 Grade 8 Vocab: ${Math.floor(words/12)} လုံး သုံးထားသည်`;
-      document.getElementById('res-xp-earned').innerText = `🎉 ရရှိသော XP: +${earnedXP} XP`;
-      
+
       document.getElementById('essay-writing-box').style.display = 'none';
       document.getElementById('essay-result-box').style.display = 'block';
-      updateTelegramShareLink();
+
+      let earnedXP = Math.floor(words * 1.5);
+      userXP += earnedXP;
+      winCount += 1;
+
+      localStorage.setItem('userXP', userXP);
+      localStorage.setItem('winCount', winCount);
+
+      document.getElementById('xp').innerText = userXP;
+      document.getElementById('win-count').innerText = winCount + 'W';
+
+      document.getElementById('res-word-count').innerText = `📝 စာလုံးရေ: ${words}`;
+      document.getElementById('res-vocab-count').innerText = `🌟 Grade 8 Vocab: ${Math.floor(words / 5)} လုံး`;
+      document.getElementById('res-xp-earned').innerText = `🎉 ရရှိသော XP: +${earnedXP} XP`;
     }
 
     function resetChallenge() {
-      document.getElementById('opponent-given-topic').value = '';
-      document.getElementById('essay-input').value = '';
       document.getElementById('essay-result-box').style.display = 'none';
       document.getElementById('topic-setup-box').style.display = 'block';
+      document.getElementById('opponent-given-topic').value = '';
+      document.getElementById('essay-input').value = '';
     }
-
-    // On Load
-    window.addEventListener('DOMContentLoaded', () => {
-      checkVipStatus();
-      buildLevelGrids();
-      updateTelegramShareLink();
-    });
   </script>
 </body>
 </html>
-
-
-    
